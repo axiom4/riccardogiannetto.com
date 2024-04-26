@@ -15,8 +15,28 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework.schemas import get_schema_view
+from rest_framework import permissions
+from .permissions import AccessListPermission
+
+from blog import urls as blog_urls
+
+schema_url_patterns = [
+    path('blog/', include(blog_urls.urlpatterns)),
+]
+
 
 urlpatterns = [
+    path("blog/", include(blog_urls.urlpatterns)),
     path('admin/', admin.site.urls),
+    path('', get_schema_view(
+         title="Riccardo Giannetto Gallery API",
+         description="API app riccardogiannetto.com",
+         version="1.0.0",
+         patterns=schema_url_patterns,
+         public=True,
+         permission_classes=[AccessListPermission | permissions.IsAuthenticated]
+         ), name='openapi-schema'),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
