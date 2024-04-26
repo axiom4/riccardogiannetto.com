@@ -18,7 +18,10 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.schemas import get_schema_view
 from rest_framework import permissions
+
+from django.conf import settings
 from .permissions import AccessListPermission
+from django.conf.urls.static import static
 
 from blog import urls as blog_urls
 
@@ -36,7 +39,19 @@ urlpatterns = [
          version="1.0.0",
          patterns=schema_url_patterns,
          public=True,
-         permission_classes=[AccessListPermission | permissions.IsAuthenticated]
+         permission_classes=[AccessListPermission |
+                             permissions.IsAuthenticated]
          ), name='openapi-schema'),
+    path(r'mdeditor/', include('mdeditor.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )
+    urlpatterns += static(
+        settings.STATIC_URL,
+        document_root=settings.STATIC_ROOT
+    )

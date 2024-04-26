@@ -13,26 +13,61 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
+import { Category } from '../model/models';
+import { ListCategories200Response } from '../model/models';
 import { ListPages200Response } from '../model/models';
+import { ListPosts200Response } from '../model/models';
 import { Page } from '../model/models';
+import { Post } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
+
+export interface ListCategoriesRequestParams {
+    limit?: number;
+    offset?: number;
+}
 
 export interface ListPagesRequestParams {
     limit?: number;
     offset?: number;
 }
 
+export interface ListPostsRequestParams {
+    page?: number;
+    pageSize?: number;
+    categoriesName?: string;
+    search?: string;
+    ordering?: string;
+}
+
+export interface RetrieveCategoryRequestParams {
+    id: string;
+}
+
 export interface RetrievePageRequestParams {
     tag: string;
+}
+
+export interface RetrievePostRequestParams {
+    id: string;
+    categoriesName?: string;
+    search?: string;
+    ordering?: string;
 }
 
 
 export interface BlogServiceInterface {
     defaultHeaders: HttpHeaders;
     configuration: Configuration;
+
+    /**
+     * 
+     * API endpoint that allows groups to be viewed or edited.
+* @param requestParameters
+     */
+    listCategories(requestParameters: ListCategoriesRequestParams, extraHttpRequestParams?: any): Observable<ListCategories200Response>;
 
     /**
      * 
@@ -46,6 +81,27 @@ export interface BlogServiceInterface {
      * 
 * @param requestParameters
      */
+    listPosts(requestParameters: ListPostsRequestParams, extraHttpRequestParams?: any): Observable<ListPosts200Response>;
+
+    /**
+     * 
+     * API endpoint that allows groups to be viewed or edited.
+* @param requestParameters
+     */
+    retrieveCategory(requestParameters: RetrieveCategoryRequestParams, extraHttpRequestParams?: any): Observable<Category>;
+
+    /**
+     * 
+     * 
+* @param requestParameters
+     */
     retrievePage(requestParameters: RetrievePageRequestParams, extraHttpRequestParams?: any): Observable<Page>;
+
+    /**
+     * 
+     * 
+* @param requestParameters
+     */
+    retrievePost(requestParameters: RetrievePostRequestParams, extraHttpRequestParams?: any): Observable<Post>;
 
 }
