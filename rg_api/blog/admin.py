@@ -41,7 +41,7 @@ class PageAdmin(admin.ModelAdmin):
         ('author', 'tag'),
         'body'
     ]
-    list_display = ('title', 'tag', 'author')
+    list_display = ('title', 'tag', 'author', 'created_at')
     save_on_top = True
     search_fields = ['title',]
     formfield_overrides = {
