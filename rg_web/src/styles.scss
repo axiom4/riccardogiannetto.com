@@ -667,8 +667,8 @@ h2.site-description {
 }
 .site-footer {
   padding: 30px 0;
-  border-top: 5px solid #dbdbdb;
   font-size: 14px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .site-content {
@@ -1144,7 +1144,7 @@ a:active {
 }
 .site-footer {
   padding: 30px 0;
-  border-top: 5px solid #dbdbdb;
+  box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.2);
   font-size: 14px;
 }
 #back-top {
@@ -1725,21 +1725,29 @@ article a:visited {
 }
 
 article h1 {
+  font-style: italic;
+  font-family: "Libre Baskerville", serif;
   color: rgba(0, 0, 0, 0.7);
   margin: 10px 0 -10px;
 }
 
 article figcaption {
+  font-style: italic;
+  font-family: "Libre Baskerville", serif;
   color: rgba(0, 0, 0, 0.7);
   margin: 0 5px 10px;
 }
 
 article h3 {
+  font-style: italic;
+  font-family: "Libre Baskerville", serif;
   color: rgba(0, 0, 0, 0.7);
-  margin: 20px 0 0;
+  margin: 20px 10px 10px;
 }
 
 article h5 {
+  font-style: italic;
+  font-family: "Libre Baskerville", serif;
   color: rgba(0, 0, 0, 0.7);
   margin: 40px 20px 10px 0;
 }
