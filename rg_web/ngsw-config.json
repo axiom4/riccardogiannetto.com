@@ -21,9 +21,26 @@
       "updateMode": "prefetch",
       "resources": {
         "files": [
+          "/media/**",
           "/assets/**",
-          "/media/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
+          "/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
         ]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "api-performance",
+      "urls": [
+        "/api/blog/posts/**",
+        "/api/blog/pages/**",
+        "/api/blog/categories/**",
+        "/blog/**"
+      ],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 100,
+        "maxAge": "3d2h"
       }
     }
   ]
