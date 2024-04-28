@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 Disallow: /cgi-bin/
-Sitemap: https://www.axiom4.net/sitemap.xml
+Sitemap: https://www.riccardogiannetto.com/sitemap.xml
