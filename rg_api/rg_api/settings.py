@@ -237,3 +237,6 @@ MDEDITOR_CONFIGS = {
         'language': 'en'  # zh / en / es
     }
 }
+
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_PATH = '/;HttpOnly'
