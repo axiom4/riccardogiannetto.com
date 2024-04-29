@@ -1,6 +1,6 @@
 {
-  "name": "rg_web",
-  "short_name": "rg_web",
+  "name": "Riccardo Giannetto Gallery",
+  "short_name": "rg-gallery",
   "theme_color": "#ffffff",
   "background_color": "#ffffff",
   "display": "standalone",
