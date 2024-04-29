@@ -1,8 +1,8 @@
 @font-face {
-  font-family: "fantasy";
+  font-family: "myfantasy";
   font-style: normal;
   font-weight: 400;
-  src: local("fantasy"), url(assets/fonts/fantasy.otf) format("otf");
+  src: local("Fantasy"), url(assets/fonts/Fantasy.woff) format("woff");
 }
 
 html {
@@ -521,14 +521,14 @@ header.site-header {
 
 h1.page-title,
 h1.site-title {
-  font-family: fantasy;
+  font-family: myfantasy;
   text-shadow: 2px 1px 2px #d3d3d3;
 }
 
 h1.site-title {
   margin-bottom: 0;
-  font-weight: bolder;
-  font-size: xx-large;
+  font-weight: normal;
+  font-size: 60px;
 }
 
 h1.site-title a {
@@ -541,11 +541,11 @@ h1.site-title a:hover {
 }
 
 h2.site-description {
-  font-family: fantasy;
-  font-size: small;
+  font-family: myfantasy;
+  font-size: 25px;
   margin: 0 10px;
   position: relative;
-  top: -12px;
+  top: -5px;
   color: #454a4e;
 }
 
@@ -1365,7 +1365,7 @@ article img {
   position: absolute;
   vertical-align: middle;
   width: 128px;
-  font-family: fantasy;
+  font-family: myfantasy;
   font-size: x-large;
   font-style: italic;
   border: 1px solid #000;
@@ -1389,7 +1389,7 @@ article img {
 
 .gallery-tag-cloud,
 .main-single-photo h1.entry-title {
-  font-family: fantasy;
+  font-family: myfantasy;
   font-style: italic;
   font-weight: 700;
   text-shadow: 2px 1px 2px #d3d3d3;
@@ -1447,7 +1447,7 @@ article img {
 }
 
 .main-single-photo .entry-meta {
-  font-family: fantasy;
+  font-family: myfantasy;
   font-size: x-small;
   padding: 0 25px;
 }
