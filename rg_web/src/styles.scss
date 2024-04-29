@@ -1,3 +1,10 @@
+@font-face {
+  font-family: "fantasy";
+  font-style: normal;
+  font-weight: 400;
+  src: local("fantasy"), url(assets/fonts/fantasy.otf) format("otf");
+}
+
 html {
   font-family: sans-serif;
   box-sizing: border-box;
