@@ -1,13 +1,17 @@
-		<main id="main" class="main" role="main">
-      <article *ngIf="page" class="mt-4 entry-content">
-        <figure class="text-left">
-          <blockquote class="blockquote">
-            <h1>{{ page.title }}</h1>
-          </blockquote>
-          <figcaption class="blockquote-footer">
-            <small>author: <strong>{{ page.author?.username }} - <cite title="Source Title">{{ page.created_at | date }}</cite></strong></small>
-          </figcaption>
-        </figure>
-        <div class="mt-4" [innerHTML]="page.body | marked"></div>
-      </article>
-    </main>
+<article *ngIf="page" class="mt-4 entry-content">
+  <figure class="text-left">
+    <blockquote class="blockquote">
+      <h1>{{ page.title }}</h1>
+    </blockquote>
+    <figcaption class="blockquote-footer">
+      <small
+        >author:
+        <strong
+          >{{ page.author?.username }} -
+          <cite title="Source Title">{{ page.created_at | date }}</cite></strong
+        ></small
+      >
+    </figcaption>
+  </figure>
+  <div class="mt-4" [innerHTML]="page.body | marked"></div>
+</article>
