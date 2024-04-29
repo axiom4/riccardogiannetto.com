@@ -7,10 +7,12 @@ import {
   trigger,
   AnimationEvent,
 } from '@angular/animations';
+import { NgFor, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-gallery-lightbox',
-  standalone: false,
+  standalone: true,
+  imports: [NgFor, NgIf],
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
   animations: [

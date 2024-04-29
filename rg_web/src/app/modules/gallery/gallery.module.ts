@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { GalleryLightboxComponent } from './components/gallery-lightbox/gallery-lightbox.component';
 
 @NgModule({
-  declarations: [GalleryLightboxComponent],
-  exports: [GalleryLightboxComponent],
+  declarations: [],
+  exports: [],
   imports: [CommonModule],
 })
 export class GalleryModule {}
