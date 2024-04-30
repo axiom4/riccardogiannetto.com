@@ -1,5 +1,6 @@
 import {
   ApplicationConfig,
+  Provider,
   importProvidersFrom,
   isDevMode,
 } from '@angular/core';
@@ -7,7 +8,12 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import {
+  HTTP_INTERCEPTORS,
+  HttpClientModule,
+  provideHttpClient,
+  withFetch,
+} from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   ApiModule,
@@ -17,6 +23,7 @@ import {
 import { HighlightService } from './highlight.service';
 import { provideServiceWorker } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { AuthInterceptor } from './auth.interceptor';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -24,6 +31,12 @@ export function apiConfigFactory(): Configuration {
   };
   return new Configuration(params);
 }
+
+export const authInterceptorProvider: Provider = {
+  provide: HTTP_INTERCEPTORS,
+  useClass: AuthInterceptor,
+  multi: true,
+};
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,9 +46,11 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(ApiModule.forRoot(apiConfigFactory)),
     HighlightService,
     provideHttpClient(withFetch()),
+    importProvidersFrom(HttpClientModule),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
+    authInterceptorProvider,
   ],
 };

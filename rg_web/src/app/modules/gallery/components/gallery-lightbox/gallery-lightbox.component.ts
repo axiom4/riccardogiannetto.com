@@ -46,7 +46,7 @@ export class GalleryLightboxComponent implements OnInit {
   @HostListener('window:scroll', ['$event'])
   onWindowScroll(event: any) {
     if (
-      window.innerHeight + window.scrollY >= document.body.offsetHeight &&
+      window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 &&
       !this.isLoading
     ) {
       console.log(event);
@@ -56,7 +56,7 @@ export class GalleryLightboxComponent implements OnInit {
 
   previewImage = false;
   showMask = false;
-  currentLightboxImg: Item = this.galleryData[0];
+  currentLightboxImg: Item = this.data[0];
   currentIndex = 0;
   controls = true;
   totalImageCount = 0;
@@ -65,7 +65,8 @@ export class GalleryLightboxComponent implements OnInit {
 
   ngOnInit(): void {
     this.totalImageCount = this.galleryData.length;
-    this.data = this.galleryData;
+    // this.data = this.galleryData;
+    this.loadItems();
   }
 
   onPreviewImage(index: number): void {
@@ -75,7 +76,7 @@ export class GalleryLightboxComponent implements OnInit {
     this.previewImage = true;
 
     this.currentIndex = index;
-    this.currentLightboxImg = this.galleryData[index];
+    this.currentLightboxImg = this.data[index];
   }
 
   onAnimationEnd(event: AnimationEvent): void {
@@ -92,34 +93,34 @@ export class GalleryLightboxComponent implements OnInit {
   prev(): void {
     this.currentIndex--;
     if (this.currentIndex < 0) {
-      this.currentIndex = this.galleryData.length - 1;
+      this.currentIndex = this.data.length - 1;
     }
-    this.currentLightboxImg = this.galleryData[this.currentIndex];
+    this.currentLightboxImg = this.data[this.currentIndex];
   }
 
   next(): void {
     this.currentIndex++;
-    if (this.currentIndex > this.galleryData.length - 1) {
-      this.currentIndex = 0;
+    if (this.currentIndex > this.data.length - 1) {
+      this.loadItems();
+    } else {
+      this.currentLightboxImg = this.data[this.currentIndex];
     }
-    this.currentLightboxImg = this.galleryData[this.currentIndex];
   }
 
   loadItems(): void {
     console.log('Load more items');
     this.isLoading = true;
     this.galleryService.getItems(this.page, this.perPage).subscribe((items) => {
-      console.log(items);
-
       items.photos.forEach((item: any) => {
         const g_item: Item = {
           src: item.src.large,
-          alt: '1',
+          alt: item.alt,
         };
-        this.galleryData.push(g_item);
+        this.data.push(g_item);
       });
       // this.items.push(...items.photos);
       this.page++;
+      this.totalImageCount = this.data.length;
       this.isLoading = false;
     });
   }

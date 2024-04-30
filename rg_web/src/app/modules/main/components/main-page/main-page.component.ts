@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { Item } from '../../gallery/models/item';
-import { GalleryModule } from '../../gallery/gallery.module';
-import { GalleryLightboxComponent } from '../../gallery/components/gallery-lightbox/gallery-lightbox.component';
+import { Item } from '../../../gallery/models/item';
+import { GalleryModule } from '../../../gallery/gallery.module';
+import { GalleryLightboxComponent } from '../../../gallery/components/gallery-lightbox/gallery-lightbox.component';
 
 @Component({
   selector: 'app-main-page',
