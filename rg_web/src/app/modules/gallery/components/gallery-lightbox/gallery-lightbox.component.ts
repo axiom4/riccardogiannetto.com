@@ -5,6 +5,7 @@ import {
   style,
   transition,
   trigger,
+  state,
   AnimationEvent,
 } from '@angular/animations';
 import { NgFor, NgIf } from '@angular/common';
@@ -16,7 +17,7 @@ import { NgFor, NgIf } from '@angular/common';
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
   animations: [
-    trigger('animation', [
+    trigger('animation-enter', [
       transition('void => visible', [
         style({ transform: 'scale(0.5)' }),
         animate('150ms', style({ transform: 'scale(1)' })),

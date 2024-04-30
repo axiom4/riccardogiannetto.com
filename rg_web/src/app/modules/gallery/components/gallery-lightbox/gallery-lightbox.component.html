@@ -44,8 +44,8 @@
     </button>
     <div
       *ngIf="previewImage"
-      [@animation]="{ value: 'visible' }"
-      (@animation.done)="onAnimationEnd($event)"
+      [@animation-enter]="{ value: 'visible' }"
+      (@animation-enter.done)="onAnimationEnd($event)"
       class="lightbox-img"
     >
       <img
