@@ -1,14 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { Item } from '../../models/item';
 import {
   animate,
   style,
   transition,
   trigger,
-  state,
   AnimationEvent,
 } from '@angular/animations';
 import { NgFor, NgIf } from '@angular/common';
+import { GalleryService } from '../../gallery.service';
 
 @Component({
   selector: 'app-gallery-lightbox',
@@ -38,6 +38,21 @@ import { NgFor, NgIf } from '@angular/common';
 export class GalleryLightboxComponent implements OnInit {
   @Input() galleryData: Item[] = [];
   @Input() showCount = false;
+  isLoading = false;
+  data: Item[] = [];
+  page = 1;
+  perPage = 25;
+
+  @HostListener('window:scroll', ['$event'])
+  onWindowScroll(event: any) {
+    if (
+      window.innerHeight + window.scrollY >= document.body.offsetHeight &&
+      !this.isLoading
+    ) {
+      console.log(event);
+      this.loadItems();
+    }
+  }
 
   previewImage = false;
   showMask = false;
@@ -46,9 +61,11 @@ export class GalleryLightboxComponent implements OnInit {
   controls = true;
   totalImageCount = 0;
 
-  constructor() {}
+  constructor(private galleryService: GalleryService) {}
+
   ngOnInit(): void {
     this.totalImageCount = this.galleryData.length;
+    this.data = this.galleryData;
   }
 
   onPreviewImage(index: number): void {
@@ -86,5 +103,24 @@ export class GalleryLightboxComponent implements OnInit {
       this.currentIndex = 0;
     }
     this.currentLightboxImg = this.galleryData[this.currentIndex];
+  }
+
+  loadItems(): void {
+    console.log('Load more items');
+    this.isLoading = true;
+    this.galleryService.getItems(this.page, this.perPage).subscribe((items) => {
+      console.log(items);
+
+      items.photos.forEach((item: any) => {
+        const g_item: Item = {
+          src: item.src.large,
+          alt: '1',
+        };
+        this.galleryData.push(g_item);
+      });
+      // this.items.push(...items.photos);
+      this.page++;
+      this.isLoading = false;
+    });
   }
 }
