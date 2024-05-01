@@ -1669,7 +1669,10 @@ article th {
 
 @media screen and (max-width: 1024px) {
   .gallery-lightbox-container {
+    padding: 5px;
     .gallery {
+      padding: 25px 15px;
+
       width: 50%;
     }
   }
@@ -1677,7 +1680,11 @@ article th {
 
 @media screen and (max-width: 650px) {
   .gallery-lightbox-container {
+    padding: 5px;
+
     .gallery {
+      padding: 25px 10px;
+
       width: 100%;
     }
   }

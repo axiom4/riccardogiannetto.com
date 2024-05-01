@@ -161,7 +161,6 @@ export class GalleryLightboxComponent implements OnInit {
         items.forEach((item: Item) => {
           const g_item: Item = item;
           if (this.data[this.index] != undefined) {
-            // this.getLowerColumnHeightIndex();
             this.data[this.index].push(g_item);
             this.index = (this.index + 1) % this.columns;
           }

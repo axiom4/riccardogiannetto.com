@@ -70,9 +70,6 @@ export class GalleryService {
     if (this.pendingReq) {
       return {} as Observable<Item[]>;
     }
-    this.pendingReq = true;
-    const url = `${this.apiUrl}?per_page=${perPage}&page=${page}`;
-    this.pendingReq = false;
     return of(this.data).pipe(delay(300));
   }
 }
