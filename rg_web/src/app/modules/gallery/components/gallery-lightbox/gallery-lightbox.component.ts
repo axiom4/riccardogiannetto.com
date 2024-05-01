@@ -1,4 +1,14 @@
-import { Component, HostListener, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+  afterNextRender,
+} from '@angular/core';
 import { Item } from '../../models/item';
 import {
   animate,
@@ -39,9 +49,23 @@ export class GalleryLightboxComponent implements OnInit {
   @Input() galleryData: Item[] = [];
   @Input() showCount = false;
   isLoading = false;
-  data: Item[] = [];
+  data: Item[][] = [];
   page = 1;
   perPage = 25;
+  innerWidth = 0;
+  index = 0;
+
+  columns = 0;
+
+  previewImage = false;
+  showMask = false;
+  currentLightboxImg: Item | undefined;
+  currentRow = 0;
+  currentColumn = 0;
+  controls = true;
+  totalImageCount = 0;
+
+  @ViewChildren('galleryItem') galleryItem: QueryList<ElementRef> | undefined;
 
   @HostListener('window:scroll', ['$event'])
   onWindowScroll(event: any) {
@@ -49,34 +73,41 @@ export class GalleryLightboxComponent implements OnInit {
       window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 &&
       !this.isLoading
     ) {
-      console.log(event);
       this.loadItems();
     }
   }
 
-  previewImage = false;
-  showMask = false;
-  currentLightboxImg: Item = this.data[0];
-  currentIndex = 0;
-  controls = true;
-  totalImageCount = 0;
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (this.innerWidth !== window?.innerWidth) {
+      this.innerWidth = window.innerWidth;
+      this.setColumns(this.innerWidth);
 
-  constructor(private galleryService: GalleryService) {}
+      if (this.data.length != this.columns && !this.isLoading) this.loadItems();
+    }
+  }
+
+  constructor(private galleryService: GalleryService) {
+    afterNextRender(() => {
+      this.innerWidth = window.innerWidth;
+      this.setColumns(this.innerWidth);
+    });
+  }
 
   ngOnInit(): void {
-    this.totalImageCount = this.galleryData.length;
+    this.totalImageCount = 0;
     // this.data = this.galleryData;
     this.loadItems();
   }
 
-  onPreviewImage(index: number): void {
-    console.log('Preview image', index);
-
+  onPreviewImage(column: number, row: number): void {
     this.showMask = true;
     this.previewImage = true;
 
-    this.currentIndex = index;
-    this.currentLightboxImg = this.data[index];
+    this.currentRow = row;
+    this.currentColumn = column;
+
+    this.currentLightboxImg = this.data[column][row];
   }
 
   onAnimationEnd(event: AnimationEvent): void {
@@ -91,37 +122,87 @@ export class GalleryLightboxComponent implements OnInit {
   }
 
   prev(): void {
-    this.currentIndex--;
-    if (this.currentIndex < 0) {
-      this.currentIndex = this.data.length - 1;
+    this.currentRow--;
+    if (this.currentRow < 0) {
+      if (this.currentColumn == 0) {
+        this.currentColumn = this.columns - 1;
+      } else {
+        this.currentColumn = (this.currentColumn - 1) % this.columns;
+      }
+      this.currentRow = this.data[this.currentColumn].length - 1;
     }
-    this.currentLightboxImg = this.data[this.currentIndex];
+    this.currentLightboxImg = this.data[this.currentColumn][this.currentRow];
   }
 
   next(): void {
-    this.currentIndex++;
-    if (this.currentIndex > this.data.length - 1) {
-      this.loadItems();
-    } else {
-      this.currentLightboxImg = this.data[this.currentIndex];
+    this.currentRow++;
+    if (this.currentRow > this.data[this.currentColumn].length - 1) {
+      this.currentRow = 0;
+      this.currentColumn = (this.currentColumn + 1) % this.columns;
     }
+    this.currentLightboxImg = this.data[this.currentColumn][this.currentRow];
   }
 
   loadItems(): void {
-    console.log('Load more items');
     this.isLoading = true;
+
     this.galleryService.getItems(this.page, this.perPage).subscribe((items) => {
+      if (this.data.length != this.columns) {
+        this.data = [];
+
+        for (let i = 0; i < this.columns; i++) {
+          this.data.push(new Array<Item>());
+        }
+      }
+      this.index = this.getLowerColumnHeightIndex();
+
       items.photos.forEach((item: any) => {
         const g_item: Item = {
           src: item.src.large,
           alt: item.alt,
         };
-        this.data.push(g_item);
+        if (this.data[this.index] != undefined) {
+          // this.getLowerColumnHeightIndex();
+          this.data[this.index].push(g_item);
+          this.index = (this.index + 1) % this.columns;
+        }
       });
-      // this.items.push(...items.photos);
+
       this.page++;
-      this.totalImageCount = this.data.length;
+      let imageCount = 0;
+      this.data.forEach((column) => {
+        imageCount += column.length;
+      });
+      this.totalImageCount = imageCount;
+
       this.isLoading = false;
     });
+  }
+
+  setColumns(width: number): void {
+    if (width < 650) {
+      this.columns = 1;
+    } else if (width < 1024) {
+      this.columns = 2;
+    } else {
+      this.columns = 3;
+    }
+  }
+
+  getLowerColumnHeightIndex(): number {
+    let index = 0;
+    if (this.galleryItem == undefined) return index;
+
+    if (this.galleryItem.length > 0) {
+      let minHeight = this.galleryItem.first.nativeElement.offsetHeight;
+
+      this.galleryItem?.forEach((item) => {
+        if (minHeight > item.nativeElement.offsetHeight) {
+          minHeight = item.nativeElement.offsetHeight;
+          index = this.galleryItem?.toArray().indexOf(item) || 0;
+        }
+      });
+    }
+    return index;
   }
 }

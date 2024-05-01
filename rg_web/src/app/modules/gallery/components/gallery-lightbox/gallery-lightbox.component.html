@@ -1,8 +1,12 @@
 <div class="gallery-lightbox-container">
-  <div class="gallery">
-    <div *ngFor="let data of data; let i = index" class="gallery-img">
+  <div
+    #galleryItem
+    *ngFor="let column of data; let col = index"
+    class="gallery"
+  >
+    <div *ngFor="let data of column; let i = index" class="gallery-img">
       <img
-        (click)="onPreviewImage(i)"
+        (click)="onPreviewImage(col, i)"
         [src]="data.src"
         alt="{{ data.alt }}"
         onKeyPress=""
@@ -12,9 +16,6 @@
     </div>
   </div>
   <div *ngIf="showMask" class="lightbox" [@animation-leave]="{ value: 'hide' }">
-    <span *ngIf="showCount" class="count">
-      {{ currentIndex + 1 }}/{{ totalImageCount }}
-    </span>
     <button *ngIf="previewImage" class="close-btn" title="Close">
       <span
         class="icon-lightbox-carousel"
@@ -49,6 +50,7 @@
       class="lightbox-img"
     >
       <img
+        *ngIf="currentLightboxImg"
         src="{{ currentLightboxImg.src }}"
         alt="{{ currentLightboxImg.alt }}"
       />
