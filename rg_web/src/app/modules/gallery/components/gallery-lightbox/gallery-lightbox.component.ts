@@ -146,37 +146,36 @@ export class GalleryLightboxComponent implements OnInit {
   loadItems(): void {
     this.isLoading = true;
 
-    this.galleryService.getItems(this.page, this.perPage).subscribe((items) => {
-      if (this.data.length != this.columns) {
-        this.data = [];
+    this.galleryService
+      .getItems(this.page, this.perPage)
+      .subscribe((items: Item[]) => {
+        if (this.data.length != this.columns) {
+          this.data = [];
 
-        for (let i = 0; i < this.columns; i++) {
-          this.data.push(new Array<Item>());
+          for (let i = 0; i < this.columns; i++) {
+            this.data.push(new Array<Item>());
+          }
         }
-      }
-      this.index = this.getLowerColumnHeightIndex();
+        this.index = this.getLowerColumnHeightIndex();
 
-      items.photos.forEach((item: any) => {
-        const g_item: Item = {
-          src: item.src.large,
-          alt: item.alt,
-        };
-        if (this.data[this.index] != undefined) {
-          // this.getLowerColumnHeightIndex();
-          this.data[this.index].push(g_item);
-          this.index = (this.index + 1) % this.columns;
-        }
+        items.forEach((item: Item) => {
+          const g_item: Item = item;
+          if (this.data[this.index] != undefined) {
+            // this.getLowerColumnHeightIndex();
+            this.data[this.index].push(g_item);
+            this.index = (this.index + 1) % this.columns;
+          }
+        });
+
+        this.page++;
+        let imageCount = 0;
+        this.data.forEach((column) => {
+          imageCount += column.length;
+        });
+        this.totalImageCount = imageCount;
+
+        this.isLoading = false;
       });
-
-      this.page++;
-      let imageCount = 0;
-      this.data.forEach((column) => {
-        imageCount += column.length;
-      });
-      this.totalImageCount = imageCount;
-
-      this.isLoading = false;
-    });
   }
 
   setColumns(width: number): void {
