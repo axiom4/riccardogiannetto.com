@@ -13,6 +13,7 @@ html {
 .nav-menu ul > li,
 body {
   margin: 0;
+  touch-action: pan-y, pan-x;
 }
 
 article,
