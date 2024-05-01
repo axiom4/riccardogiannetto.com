@@ -1,6 +1,5 @@
 import {
   ApplicationConfig,
-  Provider,
   importProvidersFrom,
   isDevMode,
 } from '@angular/core';
@@ -25,17 +24,6 @@ import {
 import { HighlightService } from './highlight.service';
 import { provideServiceWorker } from '@angular/service-worker';
 import { environment } from '../environments/environment';
-import { AuthInterceptor } from './auth.interceptor';
-import { CSP_NONCE } from '@angular/core';
-
-export const nonceProvider: Provider[] = [
-  {
-    provide: CSP_NONCE,
-    useValue: document.querySelector(
-      'meta[name="csp-nonce"]'
-    ) as HTMLMetaElement,
-  },
-];
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -61,6 +49,5 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
-    nonceProvider,
   ],
 };
