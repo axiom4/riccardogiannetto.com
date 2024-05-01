@@ -12,7 +12,6 @@ import {
   withHttpTransferCacheOptions,
 } from '@angular/platform-browser';
 import {
-  HTTP_INTERCEPTORS,
   HttpClientModule,
   provideHttpClient,
   withFetch,
@@ -27,6 +26,14 @@ import { HighlightService } from './highlight.service';
 import { provideServiceWorker } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { AuthInterceptor } from './auth.interceptor';
+import { CSP_NONCE } from '@angular/core';
+
+export const nonceProvider: Provider[] = [
+  {
+    provide: CSP_NONCE,
+    useValue: '5957472310',
+  },
+];
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -34,12 +41,6 @@ export function apiConfigFactory(): Configuration {
   };
   return new Configuration(params);
 }
-
-export const authInterceptorProvider: Provider = {
-  provide: HTTP_INTERCEPTORS,
-  useClass: AuthInterceptor,
-  multi: true,
-};
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -58,6 +59,5 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
-    authInterceptorProvider,
   ],
 };
