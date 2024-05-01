@@ -31,7 +31,9 @@ import { CSP_NONCE } from '@angular/core';
 export const nonceProvider: Provider[] = [
   {
     provide: CSP_NONCE,
-    useValue: '5957472310',
+    useValue: document.querySelector(
+      'meta[name="csp-nonce"]'
+    ) as HTMLMetaElement,
   },
 ];
 
