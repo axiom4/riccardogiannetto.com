@@ -6,6 +6,7 @@
   >
     <div *ngFor="let data of column; let i = index" class="gallery-img">
       <img
+        appImageLazyLoader
         (click)="onPreviewImage(col, i)"
         [src]="data.src"
         alt="{{ data.alt }}"
