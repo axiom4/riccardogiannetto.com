@@ -70,6 +70,6 @@ export class GalleryService {
     if (this.pendingReq) {
       return {} as Observable<Item[]>;
     }
-    return of(this.data).pipe(delay(300));
+    return of(this.data).pipe(delay(150));
   }
 }
