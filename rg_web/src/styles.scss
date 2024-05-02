@@ -416,7 +416,17 @@ h1.page-title {
   font-size: 16px;
   line-height: 24px;
   text-decoration: none;
-  font-weight: lighter;
+  font-weight: normal;
+  margin: auto;
+  display: block;
+}
+
+.nav-menu > li > a:hover {
+  transition: transform 0.2s;
+  // font-weight: bold;
+  -ms-transform: scale(1.1); /* IE 9 */
+  -webkit-transform: scale(1.1); /* Safari 3-8 */
+  transform: scale(1.1);
 }
 
 .nav-menu > li > a:before,
