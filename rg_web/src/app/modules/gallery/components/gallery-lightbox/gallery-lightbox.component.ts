@@ -17,14 +17,14 @@ import {
   trigger,
   AnimationEvent,
 } from '@angular/animations';
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf, NgOptimizedImage } from '@angular/common';
 import { GalleryService } from '../../gallery.service';
 import { ImageLazyLoaderDirective } from '../../image-lazy-loader.directive';
 
 @Component({
   selector: 'app-gallery-lightbox',
   standalone: true,
-  imports: [NgFor, NgIf, ImageLazyLoaderDirective],
+  imports: [NgFor, NgIf, ImageLazyLoaderDirective, NgOptimizedImage],
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
   animations: [
