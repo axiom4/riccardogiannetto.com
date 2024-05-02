@@ -6,18 +6,14 @@
   >
     <div *ngFor="let data of column; let i = index" class="gallery-img">
       <img
-        class="loading"
-        lazy
-        appImageLazyLoader
         (click)="onPreviewImage(col, i)"
         alt="{{ data.alt }}"
         onKeyPress=""
         onKeyDown=""
         onKeyUp=""
         [ngSrc]="data.src"
-        width="400"
-        height="200"
-        sizes="(max-width: 768px) 100vw, 50vw"
+        width="{{ data.width }}"
+        height="{{ data.height }}"
         priority
       />
     </div>
@@ -63,8 +59,12 @@
     >
       <img
         *ngIf="currentLightboxImg"
-        src="{{ currentLightboxImg.src }}"
         alt="{{ currentLightboxImg.alt }}"
+        [ngSrc]="currentLightboxImg.src"
+        width="{{ currentLightboxImg.width }}"
+        height="800"
+        sizes="100vw"
+        priority
       />
     </div>
   </div>

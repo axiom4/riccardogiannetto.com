@@ -17,9 +17,24 @@ import {
   trigger,
   AnimationEvent,
 } from '@angular/animations';
-import { NgFor, NgIf, NgOptimizedImage } from '@angular/common';
+import {
+  IMAGE_LOADER,
+  ImageLoaderConfig,
+  NgFor,
+  NgIf,
+  NgOptimizedImage,
+} from '@angular/common';
 import { GalleryService } from '../../gallery.service';
 import { ImageLazyLoaderDirective } from '../../image-lazy-loader.directive';
+
+const myCustomLoader = (config: ImageLoaderConfig) => {
+  let url = `${config.src}?`;
+  let queryParams = [];
+  if (config.width) {
+    queryParams.push(`w=${config.width}`);
+  }
+  return url + queryParams.join('&');
+};
 
 @Component({
   selector: 'app-gallery-lightbox',
@@ -27,6 +42,12 @@ import { ImageLazyLoaderDirective } from '../../image-lazy-loader.directive';
   imports: [NgFor, NgIf, ImageLazyLoaderDirective, NgOptimizedImage],
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
+  providers: [
+    {
+      provide: IMAGE_LOADER,
+      useValue: myCustomLoader,
+    },
+  ],
   animations: [
     trigger('animation-enter', [
       transition('void => visible', [
