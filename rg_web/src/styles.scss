@@ -272,7 +272,7 @@ h1.page-title {
 }
 
 .main-navigation ul {
-  display: none;
+  display: block;
   list-style: none;
   margin: 0;
   padding-left: 0;
@@ -341,30 +341,6 @@ h1.page-title {
   position: absolute;
   right: 0;
   width: 140px;
-}
-
-@media only screen and (min-width: 768px) {
-  .menu-toggle {
-    display: none;
-  }
-
-  .main-navigation ul,
-  .nav-menu > li {
-    display: block;
-  }
-
-  .menu-main-container {
-    background: #fff 0 0;
-    display: block;
-    position: relative;
-    right: auto;
-    width: auto;
-  }
-
-  .nav-menu > li {
-    float: left;
-    margin: 0 10px;
-  }
 }
 
 .site-main .comment-navigation,
@@ -533,12 +509,17 @@ h1.page-title {
   display: block;
 }
 
+.main-navigation .visible {
+  display: block;
+}
+
 .menu-toggle {
   width: 28px;
   height: 28px;
   font-size: x-large;
   border: 1px solid #000;
   color: #8e8e8e;
+  display: none;
 }
 
 .clear:after,
@@ -802,5 +783,58 @@ article th {
 
       width: 100%;
     }
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .main-navigation ul {
+    background: #fff;
+    float: none;
+    margin: 0;
+    top: 100%;
+    position: relative;
+  }
+  .nav-menu > li {
+    position: relative;
+    float: none;
+    margin: 0 10px;
+    display: block;
+  }
+}
+
+@media only screen and (max-width: 650px) {
+  .menu-toggle {
+    display: block;
+    right: 20px;
+    position: absolute;
+  }
+
+  .main-navigation {
+    position: relative;
+    top: 0;
+    display: none;
+  }
+
+  .visible {
+    display: block;
+  }
+
+  .main-navigation ul,
+  .nav-menu > li {
+    display: block;
+    margin: 0 auto;
+  }
+
+  .menu-main-container {
+    background: #fff 0 0;
+    display: block;
+    position: absolute;
+    width: 100%;
+    padding: 0;
+  }
+
+  .nav-menu > li {
+    float: left;
+    margin: 0 10px;
   }
 }
