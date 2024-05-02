@@ -16,10 +16,15 @@
     </div>
   </div>
   <div *ngIf="showMask" class="lightbox" [@animation-leave]="{ value: 'hide' }">
-    <button *ngIf="previewImage" class="close-btn" title="Close">
+    <button
+      type="button"
+      (click)="onclosePreview()"
+      *ngIf="previewImage"
+      class="close-btn"
+      title="Close"
+    >
       <span
         class="icon-lightbox-carousel"
-        (click)="onclosePreview()"
         onKeyPress=""
         onKeyDown=""
         onKeyUp=""

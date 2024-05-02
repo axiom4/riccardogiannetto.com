@@ -77,6 +77,15 @@ export class GalleryLightboxComponent implements OnInit {
     }
   }
 
+  @HostListener('document:keydown.escape', ['$event']) onKeydownHandler(
+    event: KeyboardEvent
+  ) {
+    console.log(event);
+    if (this.previewImage) {
+      this.previewImage = false;
+    }
+  }
+
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
     if (this.innerWidth !== window?.innerWidth) {
