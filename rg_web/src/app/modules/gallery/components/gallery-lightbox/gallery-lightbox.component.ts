@@ -27,7 +27,7 @@ import { GalleryService } from '../../gallery.service';
 import { ImageLazyLoaderDirective } from '../../image-lazy-loader.directive';
 
 const galleryLoaderProvider = (config: ImageLoaderConfig) => {
-  return `https://example.com/images?src=${config.src}&width=${config.width}`;
+  return `/${config.src}?width=${config.width}`;
 };
 
 @Component({
