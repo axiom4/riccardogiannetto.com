@@ -18,6 +18,8 @@ incremental==22.10.0
 inflection==0.5.1
 Markdown==3.6
 mysqlclient==2.2.4
+numpy==1.26.4
+opencv-python==4.9.0.80
 pillow==10.3.0
 pyasn1==0.6.0
 pyasn1_modules==0.4.0
