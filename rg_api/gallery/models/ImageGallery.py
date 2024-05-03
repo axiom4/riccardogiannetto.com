@@ -34,6 +34,7 @@ class ImageGallery(models.Model):
     def save(self, *args, **kwargs):
         img = PIL.Image.open(self.image)
         width, height = img.size
+        img.close()
         self.width = width
         self.height = height
         # target_width = 600

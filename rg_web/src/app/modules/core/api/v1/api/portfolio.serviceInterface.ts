@@ -34,6 +34,7 @@ export interface ListImageGalleriesRequestParams {
     page?: number;
     pageSize?: number;
     gallery?: string;
+    width?: string;
     search?: string;
     ordering?: string;
 }
@@ -48,6 +49,7 @@ export interface RetrieveGalleryRequestParams {
 export interface RetrieveImageGalleryRequestParams {
     id: string;
     gallery?: string;
+    width?: string;
     search?: string;
     ordering?: string;
 }
