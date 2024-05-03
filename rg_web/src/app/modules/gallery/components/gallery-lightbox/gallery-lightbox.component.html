@@ -11,12 +11,9 @@
         onKeyPress=""
         onKeyDown=""
         onKeyUp=""
-        ngSrc="{{ data.url }}/jpeg/{{
+        src="{{ data.url }}/jpeg/{{
           (innerWidth - (innerWidth % columns)) / columns
         }}"
-        width="{{ data.width }}"
-        height="{{ data.height }}"
-        priority
       />
     </div>
   </div>
@@ -64,11 +61,7 @@
       <img
         *ngIf="currentLightboxImg"
         alt="{{ currentLightboxImg.title }}"
-        ngSrc="{{ currentLightboxImg.url }}/jpeg/1200"
-        width="1200"
-        height="800"
-        sizes="100vw"
-        priority
+        src="{{ currentLightboxImg.url }}/jpeg/1200"
       />
     </div>
   </div>

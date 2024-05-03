@@ -15,13 +15,7 @@ import {
   trigger,
   AnimationEvent,
 } from '@angular/animations';
-import {
-  IMAGE_LOADER,
-  ImageLoaderConfig,
-  NgFor,
-  NgIf,
-  NgOptimizedImage,
-} from '@angular/common';
+import { NgFor, NgIf, NgOptimizedImage } from '@angular/common';
 import { ImageLazyLoaderDirective } from '../../image-lazy-loader.directive';
 import {
   ImageGallery,
@@ -29,22 +23,18 @@ import {
   PortfolioService,
 } from '../../../core/api/v1';
 
-const galleryLoaderProvider = (config: ImageLoaderConfig) => {
-  return `${config.src}`;
-};
-
 @Component({
   selector: 'app-gallery-lightbox',
   standalone: true,
   imports: [NgFor, NgIf, ImageLazyLoaderDirective, NgOptimizedImage],
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
-  providers: [
-    {
-      provide: IMAGE_LOADER,
-      useValue: galleryLoaderProvider,
-    },
-  ],
+  // providers: [
+  //   {
+  //     provide: IMAGE_LOADER,
+  //     useValue: galleryLoaderProvider,
+  //   },
+  // ],
   animations: [
     trigger('animation-enter', [
       transition('void => visible', [

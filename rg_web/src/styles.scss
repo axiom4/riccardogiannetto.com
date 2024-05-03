@@ -669,18 +669,19 @@ article th {
   display: inline-block;
   padding: 25px 25px 0;
   z-index: 100;
+  width: 100%;
 
   .gallery {
     line-height: 0;
     width: 33%;
     height: auto;
-    display: block;
-    float: left;
+    display: inline-table;
     padding: 15px;
 
     .gallery-img img {
       width: 100%;
-      height: 100%;
+      min-width: 100%;
+      min-height: 200px;
       cursor: zoom-in;
       border-radius: 0.35rem;
       margin-bottom: 30px;
