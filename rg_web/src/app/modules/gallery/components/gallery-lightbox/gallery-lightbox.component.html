@@ -7,11 +7,13 @@
     <div *ngFor="let data of column; let i = index" class="gallery-img">
       <img
         (click)="onPreviewImage(col, i)"
-        alt="{{ data.alt }}"
+        alt="{{ data.title }}"
         onKeyPress=""
         onKeyDown=""
         onKeyUp=""
-        ngSrc="{{ data.src }}"
+        ngSrc="{{ data.url }}/jpeg/{{
+          (innerWidth - (innerWidth % columns)) / columns
+        }}"
         width="{{ data.width }}"
         height="{{ data.height }}"
         priority
@@ -61,8 +63,8 @@
     >
       <img
         *ngIf="currentLightboxImg"
-        alt="{{ currentLightboxImg.alt }}"
-        ngSrc="{{ currentLightboxImg.src }}"
+        alt="{{ currentLightboxImg.title }}"
+        ngSrc="{{ currentLightboxImg.url }}/jpeg/1200"
         width="1200"
         height="800"
         sizes="100vw"

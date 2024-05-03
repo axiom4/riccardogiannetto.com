@@ -22,6 +22,11 @@ import { ListImageGalleries200Response } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface JpegImageGalleryRequestParams {
+    id: string;
+    width: string;
+}
+
 export interface ListGalleriesRequestParams {
     page?: number;
     pageSize?: number;
@@ -34,7 +39,6 @@ export interface ListImageGalleriesRequestParams {
     page?: number;
     pageSize?: number;
     gallery?: string;
-    width?: string;
     search?: string;
     ordering?: string;
 }
@@ -49,7 +53,6 @@ export interface RetrieveGalleryRequestParams {
 export interface RetrieveImageGalleryRequestParams {
     id: string;
     gallery?: string;
-    width?: string;
     search?: string;
     ordering?: string;
 }
@@ -58,6 +61,13 @@ export interface RetrieveImageGalleryRequestParams {
 export interface PortfolioServiceInterface {
     defaultHeaders: HttpHeaders;
     configuration: Configuration;
+
+    /**
+     * 
+     * 
+* @param requestParameters
+     */
+    jpegImageGallery(requestParameters: JpegImageGalleryRequestParams, extraHttpRequestParams?: any): Observable<ImageGallery>;
 
     /**
      * 

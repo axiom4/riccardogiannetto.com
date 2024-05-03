@@ -1,12 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './modules/main/components/header/header.component';
 import { FooterComponent } from './modules/main/components/footer/footer.component';
-import {
-  PortfolioService,
-  RetrieveImageGalleryRequestParams,
-} from './modules/core/api/v1';
-import { options } from 'marked';
 
 @Component({
   selector: 'app-root',
@@ -15,18 +10,7 @@ import { options } from 'marked';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'Riccardo Giannetto Gallery';
-  constructor(private portfolioService: PortfolioService) {}
-
-  ngOnInit(): void {
-    const params: RetrieveImageGalleryRequestParams = {
-      id: '1',
-      gallery: '1',
-      width: '300',
-    };
-    this.portfolioService.retrieveImageGallery(params).subscribe((data) => {
-      console.log(data);
-    });
-  }
+  constructor() {}
 }

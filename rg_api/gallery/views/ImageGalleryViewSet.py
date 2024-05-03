@@ -11,6 +11,11 @@ from gallery.models import ImageGallery
 from gallery.serializers import ImageGallerySerializer
 from rest_framework import renderers
 
+from rest_framework.decorators import action
+import PIL.Image
+import cv2
+from rest_framework.response import Response
+from rest_framework import status
 
 class ImageGalleryPagination(PageNumberPagination):
     page_size = 5
@@ -18,6 +23,7 @@ class ImageGalleryPagination(PageNumberPagination):
     max_page_size = 12
 
 import PIL.Image
+import cv2
 
 class JPEGRenderer(renderers.BaseRenderer):
     media_type = 'image/jpeg'
@@ -26,22 +32,20 @@ class JPEGRenderer(renderers.BaseRenderer):
     render_style = 'binary'
 
     def render(self, data, media_type=None, renderer_context=None):
-        width = int(renderer_context['request'].GET.get('width' , 500))
+        print(renderer_context)
+        width = int(renderer_context['kwargs']['width'])
 
         this_object = ImageGallery.objects.get(pk=renderer_context['kwargs']['pk'])
-        img = PIL.Image.open(this_object.image.file.name)
-        wpercent = (width/float(img.size[0]))
-        hsize = int((float(img.size[1])*float(wpercent)))
-        resize = img.resize((width,hsize))
+        img = cv2.imread(this_object.image.file.name)
+        wpercent = (width/float(img.shape[1]))
+        hsize = int((float(img.shape[0])*float(wpercent)))
+        resize = cv2.resize(img, (width, hsize))
 
-        b = io.BytesIO()
-        resize.save(b, 'JPEG', quality=100)
-        resize.close()
-        img.close()
-        image_data = b.getvalue()
-        b.close()
+        _, im_buf_arr = cv2.imencode(".jpg", resize, [int(cv2.IMWRITE_JPEG_QUALITY), 80])
+        byte_im = im_buf_arr.tobytes()
 
-        return image_data
+        return byte_im
+
 
 class ImageGalleryViewSet(viewsets.ModelViewSet):
 
@@ -55,12 +59,17 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ['title', 'created_at', 'gallery']
 
-    filterset_fields = ['gallery', 'width']
+    filterset_fields = ['gallery']
     
 
     search_fields = [
         '$title'
     ]
+
+    @action(methods=['get'], detail=True, url_path='jpeg/(?P<width>[0-9]+)', url_name='jpeg', renderer_classes=[JPEGRenderer])
+    def jpeg(self, request, *args, **kwargs):
+        data = self.retrieve(request, *args, **kwargs)
+        return data
 
 
 

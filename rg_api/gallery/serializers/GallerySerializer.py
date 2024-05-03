@@ -4,6 +4,7 @@ from blog.serializers import UserSerializer
 
 
 class GallerySerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.IntegerField()
     url = serializers.HyperlinkedIdentityField(
         read_only=True, view_name='gallery-detail')
 

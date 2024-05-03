@@ -37,11 +37,7 @@ class ImageGallery(models.Model):
         img.close()
         self.width = width
         self.height = height
-        # target_width = 600
-        # h_coefficient = width/600
-        # target_height = height/h_coefficient
-        # img = img.resize((int(target_width), int(target_height)), PIL.Image.ANTIALIAS)
-        # img.save(self.image.path, quality=100)
+      
         super().save(*args, **kwargs)
 
     class Meta:
