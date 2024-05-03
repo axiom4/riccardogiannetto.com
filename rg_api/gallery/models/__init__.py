@@ -1,2 +1,2 @@
 from .Gallery import Gallery
-from .GalleryImage import GalleryImage
+from .ImageGallery import ImageGallery

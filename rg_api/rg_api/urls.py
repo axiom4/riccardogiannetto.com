@@ -27,11 +27,14 @@ from blog import urls as blog_urls
 
 schema_url_patterns = [
     path('blog/', include(blog_urls.urlpatterns)),
+    path('portfolio/', include('gallery.urls')),
+
 ]
 
 
 urlpatterns = [
     path("blog/", include(blog_urls.urlpatterns)),
+    path('portfolio/', include('gallery.urls')),
     path('admin/', admin.site.urls),
     path('', get_schema_view(
          title="Riccardo Giannetto Gallery API",

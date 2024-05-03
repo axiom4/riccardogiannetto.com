@@ -6,12 +6,12 @@ from django.utils.html import mark_safe
 from gallery.models import Gallery
 import PIL.Image
 
-class GalleryImage(models.Model):
-    title = models.CharField(max_length=250, null=False)
+class ImageGallery(models.Model):
+    title = models.CharField(max_length=250, null=False, blank=False)
     image = models.ImageField(
         null=False
     )
-    gallery = models.ForeignKey(Gallery, on_delete=models.CASCADE)
+    gallery = models.ForeignKey(Gallery, related_name='images', on_delete=models.CASCADE)
 
     width = models.IntegerField()
     height = models.IntegerField()
@@ -42,5 +42,13 @@ class GalleryImage(models.Model):
         # img = img.resize((int(target_width), int(target_height)), PIL.Image.ANTIALIAS)
         # img.save(self.image.path, quality=100)
         super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name_plural = 'images'
+        indexes = [
+            models.Index(fields=['title']),
+            models.Index(fields=['author']),
+            models.Index(fields=['gallery']),
+        ]
 
         
