@@ -40,7 +40,7 @@ class ImageRenderer(renderers.BaseRenderer):
         hsize = int((float(img.shape[0])*float(wpercent)))
         resize = cv2.resize(img, (width, hsize))
 
-        _, im_buf_arr = cv2.imencode(".jpeg", resize, [int(cv2.IMWRITE_JPEG_OPTIMIZE), 75])
+        _, im_buf_arr = cv2.imencode(".jpeg", resize, [int(cv2.IMWRITE_JPEG_QUALITY), 80])
         byte_im = im_buf_arr.tobytes()
 
         return byte_im
