@@ -1,4 +1,4 @@
-<div class="gallery-lightbox-container">
+<div #container class="gallery-lightbox-container">
   <div
     #galleryItem
     *ngFor="let column of data; let col = index"
@@ -6,6 +6,7 @@
   >
     <div *ngFor="let data of column; let i = index" class="gallery-img">
       <img
+        #galleryImg
         (click)="onPreviewImage(col, i)"
         alt="{{ data.title }}"
         onKeyPress=""
@@ -14,6 +15,9 @@
         src="{{ data.url }}/jpeg/{{
           (innerWidth - (innerWidth % columns)) / columns
         }}"
+        width="{{ galleryImg.width }}"
+        height="{{ (data.height / data.width) * galleryImg.width }}"
+        priority
       />
     </div>
   </div>
@@ -59,9 +63,17 @@
       class="lightbox-img"
     >
       <img
+        #galleryPreviewImg
         *ngIf="currentLightboxImg"
         alt="{{ currentLightboxImg.title }}"
-        src="{{ currentLightboxImg.url }}/jpeg/1200"
+        src="{{ currentLightboxImg.url }}/jpeg/{{ container.offsetWidth }}"
+        width="{{ innerWidth }}"
+        height="{{
+          (currentLightboxImg.height / currentLightboxImg.width) *
+            container.offsetWidth
+        }}"
+        sizes="100vw"
+        priority
       />
     </div>
   </div>

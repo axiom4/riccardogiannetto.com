@@ -29,12 +29,7 @@ import {
   imports: [NgFor, NgIf, ImageLazyLoaderDirective, NgOptimizedImage],
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
-  // providers: [
-  //   {
-  //     provide: IMAGE_LOADER,
-  //     useValue: galleryLoaderProvider,
-  //   },
-  // ],
+
   animations: [
     trigger('animation-enter', [
       transition('void => visible', [
@@ -88,8 +83,6 @@ export class GalleryLightboxComponent implements OnInit {
       this.data.forEach((column) => {
         imageCount += column.length;
       });
-
-      console.log('lenght:', imageCount, this.totalImageCount);
 
       if (imageCount < this.totalImageCount) {
         this.loadItems();
@@ -181,7 +174,6 @@ export class GalleryLightboxComponent implements OnInit {
       pageSize: this.perPage,
     };
     this.portfolioService.listImageGalleries(params).subscribe((data) => {
-      console.log(this.data.length, this.columns);
       if (this.data.length != this.columns) {
         this.data = [];
 
