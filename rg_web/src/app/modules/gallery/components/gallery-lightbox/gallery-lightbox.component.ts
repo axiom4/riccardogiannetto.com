@@ -235,16 +235,21 @@ export class GalleryLightboxComponent implements OnInit {
     let index = 0;
     if (this.galleryItem == undefined) return index;
 
-    if (this.galleryItem.length > 0) {
-      let minHeight = this.galleryItem.first.nativeElement.offsetHeight;
-
-      this.galleryItem?.forEach((item) => {
-        if (minHeight > item.nativeElement.offsetHeight) {
-          minHeight = item.nativeElement.offsetHeight;
-          index = this.galleryItem?.toArray().indexOf(item) ?? 0;
-        }
-      });
+    for (let i = 0; i < this.columns; i++) {
+      if (this.getColumnHeight(i) < this.getColumnHeight(index)) {
+        index = i;
+      }
     }
     return index;
+  }
+
+  getColumnHeight(index: number): number {
+    let height = 0;
+
+    this.data[index].forEach((item) => {
+      height += item.height;
+    });
+
+    return height;
   }
 }
