@@ -22,8 +22,8 @@ import {
   ConfigurationParameters,
 } from './modules/core/api/v1';
 import { HighlightService } from './highlight.service';
-import { provideServiceWorker } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { provideServiceWorker } from '@angular/service-worker';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
