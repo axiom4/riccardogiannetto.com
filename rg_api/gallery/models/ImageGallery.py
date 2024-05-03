@@ -34,11 +34,13 @@ class ImageGallery(models.Model):
     def save(self, *args, **kwargs):
         img = PIL.Image.open(self.image)
         width, height = img.size
-        img.close()
+        
         self.width = width
         self.height = height
       
         super().save(*args, **kwargs)
+        img.close()
+
 
     class Meta:
         verbose_name_plural = 'images'

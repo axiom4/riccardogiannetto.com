@@ -23,14 +23,13 @@ class GalleryAdmin(admin.ModelAdmin):
 
 class ImageGalleryAdmin(admin.ModelAdmin):
     fields = [('title',),
-              ('image', 'image_tag'), ('gallery', 'author')]
+              ('image', 'image_tag'), ('gallery', 'author'), ('width', 'height'), ('created_at', 'updated_at')]
     list_display = ('title', 'gallery', 'image_tag', 'author', 'width', 'height','created_at', 'updated_at')
     list_filter = ('gallery__title',)
-    readonly_fields = ['width', 'height', 'created_at', 'updated_at']
+    readonly_fields = ['image_tag', 'width', 'height', 'created_at', 'updated_at']
     search_fields = ('title', 'gallery__title')
     save_on_top = True
     list_display_links = ('title',)
-    readonly_fields = ['image_tag', 'created_at', 'updated_at']
     list_per_page = 12
 
     def get_form(self, request, obj=None, **kwargs):
