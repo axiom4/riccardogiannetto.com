@@ -25,9 +25,9 @@ class ImageGalleryPagination(PageNumberPagination):
 import PIL.Image
 import cv2
 
-class JPEGRenderer(renderers.BaseRenderer):
-    media_type = 'image/jpeg'
-    format = 'jpg'
+class ImageRenderer(renderers.BaseRenderer):
+    media_type = 'image/webp'
+    format = 'webp'
     charset = None
     render_style = 'binary'
 
@@ -41,7 +41,7 @@ class JPEGRenderer(renderers.BaseRenderer):
         hsize = int((float(img.shape[0])*float(wpercent)))
         resize = cv2.resize(img, (width, hsize))
 
-        _, im_buf_arr = cv2.imencode(".jpg", resize, [int(cv2.IMWRITE_JPEG_QUALITY), 80])
+        _, im_buf_arr = cv2.imencode(".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), 75])
         byte_im = im_buf_arr.tobytes()
 
         return byte_im
@@ -55,7 +55,7 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     http_method_names = ['get']
     pagination_class = ImageGalleryPagination
-    renderer_classes = [renderers.BrowsableAPIRenderer, renderers.JSONRenderer, JPEGRenderer]
+    renderer_classes = [renderers.BrowsableAPIRenderer, renderers.JSONRenderer]
 
     ordering_fields = ['title', 'created_at', 'gallery']
 
@@ -66,7 +66,7 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
         '$title'
     ]
 
-    @action(methods=['get'], detail=True, url_path='jpeg/(?P<width>[0-9]+)', url_name='jpeg', renderer_classes=[JPEGRenderer])
+    @action(methods=['get'], detail=True, url_path='width/(?P<width>[0-9]+)', url_name='size', renderer_classes=[ImageRenderer])
     def jpeg(self, request, *args, **kwargs):
         data = self.retrieve(request, *args, **kwargs)
         return data

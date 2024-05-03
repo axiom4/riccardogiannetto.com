@@ -111,10 +111,10 @@ export class PortfolioService implements PortfolioServiceInterface {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public jpegImageGallery(requestParameters: JpegImageGalleryRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/jpeg', context?: HttpContext, transferCache?: boolean}): Observable<ImageGallery>;
-    public jpegImageGallery(requestParameters: JpegImageGalleryRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/jpeg', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ImageGallery>>;
-    public jpegImageGallery(requestParameters: JpegImageGalleryRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/jpeg', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ImageGallery>>;
-    public jpegImageGallery(requestParameters: JpegImageGalleryRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'image/jpeg', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public jpegImageGallery(requestParameters: JpegImageGalleryRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<ImageGallery>;
+    public jpegImageGallery(requestParameters: JpegImageGalleryRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ImageGallery>>;
+    public jpegImageGallery(requestParameters: JpegImageGalleryRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ImageGallery>>;
+    public jpegImageGallery(requestParameters: JpegImageGalleryRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const id = requestParameters.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling jpegImageGallery.');
@@ -130,7 +130,7 @@ export class PortfolioService implements PortfolioServiceInterface {
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
             const httpHeaderAccepts: string[] = [
-                'image/jpeg'
+                'image/webp'
             ];
             localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         }
@@ -160,7 +160,7 @@ export class PortfolioService implements PortfolioServiceInterface {
             }
         }
 
-        let localVarPath = `/portfolio/images/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/jpeg/${this.configuration.encodeParam({name: "width", value: width, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        let localVarPath = `/portfolio/images/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/width/${this.configuration.encodeParam({name: "width", value: width, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
         return this.httpClient.request<ImageGallery>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -269,10 +269,10 @@ export class PortfolioService implements PortfolioServiceInterface {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listImageGalleries(requestParameters: ListImageGalleriesRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json' | 'image/jpeg', context?: HttpContext, transferCache?: boolean}): Observable<ListImageGalleries200Response>;
-    public listImageGalleries(requestParameters: ListImageGalleriesRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json' | 'image/jpeg', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ListImageGalleries200Response>>;
-    public listImageGalleries(requestParameters: ListImageGalleriesRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json' | 'image/jpeg', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ListImageGalleries200Response>>;
-    public listImageGalleries(requestParameters: ListImageGalleriesRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json' | 'image/jpeg', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public listImageGalleries(requestParameters: ListImageGalleriesRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ListImageGalleries200Response>;
+    public listImageGalleries(requestParameters: ListImageGalleriesRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ListImageGalleries200Response>>;
+    public listImageGalleries(requestParameters: ListImageGalleriesRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ListImageGalleries200Response>>;
+    public listImageGalleries(requestParameters: ListImageGalleriesRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const page = requestParameters.page;
         const pageSize = requestParameters.pageSize;
         const gallery = requestParameters.gallery;
@@ -307,8 +307,7 @@ export class PortfolioService implements PortfolioServiceInterface {
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
             const httpHeaderAccepts: string[] = [
-                'application/json',
-                'image/jpeg'
+                'application/json'
             ];
             localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         }
@@ -442,10 +441,10 @@ export class PortfolioService implements PortfolioServiceInterface {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public retrieveImageGallery(requestParameters: RetrieveImageGalleryRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json' | 'image/jpeg', context?: HttpContext, transferCache?: boolean}): Observable<ImageGallery>;
-    public retrieveImageGallery(requestParameters: RetrieveImageGalleryRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json' | 'image/jpeg', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ImageGallery>>;
-    public retrieveImageGallery(requestParameters: RetrieveImageGalleryRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json' | 'image/jpeg', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ImageGallery>>;
-    public retrieveImageGallery(requestParameters: RetrieveImageGalleryRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json' | 'image/jpeg', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public retrieveImageGallery(requestParameters: RetrieveImageGalleryRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ImageGallery>;
+    public retrieveImageGallery(requestParameters: RetrieveImageGalleryRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ImageGallery>>;
+    public retrieveImageGallery(requestParameters: RetrieveImageGalleryRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ImageGallery>>;
+    public retrieveImageGallery(requestParameters: RetrieveImageGalleryRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const id = requestParameters.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling retrieveImageGallery.');
@@ -474,8 +473,7 @@ export class PortfolioService implements PortfolioServiceInterface {
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
             const httpHeaderAccepts: string[] = [
-                'application/json',
-                'image/jpeg'
+                'application/json'
             ];
             localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         }
