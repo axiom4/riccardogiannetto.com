@@ -5,7 +5,7 @@ from blog.serializers import UserSerializer
 
 class ImageGallerySerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        read_only=True, view_name='gallery-detail')
+        read_only=True, view_name='image-detail')
 
     author = serializers.StringRelatedField(read_only=True)
 

@@ -17,7 +17,7 @@ class ImageGalleryPagination(PageNumberPagination):
 
 
 class ImageGalleryViewSet(viewsets.ModelViewSet):
-    view_name = 'image-detail'
+    # view_name = 'image-detail'
 
     queryset = ImageGallery.objects.all()
     serializer_class = ImageGallerySerializer

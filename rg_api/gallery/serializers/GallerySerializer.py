@@ -8,6 +8,12 @@ class GallerySerializer(serializers.HyperlinkedModelSerializer):
         read_only=True, view_name='gallery-detail')
 
     author = serializers.StringRelatedField(read_only=True)
+
+    images = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name='image-detail'
+    )
   
     class Meta:
         fields = '__all__'
