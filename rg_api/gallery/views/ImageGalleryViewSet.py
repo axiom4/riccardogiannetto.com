@@ -26,13 +26,12 @@ import PIL.Image
 import cv2
 
 class ImageRenderer(renderers.BaseRenderer):
-    media_type = 'image/webp'
-    format = 'webp'
+    media_type = 'image/jpeg'
+    format = 'jpeg'
     charset = None
     render_style = 'binary'
 
     def render(self, data, media_type=None, renderer_context=None):
-        print(renderer_context)
         width = int(renderer_context['kwargs']['width'])
 
         this_object = ImageGallery.objects.get(pk=renderer_context['kwargs']['pk'])
@@ -41,7 +40,7 @@ class ImageRenderer(renderers.BaseRenderer):
         hsize = int((float(img.shape[0])*float(wpercent)))
         resize = cv2.resize(img, (width, hsize))
 
-        _, im_buf_arr = cv2.imencode(".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), 75])
+        _, im_buf_arr = cv2.imencode(".jpeg", resize, [int(cv2.IMWRITE_JPEG_QUALITY), 75])
         byte_im = im_buf_arr.tobytes()
 
         return byte_im
