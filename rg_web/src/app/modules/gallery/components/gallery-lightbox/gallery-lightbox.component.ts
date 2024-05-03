@@ -5,7 +5,6 @@ import {
   Input,
   OnInit,
   QueryList,
-  ViewChild,
   ViewChildren,
   afterNextRender,
 } from '@angular/core';
@@ -27,13 +26,8 @@ import {
 import { GalleryService } from '../../gallery.service';
 import { ImageLazyLoaderDirective } from '../../image-lazy-loader.directive';
 
-const myCustomLoader = (config: ImageLoaderConfig) => {
-  let url = `${config.src}?`;
-  let queryParams = [];
-  if (config.width) {
-    queryParams.push(`w=${config.width}`);
-  }
-  return url + queryParams.join('&');
+const galleryLoaderProvider = (config: ImageLoaderConfig) => {
+  return `https://example.com/images?src=${config.src}&width=${config.width}`;
 };
 
 @Component({
@@ -45,7 +39,7 @@ const myCustomLoader = (config: ImageLoaderConfig) => {
   providers: [
     {
       provide: IMAGE_LOADER,
-      useValue: myCustomLoader,
+      useValue: galleryLoaderProvider,
     },
   ],
   animations: [
@@ -127,7 +121,6 @@ export class GalleryLightboxComponent implements OnInit {
 
   ngOnInit(): void {
     this.totalImageCount = 0;
-    // this.data = this.galleryData;
     this.loadItems();
   }
 
@@ -228,7 +221,7 @@ export class GalleryLightboxComponent implements OnInit {
       this.galleryItem?.forEach((item) => {
         if (minHeight > item.nativeElement.offsetHeight) {
           minHeight = item.nativeElement.offsetHeight;
-          index = this.galleryItem?.toArray().indexOf(item) || 0;
+          index = this.galleryItem?.toArray().indexOf(item) ?? 0;
         }
       });
     }

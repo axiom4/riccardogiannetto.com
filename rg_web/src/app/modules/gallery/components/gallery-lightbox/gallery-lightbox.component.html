@@ -11,7 +11,7 @@
         onKeyPress=""
         onKeyDown=""
         onKeyUp=""
-        [ngSrc]="data.src"
+        ngSrc="{{ data.src }}"
         width="{{ data.width }}"
         height="{{ data.height }}"
         priority
@@ -37,6 +37,7 @@
     </button>
     <button
       *ngIf="controls"
+      type="button"
       class="btn-lightbox-carousel btn-prev"
       title="Previous"
       (click)="prev()"
@@ -44,6 +45,7 @@
       <span class="icon-lightbox-carousel">Prev</span>
     </button>
     <button
+      type="button"
       *ngIf="controls"
       class="btn-lightbox-carousel btn-next"
       title="Next"
@@ -60,7 +62,7 @@
       <img
         *ngIf="currentLightboxImg"
         alt="{{ currentLightboxImg.alt }}"
-        [ngSrc]="currentLightboxImg.src"
+        ngSrc="{{ currentLightboxImg.src }}"
         width="1200"
         height="800"
         sizes="100vw"
