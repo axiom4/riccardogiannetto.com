@@ -72,6 +72,7 @@ export class GalleryLightboxComponent implements OnInit {
   page = 1;
   perPage = 9;
   innerWidth = 0;
+  innerHeight = 0;
   imageWidth = 0;
   index = 0;
 
@@ -129,6 +130,8 @@ export class GalleryLightboxComponent implements OnInit {
   constructor(private portfolioService: PortfolioService) {
     afterNextRender(() => {
       this.innerWidth = window.innerWidth;
+      this.innerHeight = window.innerHeight;
+
       this.setColumns(this.innerWidth);
       this.loadItems();
     });
@@ -252,33 +255,37 @@ export class GalleryLightboxComponent implements OnInit {
 
   getGalleryPreviewWidth(): number {
     if (this.columns == 3) {
-      return 700;
+      return 350;
     } else if (this.columns == 2) {
-      return 1000;
-    }
-    return 1200;
-  }
-
-  getGalleryPreviewHeight(imageWidth: number, imageHeight: number): number {
-    if (this.columns == 3) {
-      return Math.floor((imageHeight / imageWidth) * 1050);
-    } else if (this.columns == 2) {
-      return Math.floor((imageHeight / imageWidth) * 1500);
-    }
-    return Math.floor((imageHeight / imageWidth) * 1800);
-  }
-
-  getGalleryImageWidth(imageWidth: number, imageHeight: number): number {
-    if (imageHeight < imageWidth) {
-      return 1200;
+      return 500;
     }
     return 600;
   }
 
-  getGalleryImageHeight(imageWidth: number, imageHeight: number): number {
-    if (imageHeight < imageWidth) {
-      return Math.floor((imageHeight / imageWidth) * 1200);
+  getGalleryPreviewHeight(imageWidth: number, imageHeight: number): number {
+    if (this.columns == 3) {
+      return Math.floor((imageHeight / imageWidth) * 350);
+    } else if (this.columns == 2) {
+      return Math.floor((imageHeight / imageWidth) * 500);
     }
     return Math.floor((imageHeight / imageWidth) * 600);
+  }
+
+  getGalleryImageWidth(imageWidth: number, imageHeight: number): number {
+    if (imageHeight < imageWidth) {
+      return Math.floor(this.innerWidth * 0.8);
+    }
+    return Math.floor(
+      (imageWidth / imageHeight) * Math.floor(this.innerHeight * 0.9)
+    );
+  }
+
+  getGalleryImageHeight(imageWidth: number, imageHeight: number): number {
+    if (imageHeight < imageWidth) {
+      return Math.floor(
+        (imageHeight / imageWidth) * Math.floor(this.innerWidth * 0.8)
+      );
+    }
+    return Math.floor(this.innerHeight * 0.9);
   }
 }
