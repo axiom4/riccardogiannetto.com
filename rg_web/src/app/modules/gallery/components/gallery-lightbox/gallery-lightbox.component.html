@@ -15,6 +15,7 @@
         ngSrc="{{ data.url }}/width/{{ getGalleryPreviewWidth() }}"
         width="{{ getGalleryPreviewWidth() }}"
         height="{{ getGalleryPreviewHeight(data.width, data.height) }}"
+        ngSrcset="350px, 500px, 600px"
         priority
         placeholder
       />
@@ -83,7 +84,7 @@
             currentLightboxImg.height
           )
         }}"
-        ngSrcset="100w, 200w, 300w"
+        srcset="100w, 200w, 300w"
         priority
       />
     </div>
