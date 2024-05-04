@@ -40,10 +40,10 @@ const galleryLoaderProvider = (config: ImageLoaderConfig) => {
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
   providers: [
-    {
-      provide: IMAGE_LOADER,
-      useValue: galleryLoaderProvider,
-    },
+    // {
+    //   provide: IMAGE_LOADER,
+    //   useValue: galleryLoaderProvider,
+    // },
   ],
   animations: [
     trigger('animation-enter', [
