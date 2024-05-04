@@ -224,10 +224,13 @@ export class GalleryLightboxComponent implements OnInit {
   setColumns(width: number): void {
     if (width < 650) {
       this.columns = 1;
+      this.perPage = 5;
     } else if (width < 1024) {
       this.columns = 2;
+      this.perPage = 8;
     } else {
       this.columns = 3;
+      this.perPage = 9;
     }
   }
 
