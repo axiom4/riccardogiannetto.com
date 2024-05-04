@@ -15,8 +15,9 @@ export const routes: Routes = [
   },
   {
     path: '',
-    pathMatch: 'full',
-    component: MainPageComponent,
+    // pathMatch: 'full',
+    loadChildren: () =>
+      import('./modules/main/main.module').then((m) => m.MainModule),
   },
   {
     path: 'notfound',
@@ -25,6 +26,6 @@ export const routes: Routes = [
   {
     path: '**',
     pathMatch: 'full',
-    redirectTo: '/notfound',
+    redirectTo: '/',
   },
 ];
