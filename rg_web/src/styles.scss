@@ -558,6 +558,7 @@ h1.page-title {
 }
 
 .site-footer {
+  transform: translate(0, 0);
   padding: 30px 0;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
   font-size: 14px;
@@ -575,6 +576,7 @@ h1.page-title {
 
 .main {
   max-width: 1200px;
+  min-height: 900px;
   margin: auto;
   padding: 0 10px 30px;
 }
