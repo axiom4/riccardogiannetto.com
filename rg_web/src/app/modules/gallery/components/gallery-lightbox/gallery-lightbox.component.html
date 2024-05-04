@@ -15,7 +15,7 @@
         src="{{ data.url }}/width/{{ getGalleryPreviewWidth() }}"
         width="{{ getGalleryPreviewWidth() }}"
         height="{{ getGalleryPreviewHeight(data.width, data.height) }}"
-        srcset="{{ data.url }}/width/350 1200w, {{ data.url }}/width/500 1024w, {{ data.url }}/width/600 650w"
+        srcset="{{ data.url }}/width/1050 1200w, {{ data.url }}/width/1500 1024w, {{ data.url }}/width/1800 650w"
         sizes="(max-width: 1024px) 350px, (max-width: 650px) 500px, 600px"
         priority
         placeholder
@@ -67,12 +67,7 @@
         #galleryPreviewImg
         *ngIf="currentLightboxImg"
         alt="{{ currentLightboxImg.title }}"
-        src="{{ currentLightboxImg.url }}/width/{{
-          getGalleryImageWidth(
-            currentLightboxImg.width,
-            currentLightboxImg.height
-          )
-        }}"
+        src="{{ currentLightboxImg.url }}/width/3600"
         width="{{
           getGalleryImageWidth(
             currentLightboxImg.width,

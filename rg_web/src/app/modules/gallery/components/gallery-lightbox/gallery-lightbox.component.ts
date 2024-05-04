@@ -40,10 +40,10 @@ const galleryLoaderProvider = (config: ImageLoaderConfig) => {
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
   providers: [
-    // {
-    //   provide: IMAGE_LOADER,
-    //   useValue: galleryLoaderProvider,
-    // },
+    {
+      provide: IMAGE_LOADER,
+      useValue: galleryLoaderProvider,
+    },
   ],
   animations: [
     trigger('animation-enter', [
@@ -252,20 +252,20 @@ export class GalleryLightboxComponent implements OnInit {
 
   getGalleryPreviewWidth(): number {
     if (this.columns == 3) {
-      return 350;
+      return 700;
     } else if (this.columns == 2) {
-      return 500;
+      return 1000;
     }
-    return 600;
+    return 1200;
   }
 
   getGalleryPreviewHeight(imageWidth: number, imageHeight: number): number {
     if (this.columns == 3) {
-      return Math.floor((imageHeight / imageWidth) * 350);
+      return Math.floor((imageHeight / imageWidth) * 1050);
     } else if (this.columns == 2) {
-      return Math.floor((imageHeight / imageWidth) * 500);
+      return Math.floor((imageHeight / imageWidth) * 1500);
     }
-    return Math.floor((imageHeight / imageWidth) * 600);
+    return Math.floor((imageHeight / imageWidth) * 1800);
   }
 
   getGalleryImageWidth(imageWidth: number, imageHeight: number): number {
