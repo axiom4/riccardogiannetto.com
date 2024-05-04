@@ -79,7 +79,7 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
         '$title'
     ]
 
-    @method_decorator(cache_page(60 * 60 * 24 * 7))
+    @method_decorator(cache_page(60 * 60 * 24 * 30))
     @action(methods=['get'], detail=True, url_path='width/(?P<width>[0-9]+)', url_name='size', renderer_classes=[ImageRenderer])
     def jpeg(self, request, *args, **kwargs):
         data = self.retrieve(request, *args, **kwargs)
