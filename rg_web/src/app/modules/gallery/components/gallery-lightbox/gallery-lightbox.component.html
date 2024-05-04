@@ -16,6 +16,7 @@
         width="{{ getGalleryPreviewWidth() }}"
         height="{{ getGalleryPreviewHeight(data.width, data.height) }}"
         srcset="{{ data.url }}/width/350 1200w, {{ data.url }}/width/500 1024w, {{ data.url }}/width/600 650w"
+        sizes="(max-width: 1024px) 350px, (max-width: 650px) 500px, 600px"
         priority
         placeholder
       />
