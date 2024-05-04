@@ -1,6 +1,8 @@
 
 # Create your views here.
 import io
+import os
+from django.conf import settings
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -35,15 +37,28 @@ class ImageRenderer(renderers.BaseRenderer):
         width = int(renderer_context['kwargs']['width'])
 
         this_object = ImageGallery.objects.get(pk=renderer_context['kwargs']['pk'])
-        img = cv2.imread(this_object.image.file.name)
-        wpercent = (width/float(img.shape[1]))
-        hsize = int((float(img.shape[0])*float(wpercent)))
-        resize = cv2.resize(img, (width, hsize))
 
-        _, im_buf_arr = cv2.imencode(".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), 75])
-        byte_im = im_buf_arr.tobytes()
+        filename =f"{settings.MEDIA_ROOT}/preview/{this_object.pk}_{width}.webp"
 
-        return byte_im
+        if os.path.exists(filename) == False:
+
+            img = cv2.imread(this_object.image.file.name)
+            wpercent = (width/float(img.shape[1]))
+            hsize = int((float(img.shape[0])*float(wpercent)))
+            resize = cv2.resize(img, (width, hsize))
+
+            _, im_buf_arr = cv2.imencode(".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), 75])
+            byte_im = im_buf_arr.tobytes()
+
+            with open(filename, "wb") as f:
+                f.write(byte_im)
+    
+            return byte_im
+        
+        else:
+            with open(filename, "rb") as f:
+                return f.read()
+
 
 
 class ImageGalleryViewSet(viewsets.ModelViewSet):
