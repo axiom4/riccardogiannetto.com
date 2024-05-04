@@ -680,8 +680,7 @@ article th {
 
     .gallery-img img {
       width: 100%;
-      min-width: 100%;
-      min-height: 200px;
+      height: auto;
       cursor: zoom-in;
       border-radius: 0.35rem;
       margin-bottom: 30px;
@@ -768,7 +767,12 @@ article th {
     }
 
     .lightbox-img img {
-      width: 100%;
+      display: block;
+      position: relative;
+      width: auto;
+      height: auto;
+      max-width: 1200px;
+      max-height: 80%;
       border-radius: 0.35rem;
     }
   }
@@ -779,7 +783,6 @@ article th {
     padding: 5px;
     .gallery {
       padding: 25px 15px;
-
       width: 50%;
     }
   }
@@ -791,13 +794,10 @@ article th {
 
     .gallery {
       padding: 25px 10px;
-
       width: 100%;
     }
   }
-}
 
-@media screen and (max-width: 650px) {
   .main-navigation ul {
     background: #fff;
     float: none;
@@ -811,9 +811,7 @@ article th {
     margin: 0 10px;
     display: block;
   }
-}
 
-@media only screen and (max-width: 650px) {
   .menu-toggle {
     display: block;
     right: 20px;

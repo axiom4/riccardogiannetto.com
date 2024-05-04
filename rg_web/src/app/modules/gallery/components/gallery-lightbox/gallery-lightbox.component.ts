@@ -15,7 +15,13 @@ import {
   trigger,
   AnimationEvent,
 } from '@angular/animations';
-import { NgFor, NgIf, NgOptimizedImage } from '@angular/common';
+import {
+  IMAGE_LOADER,
+  ImageLoaderConfig,
+  NgFor,
+  NgIf,
+  NgOptimizedImage,
+} from '@angular/common';
 import { ImageLazyLoaderDirective } from '../../image-lazy-loader.directive';
 import {
   ImageGallery,
@@ -23,13 +29,22 @@ import {
   PortfolioService,
 } from '../../../core/api/v1';
 
+const galleryLoaderProvider = (config: ImageLoaderConfig) => {
+  return `${config.src}`;
+};
+
 @Component({
   selector: 'app-gallery-lightbox',
   standalone: true,
   imports: [NgFor, NgIf, ImageLazyLoaderDirective, NgOptimizedImage],
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
-
+  providers: [
+    {
+      provide: IMAGE_LOADER,
+      useValue: galleryLoaderProvider,
+    },
+  ],
   animations: [
     trigger('animation-enter', [
       transition('void => visible', [
@@ -233,5 +248,37 @@ export class GalleryLightboxComponent implements OnInit {
     });
 
     return height;
+  }
+
+  getGalleryPreviewWidth(): number {
+    if (this.columns == 3) {
+      return 350;
+    } else if (this.columns == 2) {
+      return 500;
+    }
+    return 600;
+  }
+
+  getGalleryPreviewHeight(imageWidth: number, imageHeight: number): number {
+    if (this.columns == 3) {
+      return Math.floor((imageHeight / imageWidth) * 350);
+    } else if (this.columns == 2) {
+      return Math.floor((imageHeight / imageWidth) * 500);
+    }
+    return Math.floor((imageHeight / imageWidth) * 600);
+  }
+
+  getGalleryImageWidth(imageWidth: number, imageHeight: number): number {
+    if (imageHeight < imageWidth) {
+      return 1200;
+    }
+    return 600;
+  }
+
+  getGalleryImageHeight(imageWidth: number, imageHeight: number): number {
+    if (imageHeight < imageWidth) {
+      return Math.floor((imageHeight / imageWidth) * 1200);
+    }
+    return Math.floor((imageHeight / imageWidth) * 600);
   }
 }

@@ -12,12 +12,11 @@
         onKeyPress=""
         onKeyDown=""
         onKeyUp=""
-        src="{{ data.url }}/width/{{
-          (innerWidth - (innerWidth % columns)) / columns
-        }}"
-        width="{{ galleryImg.width }}"
-        height="{{ (data.height / data.width) * galleryImg.width }}"
+        ngSrc="{{ data.url }}/width/{{ getGalleryPreviewWidth() }}"
+        width="{{ getGalleryPreviewWidth() }}"
+        height="{{ getGalleryPreviewHeight(data.width, data.height) }}"
         priority
+        placeholder
       />
     </div>
   </div>
@@ -66,13 +65,25 @@
         #galleryPreviewImg
         *ngIf="currentLightboxImg"
         alt="{{ currentLightboxImg.title }}"
-        src="{{ currentLightboxImg.url }}/width/{{ container.offsetWidth }}"
-        width="{{ innerWidth }}"
-        height="{{
-          (currentLightboxImg.height / currentLightboxImg.width) *
-            container.offsetWidth
+        src="{{ currentLightboxImg.url }}/width/{{
+          getGalleryImageWidth(
+            currentLightboxImg.width,
+            currentLightboxImg.height
+          )
         }}"
-        sizes="100vw"
+        width="{{
+          getGalleryImageWidth(
+            currentLightboxImg.width,
+            currentLightboxImg.height
+          )
+        }}"
+        height="{{
+          getGalleryImageHeight(
+            currentLightboxImg.width,
+            currentLightboxImg.height
+          )
+        }}"
+        ngSrcset="100w, 200w, 300w"
         priority
       />
     </div>
