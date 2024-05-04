@@ -1,6 +1,5 @@
 
 # Create your views here.
-import io
 import os
 from django.conf import settings
 from rest_framework import viewsets
@@ -14,10 +13,10 @@ from gallery.serializers import ImageGallerySerializer
 from rest_framework import renderers
 
 from rest_framework.decorators import action
-import PIL.Image
 import cv2
-from rest_framework.response import Response
-from rest_framework import status
+
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 class ImageGalleryPagination(PageNumberPagination):
     page_size = 5
@@ -80,6 +79,7 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
         '$title'
     ]
 
+    @method_decorator(cache_page(60 * 60 * 24 * 7))
     @action(methods=['get'], detail=True, url_path='width/(?P<width>[0-9]+)', url_name='size', renderer_classes=[ImageRenderer])
     def jpeg(self, request, *args, **kwargs):
         data = self.retrieve(request, *args, **kwargs)
