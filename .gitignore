@@ -3,3 +3,4 @@ __pycache__
 *.pyc
 theme
 rg_api/files
+rg_web_old
