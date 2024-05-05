@@ -7,7 +7,7 @@ import {
   Configuration,
   ConfigurationParameters,
 } from './modules/core/api/v1';
-import { environment } from '../environments/environment.development';
+import { environment } from '../environments/environment';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { HighlightService } from './highlight.service';
