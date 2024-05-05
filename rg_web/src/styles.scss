@@ -684,6 +684,7 @@ article th {
     .gallery-img img {
       width: 100%;
       height: auto;
+      object-fit: cover;
       cursor: zoom-in;
       border-radius: 0.35rem;
       margin-bottom: 30px;

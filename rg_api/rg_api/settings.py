@@ -196,13 +196,15 @@ MEDIA_URL = '/files/'
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
-        "LOCATION": "127.0.0.1:11211",
-        "KEY_PREFIX": 'gallery_'
+
+if not DEBUG:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
+            "LOCATION": "127.0.0.1:11211",
+            "KEY_PREFIX": 'gallery_'
+        }
     }
-}
 
 ACCESS_LIST = ['127.0.0.1']
 
