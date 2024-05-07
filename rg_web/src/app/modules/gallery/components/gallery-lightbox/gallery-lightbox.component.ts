@@ -273,19 +273,19 @@ export class GalleryLightboxComponent implements OnInit {
 
   getGalleryImageWidth(imageWidth: number, imageHeight: number): number {
     if (imageHeight < imageWidth) {
-      return Math.floor(this.innerWidth * 0.8);
+      return Math.floor(this.innerWidth * 0.7);
     }
     return Math.floor(
-      (imageWidth / imageHeight) * Math.floor(this.innerHeight * 0.9)
+      (imageWidth / imageHeight) * Math.floor(this.innerHeight * 0.8)
     );
   }
 
   getGalleryImageHeight(imageWidth: number, imageHeight: number): number {
     if (imageHeight < imageWidth) {
       return Math.floor(
-        (imageHeight / imageWidth) * Math.floor(this.innerWidth * 0.8)
+        (imageHeight / imageWidth) * Math.floor(this.innerWidth * 0.7)
       );
     }
-    return Math.floor(this.innerHeight * 0.9);
+    return Math.floor(this.innerHeight * 0.8);
   }
 }

@@ -773,14 +773,34 @@ article th {
       opacity: 0.5;
     }
 
-    .lightbox-img img {
-      display: block;
+    .signature {
+      font-family: myfantasy, sans-serif;
+      font-weight: bold;
       position: relative;
+      bottom: 110px;
+      right: 80px;
+      color: rgba(255, 255, 255, 1);
+      text-shadow: -1px 0 rgba(0, 0, 0, 0.56), 0 1px rgba(0, 0, 0, 0.56),
+        1px 0 rgba(0, 0, 0, 0.56), 0 -1px rgba(0, 0, 0, 0.56);
+      opacity: 0.9;
+      font-size: 50px;
+      display: flex;
+      justify-content: right;
+      align-items: center;
+    }
+
+    .lightbox-img img {
+      display: flex;
+      position: relative;
+      background-color: #fff;
+      outline: 10px solid #fff;
+      object-fit: cover;
 
       border-radius: 0.35rem;
+      padding: 50px;
 
       box-shadow: 0 1px 5px 0 rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(0, 0, 0, 0.75);
+      border: 15px solid rgba(0, 0, 0, 0.7);
     }
   }
 }
