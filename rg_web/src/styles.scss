@@ -691,6 +691,7 @@ article th {
       margin-bottom: 30px;
       box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.5);
       border: 1px solid rgba(0, 0, 0, 0.5);
+      padding: 10px;
     }
   }
 
@@ -785,6 +786,13 @@ article th {
 }
 
 @media screen and (max-width: 1024px) {
+  .main {
+    max-width: 800px;
+    min-height: 900px;
+    margin: auto;
+    padding: 0 10px 30px;
+  }
+
   .gallery-lightbox-container {
     padding: 5px;
     .gallery {

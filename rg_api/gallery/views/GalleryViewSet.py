@@ -32,9 +32,3 @@ class GalleryViewSet(viewsets.ModelViewSet):
         '$title',
         '$description'
     ]
-
-    # def get_serializer_class(self):
-    #     if self.action == 'list':
-    #         return PostPreviewSerializer
-    #     else:
-    #         return self.serializer_class

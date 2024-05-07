@@ -2,7 +2,6 @@ import {
   Component,
   ElementRef,
   HostListener,
-  Input,
   OnInit,
   QueryList,
   ViewChildren,
@@ -188,6 +187,7 @@ export class GalleryLightboxComponent implements OnInit {
       gallery: '1',
       page: this.page,
       pageSize: this.perPage,
+      ordering: '-date',
     };
     this.portfolioService.listImageGalleries(params).subscribe((data) => {
       if (this.data.length != this.columns) {

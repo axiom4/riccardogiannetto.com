@@ -85,7 +85,6 @@ class ImageGallery(models.Model):
 
     class Meta:
         verbose_name_plural = 'images'
-        ordering = ['-date']
         indexes = [
             models.Index(fields=['title']),
             models.Index(fields=['author']),
