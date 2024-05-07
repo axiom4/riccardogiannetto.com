@@ -238,7 +238,6 @@ export class GalleryLightboxComponent implements OnInit {
       }
     }
 
-    console.log('selected index', index);
     return index;
   }
 
@@ -249,7 +248,6 @@ export class GalleryLightboxComponent implements OnInit {
       height += item.height / item.width;
     });
 
-    console.log(index, height);
     return height;
   }
 
