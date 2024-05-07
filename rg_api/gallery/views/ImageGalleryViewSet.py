@@ -46,7 +46,7 @@ class ImageRenderer(renderers.BaseRenderer):
             hsize = int((float(img.shape[0])*float(wpercent)))
             resize = cv2.resize(img, (width, hsize))
 
-            _, im_buf_arr = cv2.imencode(".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), 50])
+            _, im_buf_arr = cv2.imencode(".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), 85])
             byte_im = im_buf_arr.tobytes()
 
             with open(filename, "wb") as f:
@@ -70,7 +70,7 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
     pagination_class = ImageGalleryPagination
     renderer_classes = [renderers.BrowsableAPIRenderer, renderers.JSONRenderer]
 
-    ordering_fields = ['title', 'created_at', 'gallery']
+    ordering_fields = ['title', 'created_at', 'gallery', 'date']
 
     filterset_fields = ['gallery']
     

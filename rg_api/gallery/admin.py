@@ -22,8 +22,16 @@ class GalleryAdmin(admin.ModelAdmin):
     inlines = [GalleryImageInline]
 
 class ImageGalleryAdmin(admin.ModelAdmin):
-    fields = [('title',),
-              ('image', 'image_tag'), ('gallery', 'author'), ('width', 'height'), ('created_at', 'updated_at')]
+    fields = [
+        ('title',),
+        ('image', 'image_tag'), 
+        ('gallery', 'author', 'date'), 
+        ('width', 'height'), 
+        ('created_at', 'updated_at'),
+        ('camera_model', 'lens_model'), 
+        ('iso_speed', 'aperture_f_number', 'shutter_speed', 'focal_length'),
+        ('artist', 'copyright')
+    ]
     list_display = ('title', 'gallery', 'image_tag', 'author', 'width', 'height','created_at', 'updated_at')
     list_filter = ('gallery__title',)
     readonly_fields = ['image_tag', 'width', 'height', 'created_at', 'updated_at']

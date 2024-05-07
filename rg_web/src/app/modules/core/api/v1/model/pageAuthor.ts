@@ -13,7 +13,7 @@
 
 export interface PageAuthor { 
     /**
-     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+     * Obbligatorio. 150 caratteri o meno.Solo lettere, cifre e @/./+/-/_
      */
     username: string;
 }

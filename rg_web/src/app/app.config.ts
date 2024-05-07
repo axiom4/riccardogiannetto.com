@@ -1,5 +1,5 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
 import { routes } from './app.routes';
 import {
@@ -10,7 +10,6 @@ import {
 import { environment } from '../environments/environment';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { HighlightService } from './highlight.service';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -21,10 +20,15 @@ export function apiConfigFactory(): Configuration {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withInMemoryScrolling({
+        anchorScrolling: 'disabled',
+        scrollPositionRestoration: 'top',
+      })
+    ),
     provideAnimations(),
     importProvidersFrom(ApiModule.forRoot(apiConfigFactory)),
-    HighlightService,
     provideHttpClient(withFetch()),
   ],
 };

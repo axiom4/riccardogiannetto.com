@@ -65,8 +65,6 @@ const galleryLoaderProvider = (config: ImageLoaderConfig) => {
   ],
 })
 export class GalleryLightboxComponent implements OnInit {
-  @Input() galleryData: ImageGallery[] = [];
-  @Input() showCount = false;
   isLoading = false;
   data: ImageGallery[][] = [];
   page = 1;
@@ -199,22 +197,18 @@ export class GalleryLightboxComponent implements OnInit {
           this.data.push(new Array<ImageGallery>());
         }
       }
-      this.index = this.getLowerColumnHeightIndex();
 
       const items = data.results;
 
       items.forEach((item: ImageGallery) => {
-        if (this.data[this.index] != undefined) {
-          this.data[this.index].push(item);
-          this.index = (this.index + 1) % this.columns;
+        const index = this.getLowerColumnHeightIndex();
+
+        if (this.data[index] != undefined) {
+          this.data[index].push(item);
         }
       });
 
       this.page++;
-      let imageCount = 0;
-      this.data.forEach((column) => {
-        imageCount += column.length;
-      });
       this.totalImageCount = data.count;
 
       this.isLoading = false;
@@ -243,6 +237,8 @@ export class GalleryLightboxComponent implements OnInit {
         index = i;
       }
     }
+
+    console.log('selected index', index);
     return index;
   }
 
@@ -250,28 +246,29 @@ export class GalleryLightboxComponent implements OnInit {
     let height = 0;
 
     this.data[index].forEach((item) => {
-      height += item.height;
+      height += item.height / item.width;
     });
 
+    console.log(index, height);
     return height;
   }
 
   getGalleryPreviewWidth(): number {
     if (this.columns == 3) {
-      return 350;
+      return 700;
     } else if (this.columns == 2) {
-      return 500;
+      return 1000;
     }
-    return 600;
+    return 1200;
   }
 
   getGalleryPreviewHeight(imageWidth: number, imageHeight: number): number {
     if (this.columns == 3) {
-      return Math.floor((imageHeight / imageWidth) * 350);
+      return Math.floor((imageHeight / imageWidth) * 700);
     } else if (this.columns == 2) {
-      return Math.floor((imageHeight / imageWidth) * 500);
+      return Math.floor((imageHeight / imageWidth) * 1000);
     }
-    return Math.floor((imageHeight / imageWidth) * 600);
+    return Math.floor((imageHeight / imageWidth) * 1200);
   }
 
   getGalleryImageWidth(imageWidth: number, imageHeight: number): number {

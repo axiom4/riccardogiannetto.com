@@ -20,6 +20,15 @@ export interface ImageGallery {
     height: number;
     readonly created_at?: string;
     readonly updated_at?: string;
+    camera_model?: string;
+    lens_model?: string;
+    iso_speed?: number | null;
+    aperture_f_number?: number | null;
+    shutter_speed?: number | null;
+    focal_length?: number | null;
+    artist?: string;
+    copyright?: string;
+    date?: string | null;
     gallery: string;
 }
 

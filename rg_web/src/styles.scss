@@ -678,8 +678,9 @@ article th {
     line-height: 0;
     width: 33%;
     height: auto;
-    display: inline-table;
+    display: block;
     padding: 15px;
+    float: left;
 
     .gallery-img img {
       width: 100%;
@@ -688,7 +689,8 @@ article th {
       cursor: zoom-in;
       border-radius: 0.35rem;
       margin-bottom: 30px;
-      box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.21);
+      box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(0, 0, 0, 0.5);
     }
   }
 
@@ -775,6 +777,9 @@ article th {
       position: relative;
 
       border-radius: 0.35rem;
+
+      box-shadow: 0 1px 5px 0 rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.75);
     }
   }
 }

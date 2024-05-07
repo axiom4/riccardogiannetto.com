@@ -16,13 +16,14 @@
         width="{{ getGalleryPreviewWidth() }}"
         height="{{ getGalleryPreviewHeight(data.width, data.height) }}"
         srcset="{{ data.url }}/width/700 1200w, {{ data.url }}/width/1000 1024w, {{ data.url }}/width/1200 650w"
-        sizes="(max-width: 1024px) 350px, (max-width: 650px) 500px, 600px"
+        sizes="(max-width: 1024px) 700px, (max-width: 650px) 1000px, 1200px"
         priority
         placeholder
       />
     </div>
   </div>
   <div *ngIf="showMask" class="lightbox" [@animation-leave]="{ value: 'hide' }">
+    <span class="count"> {{ 1 }}/{{ totalImageCount }} </span>
     <button
       type="button"
       (click)="onclosePreview()"
