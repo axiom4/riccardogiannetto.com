@@ -41,7 +41,7 @@ class ImageGallery(models.Model):
         return self.title
     
     def image_tag(self):
-        return mark_safe('<img src="/%s/%s" width="150" />' % (settings.MEDIA_ROOT, self.image)) if self.image else ''
+        return mark_safe('<img src="%s/%s/width/700" width="150" />' % (settings.IMAGE_GENERATOR_BASE_URL, self.id)) if self.image else ''
 
     image_tag.short_description = 'Image Preview'
 

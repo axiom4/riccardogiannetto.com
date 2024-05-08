@@ -32,9 +32,16 @@ class ImageRenderer(renderers.BaseRenderer):
     charset = None
     render_style = 'binary'
 
+    image_size_array = [700, 1000, 1200, 2400]
+
     def render(self, data, media_type=None, renderer_context=None):
         width = int(renderer_context['kwargs']['width'])
 
+        for w in self.image_size_array:
+            if w >= width:
+                width = w
+                break
+            
         this_object = ImageGallery.objects.get(pk=renderer_context['kwargs']['pk'])
 
         filename =f"{settings.MEDIA_ROOT}/preview/{this_object.pk}_{width}.webp"
