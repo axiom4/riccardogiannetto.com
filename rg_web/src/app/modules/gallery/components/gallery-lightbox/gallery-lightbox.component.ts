@@ -124,18 +124,15 @@ export class GalleryLightboxComponent implements OnInit {
     }
   }
 
-  constructor(private portfolioService: PortfolioService) {
-    afterNextRender(() => {
-      this.innerWidth = window.innerWidth;
-      this.innerHeight = window.innerHeight;
-
-      this.setColumns(this.innerWidth);
-      this.loadItems();
-    });
-  }
+  constructor(private portfolioService: PortfolioService) {}
 
   ngOnInit(): void {
     this.totalImageCount = 0;
+    this.innerWidth = window.innerWidth;
+    this.innerHeight = window.innerHeight;
+
+    this.setColumns(this.innerWidth);
+    this.loadItems();
   }
 
   onPreviewImage(column: number, row: number): void {
