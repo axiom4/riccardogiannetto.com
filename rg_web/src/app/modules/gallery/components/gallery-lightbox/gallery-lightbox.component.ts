@@ -5,7 +5,6 @@ import {
   OnInit,
   QueryList,
   ViewChildren,
-  afterNextRender,
 } from '@angular/core';
 import {
   animate,
@@ -103,11 +102,26 @@ export class GalleryLightboxComponent implements OnInit {
     }
   }
 
-  @HostListener('document:keydown.escape', ['$event']) onKeydownHandler(
+  @HostListener('document:keydown.escape', ['$event']) onKeydownEscapeHandler(
     event: KeyboardEvent
   ) {
     if (this.previewImage) {
       this.previewImage = false;
+    }
+  }
+
+  @HostListener('document:keydown.arrowLeft', ['$event']) onKeydownLeftHandler(
+    event: KeyboardEvent
+  ) {
+    if (this.previewImage) {
+      this.prev();
+    }
+  }
+
+  @HostListener('document:keydown.arrowRight', ['$event'])
+  onKeydownRighttHandler(event: KeyboardEvent) {
+    if (this.previewImage) {
+      this.next();
     }
   }
 
