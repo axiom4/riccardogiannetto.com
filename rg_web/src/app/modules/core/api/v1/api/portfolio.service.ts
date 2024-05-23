@@ -12,7 +12,9 @@
 /* tslint:disable:no-unused-variable member-ordering */
 
 import { Inject, Injectable, Optional }                      from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpResponse, HttpEvent, HttpParameterCodec, HttpContext }       from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams,
+         HttpResponse, HttpEvent, HttpParameterCodec, HttpContext 
+        }       from '@angular/common/http';
 import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
@@ -54,8 +56,9 @@ export class PortfolioService implements PortfolioServiceInterface {
             this.configuration = configuration;
         }
         if (typeof this.configuration.basePath !== 'string') {
-            if (Array.isArray(basePath) && basePath.length > 0) {
-                basePath = basePath[0];
+            const firstBasePath = Array.isArray(basePath) ? basePath[0] : undefined;
+            if (firstBasePath != undefined) {
+                basePath = firstBasePath;
             }
 
             if (typeof basePath !== 'string') {
@@ -109,15 +112,15 @@ export class PortfolioService implements PortfolioServiceInterface {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public jpegImageGallery(requestParameters: JpegImageGalleryRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<ImageGallery>;
-    public jpegImageGallery(requestParameters: JpegImageGalleryRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ImageGallery>>;
-    public jpegImageGallery(requestParameters: JpegImageGalleryRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ImageGallery>>;
-    public jpegImageGallery(requestParameters: JpegImageGalleryRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const id = requestParameters.id;
+    public jpegImageGallery(requestParameters?: JpegImageGalleryRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<ImageGallery>;
+    public jpegImageGallery(requestParameters?: JpegImageGalleryRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ImageGallery>>;
+    public jpegImageGallery(requestParameters?: JpegImageGalleryRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ImageGallery>>;
+    public jpegImageGallery(requestParameters?: JpegImageGalleryRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling jpegImageGallery.');
         }
-        const width = requestParameters.width;
+        const width = requestParameters?.width;
         if (width === null || width === undefined) {
             throw new Error('Required parameter width was null or undefined when calling jpegImageGallery.');
         }
@@ -178,15 +181,15 @@ export class PortfolioService implements PortfolioServiceInterface {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listGalleries(requestParameters: ListGalleriesRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ListGalleries200Response>;
-    public listGalleries(requestParameters: ListGalleriesRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ListGalleries200Response>>;
-    public listGalleries(requestParameters: ListGalleriesRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ListGalleries200Response>>;
-    public listGalleries(requestParameters: ListGalleriesRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const page = requestParameters.page;
-        const pageSize = requestParameters.pageSize;
-        const title = requestParameters.title;
-        const search = requestParameters.search;
-        const ordering = requestParameters.ordering;
+    public listGalleries(requestParameters?: ListGalleriesRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ListGalleries200Response>;
+    public listGalleries(requestParameters?: ListGalleriesRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ListGalleries200Response>>;
+    public listGalleries(requestParameters?: ListGalleriesRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ListGalleries200Response>>;
+    public listGalleries(requestParameters?: ListGalleriesRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const title = requestParameters?.title;
+        const search = requestParameters?.search;
+        const ordering = requestParameters?.ordering;
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         if (page !== undefined && page !== null) {
@@ -267,15 +270,15 @@ export class PortfolioService implements PortfolioServiceInterface {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listImageGalleries(requestParameters: ListImageGalleriesRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ListImageGalleries200Response>;
-    public listImageGalleries(requestParameters: ListImageGalleriesRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ListImageGalleries200Response>>;
-    public listImageGalleries(requestParameters: ListImageGalleriesRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ListImageGalleries200Response>>;
-    public listImageGalleries(requestParameters: ListImageGalleriesRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const page = requestParameters.page;
-        const pageSize = requestParameters.pageSize;
-        const gallery = requestParameters.gallery;
-        const search = requestParameters.search;
-        const ordering = requestParameters.ordering;
+    public listImageGalleries(requestParameters?: ListImageGalleriesRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ListImageGalleries200Response>;
+    public listImageGalleries(requestParameters?: ListImageGalleriesRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ListImageGalleries200Response>>;
+    public listImageGalleries(requestParameters?: ListImageGalleriesRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ListImageGalleries200Response>>;
+    public listImageGalleries(requestParameters?: ListImageGalleriesRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const gallery = requestParameters?.gallery;
+        const search = requestParameters?.search;
+        const ordering = requestParameters?.ordering;
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         if (page !== undefined && page !== null) {
@@ -356,17 +359,17 @@ export class PortfolioService implements PortfolioServiceInterface {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public retrieveGallery(requestParameters: RetrieveGalleryRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Gallery>;
-    public retrieveGallery(requestParameters: RetrieveGalleryRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Gallery>>;
-    public retrieveGallery(requestParameters: RetrieveGalleryRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Gallery>>;
-    public retrieveGallery(requestParameters: RetrieveGalleryRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const id = requestParameters.id;
+    public retrieveGallery(requestParameters?: RetrieveGalleryRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Gallery>;
+    public retrieveGallery(requestParameters?: RetrieveGalleryRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Gallery>>;
+    public retrieveGallery(requestParameters?: RetrieveGalleryRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Gallery>>;
+    public retrieveGallery(requestParameters?: RetrieveGalleryRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling retrieveGallery.');
         }
-        const title = requestParameters.title;
-        const search = requestParameters.search;
-        const ordering = requestParameters.ordering;
+        const title = requestParameters?.title;
+        const search = requestParameters?.search;
+        const ordering = requestParameters?.ordering;
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         if (title !== undefined && title !== null) {
@@ -439,17 +442,17 @@ export class PortfolioService implements PortfolioServiceInterface {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public retrieveImageGallery(requestParameters: RetrieveImageGalleryRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ImageGallery>;
-    public retrieveImageGallery(requestParameters: RetrieveImageGalleryRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ImageGallery>>;
-    public retrieveImageGallery(requestParameters: RetrieveImageGalleryRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ImageGallery>>;
-    public retrieveImageGallery(requestParameters: RetrieveImageGalleryRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const id = requestParameters.id;
+    public retrieveImageGallery(requestParameters?: RetrieveImageGalleryRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ImageGallery>;
+    public retrieveImageGallery(requestParameters?: RetrieveImageGalleryRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ImageGallery>>;
+    public retrieveImageGallery(requestParameters?: RetrieveImageGalleryRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ImageGallery>>;
+    public retrieveImageGallery(requestParameters?: RetrieveImageGalleryRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling retrieveImageGallery.');
         }
-        const gallery = requestParameters.gallery;
-        const search = requestParameters.search;
-        const ordering = requestParameters.ordering;
+        const gallery = requestParameters?.gallery;
+        const search = requestParameters?.search;
+        const ordering = requestParameters?.ordering;
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         if (gallery !== undefined && gallery !== null) {
