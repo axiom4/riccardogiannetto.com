@@ -80,7 +80,9 @@ export class GalleryLightboxComponent implements OnInit {
   currentRow = 0;
   currentColumn = 0;
   controls = true;
+
   totalImageCount = 0;
+  imageNum = 0;
 
   @ViewChildren('galleryItem') galleryItem: QueryList<ElementRef> | undefined;
 
