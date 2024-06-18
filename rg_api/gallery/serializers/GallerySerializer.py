@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from gallery.models import Gallery, ImageGallery
-from blog.serializers import UserSerializer
+from gallery.models import Gallery
 
 
 class GallerySerializer(serializers.HyperlinkedModelSerializer):
