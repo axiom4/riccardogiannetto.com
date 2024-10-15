@@ -1,6 +1,5 @@
 /**
  * Riccardo Giannetto Gallery API
- * API app riccardogiannetto.com
  *
  * 
  *
