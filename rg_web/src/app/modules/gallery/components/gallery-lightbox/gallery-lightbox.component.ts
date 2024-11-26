@@ -13,14 +13,7 @@ import {
   trigger,
   AnimationEvent,
 } from '@angular/animations';
-import {
-  IMAGE_LOADER,
-  ImageLoaderConfig,
-  NgFor,
-  NgIf,
-  NgOptimizedImage,
-} from '@angular/common';
-import { ImageLazyLoaderDirective } from '../../image-lazy-loader.directive';
+import { IMAGE_LOADER, ImageLoaderConfig, NgFor, NgIf } from '@angular/common';
 import {
   ImageGallery,
   ListImageGalleriesRequestParams,
@@ -33,8 +26,7 @@ const galleryLoaderProvider = (config: ImageLoaderConfig) => {
 
 @Component({
   selector: 'app-gallery-lightbox',
-  standalone: true,
-  imports: [NgFor, NgIf, ImageLazyLoaderDirective, NgOptimizedImage],
+  imports: [NgFor, NgIf],
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
   providers: [

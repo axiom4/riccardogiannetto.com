@@ -12,12 +12,11 @@ import { MarkedPipe } from '../../../main/marked.pipe';
 import { DatePipe, NgIf } from '@angular/common';
 
 @Component({
-  selector: 'app-page',
-  standalone: true,
-  templateUrl: './page.component.html',
-  styleUrl: './page.component.scss',
-  imports: [NgIf, DatePipe, MarkedPipe],
-  providers: [HighlightService],
+    selector: 'app-page',
+    templateUrl: './page.component.html',
+    styleUrl: './page.component.scss',
+    imports: [NgIf, DatePipe, MarkedPipe],
+    providers: [HighlightService]
 })
 export class PageComponent implements OnInit, OnDestroy, AfterViewChecked {
   page: Page | undefined;
