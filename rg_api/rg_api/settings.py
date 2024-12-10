@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'daphne',
     'django.contrib.staticfiles',
+    'elasticapm.contrib.django',
     'rest_framework',
     'django_filters',
     "corsheaders",
@@ -58,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'elasticapm.contrib.django.middleware.TracingMiddleware',
 ]
 
 ROOT_URLCONF = 'rg_api.urls'
@@ -245,3 +247,10 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_PATH = '/;HttpOnly'
 
 IMAGE_GENERATOR_BASE_URL = "/portfolio/images"
+
+ELASTIC_APM = {
+  'SERVICE_NAME': 'rg-jacob-apm',
+  'SECRET_TOKEN': '',
+  'SERVER_URL': 'http://localhost:8200',
+  'ENVIRONMENT': 'rg-jacob-env',
+}
