@@ -40,3 +40,5 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+rg_web/src/environments/environment.ts
+rg_web/src/environments/environment.development.ts
