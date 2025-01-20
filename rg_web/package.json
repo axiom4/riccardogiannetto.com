@@ -17,7 +17,7 @@
     "@angular/core": "^19.1.1",
     "@angular/forms": "^19.1.1",
     "@angular/platform-browser": "^19.1.1",
-    "@angular/platform-browser-dynamic": "^19.1.1",
+    "@angular/platform-browser-dynamic": "^19.1.2",
     "@angular/router": "^19.1.1",
     "@openapitools/openapi-generator-cli": "^2.15.3",
     "@types/prismjs": "^1.26.5",
