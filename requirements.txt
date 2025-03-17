@@ -1,5 +1,5 @@
 asgiref==3.8.1
-attrs==25.2.0
+attrs==25.3.0
 autobahn==24.4.2
 Automat==24.8.1
 autopep8==2.3.2
@@ -21,7 +21,7 @@ incremental==24.7.2
 inflection==0.5.1
 Markdown==3.7
 mysqlclient==2.2.7
-numpy==2.2.3
+numpy==2.2.4
 opencv-python==4.11.0.86
 pillow==11.1.0
 psutil==7.0.0
