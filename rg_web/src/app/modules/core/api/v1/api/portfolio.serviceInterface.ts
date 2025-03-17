@@ -1,5 +1,5 @@
 /**
- * Riccardo Giannetto Gallery API
+ * Test App API
  *
  * 
  *
@@ -13,46 +13,40 @@ import { Observable }                                        from 'rxjs';
 
 import { Gallery } from '../model/models';
 import { ImageGallery } from '../model/models';
-import { ListGalleries200Response } from '../model/models';
-import { ListImageGalleries200Response } from '../model/models';
+import { PaginatedGalleryList } from '../model/models';
+import { PaginatedImageGalleryList } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
 
-export interface JpegImageGalleryRequestParams {
-    id: string;
+export interface PortfolioGalleriesListRequestParams {
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+    title?: string;
+}
+
+export interface PortfolioGalleriesRetrieveRequestParams {
+    id: number;
+}
+
+export interface PortfolioImagesListRequestParams {
+    gallery?: number;
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+}
+
+export interface PortfolioImagesRetrieveRequestParams {
+    id: number;
+}
+
+export interface PortfolioImagesWidthRetrieveRequestParams {
+    id: number;
     width: string;
-}
-
-export interface ListGalleriesRequestParams {
-    page?: number;
-    pageSize?: number;
-    title?: string;
-    search?: string;
-    ordering?: string;
-}
-
-export interface ListImageGalleriesRequestParams {
-    page?: number;
-    pageSize?: number;
-    gallery?: string;
-    search?: string;
-    ordering?: string;
-}
-
-export interface RetrieveGalleryRequestParams {
-    id: string;
-    title?: string;
-    search?: string;
-    ordering?: string;
-}
-
-export interface RetrieveImageGalleryRequestParams {
-    id: string;
-    gallery?: string;
-    search?: string;
-    ordering?: string;
 }
 
 
@@ -65,34 +59,34 @@ export interface PortfolioServiceInterface {
      * 
 * @param requestParameters
      */
-    jpegImageGallery(requestParameters: JpegImageGalleryRequestParams, extraHttpRequestParams?: any): Observable<ImageGallery>;
+    portfolioGalleriesList(requestParameters: PortfolioGalleriesListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedGalleryList>;
 
     /**
      * 
      * 
 * @param requestParameters
      */
-    listGalleries(requestParameters: ListGalleriesRequestParams, extraHttpRequestParams?: any): Observable<ListGalleries200Response>;
+    portfolioGalleriesRetrieve(requestParameters: PortfolioGalleriesRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Gallery>;
 
     /**
      * 
      * 
 * @param requestParameters
      */
-    listImageGalleries(requestParameters: ListImageGalleriesRequestParams, extraHttpRequestParams?: any): Observable<ListImageGalleries200Response>;
+    portfolioImagesList(requestParameters: PortfolioImagesListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedImageGalleryList>;
 
     /**
      * 
      * 
 * @param requestParameters
      */
-    retrieveGallery(requestParameters: RetrieveGalleryRequestParams, extraHttpRequestParams?: any): Observable<Gallery>;
+    portfolioImagesRetrieve(requestParameters: PortfolioImagesRetrieveRequestParams, extraHttpRequestParams?: any): Observable<ImageGallery>;
 
     /**
      * 
      * 
 * @param requestParameters
      */
-    retrieveImageGallery(requestParameters: RetrieveImageGalleryRequestParams, extraHttpRequestParams?: any): Observable<ImageGallery>;
+    portfolioImagesWidthRetrieve(requestParameters: PortfolioImagesWidthRetrieveRequestParams, extraHttpRequestParams?: any): Observable<ImageGallery>;
 
 }

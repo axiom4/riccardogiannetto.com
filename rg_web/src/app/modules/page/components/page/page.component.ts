@@ -1,8 +1,8 @@
 import { AfterViewChecked, Component, OnDestroy, OnInit } from '@angular/core';
 import {
+  BlogPagesRetrieveRequestParams,
   BlogService,
   Page,
-  RetrievePageRequestParams,
 } from '../../../core/api/v1';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, NavigationEnd, Event, Router } from '@angular/router';
@@ -12,11 +12,11 @@ import { MarkedPipe } from '../../../main/marked.pipe';
 import { DatePipe, NgIf } from '@angular/common';
 
 @Component({
-    selector: 'app-page',
-    templateUrl: './page.component.html',
-    styleUrl: './page.component.scss',
-    imports: [NgIf, DatePipe, MarkedPipe],
-    providers: [HighlightService]
+  selector: 'app-page',
+  templateUrl: './page.component.html',
+  styleUrl: './page.component.scss',
+  imports: [NgIf, DatePipe, MarkedPipe],
+  providers: [HighlightService],
 })
 export class PageComponent implements OnInit, OnDestroy, AfterViewChecked {
   page: Page | undefined;
@@ -61,10 +61,10 @@ export class PageComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   getPage(tag: string) {
-    const params: RetrievePageRequestParams = {
+    const params: BlogPagesRetrieveRequestParams = {
       tag: tag,
     };
-    this.blogService.retrievePage(params).subscribe({
+    this.blogService.blogPagesRetrieve(params).subscribe({
       next: (page) => {
         this.page = page;
         this.title.setTitle(page.title);

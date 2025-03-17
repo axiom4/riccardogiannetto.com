@@ -1,5 +1,5 @@
 /**
- * Riccardo Giannetto Gallery API
+ * Test App API
  *
  * 
  *
@@ -10,14 +10,14 @@
 
 
 export interface Gallery { 
-    readonly url?: string;
+    readonly url: string;
     id: number;
-    readonly author?: string;
-    readonly images?: Array<string>;
+    readonly author: string;
+    images: Array<string>;
     title: string;
     description: string;
     tag: string;
-    readonly created_at?: string;
-    readonly updated_at?: string;
+    readonly created_at: string;
+    readonly updated_at: string;
 }
 

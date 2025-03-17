@@ -1,5 +1,5 @@
 /**
- * Riccardo Giannetto Gallery API
+ * Test App API
  *
  * 
  *
@@ -7,17 +7,17 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { PageAuthor } from './pageAuthor';
+import { User } from './user';
 
 
 export interface Post { 
-    readonly id?: number;
-    readonly url?: string;
-    author?: PageAuthor;
+    readonly id: number;
+    readonly url: string;
+    readonly author: User;
     title: string;
     body: string;
-    readonly created_at?: string;
-    image?: Blob | null;
+    readonly created_at: string;
+    image?: string | null;
     categories: Array<string>;
     summary?: string;
 }

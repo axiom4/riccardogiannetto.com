@@ -13,12 +13,15 @@ django-cors-headers==4.7.0
 django-filter==25.1
 django-mdeditor==0.1.20
 djangorestframework==3.15.2
+drf-spectacular==0.28.0
 ecs-logging==2.2.0
 elastic-apm==6.23.0
 hyperlink==21.0.0
 idna==3.10
 incremental==24.7.2
 inflection==0.5.1
+jsonschema==4.23.0
+jsonschema-specifications==2024.10.1
 Markdown==3.7
 mysqlclient==2.2.7
 numpy==2.2.4
@@ -33,6 +36,8 @@ Pygments==2.19.1
 pymemcache==4.0.0
 pyOpenSSL==25.0.0
 PyYAML==6.0.2
+referencing==0.36.2
+rpds-py==0.23.1
 service-identity==24.2.0
 setuptools==76.0.0
 six==1.17.0

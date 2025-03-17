@@ -22,6 +22,7 @@ from rest_framework import permissions
 from django.conf import settings
 from .permissions import AccessListPermission
 from django.conf.urls.static import static
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 from blog import urls as blog_urls
 
@@ -36,15 +37,9 @@ urlpatterns = [
     path("blog/", include(blog_urls.urlpatterns)),
     path('portfolio/', include('gallery.urls')),
     path('admin/', admin.site.urls),
-    path('', get_schema_view(
-         title="Riccardo Giannetto Gallery API",
-         description="API app riccardogiannetto.com",
-         version="1.0.0",
-         patterns=schema_url_patterns,
-         public=True,
-         permission_classes=[AccessListPermission |
-                             permissions.IsAuthenticated]
-         ), name='openapi-schema'),
+    path('openapi', SpectacularAPIView().as_view(), name='schema'),
+    path('',
+         SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path(r'mdeditor/', include('mdeditor.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

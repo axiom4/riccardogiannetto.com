@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "generate:api": "openapi-generator-cli generate  -p supportsES6=true,withInterfaces=true,useSingleRequestParameter=true -i http://127.0.0.1:8000/?format=openapi -g typescript-angular -o src/app/modules/core/api/v1"
+    "generate:api": "openapi-generator-cli generate  -p supportsES6=true,withInterfaces=true,useSingleRequestParameter=true -i http://127.0.0.1:8000/openapi -g typescript-angular -o src/app/modules/core/api/v1"
   },
   "private": true,
   "dependencies": {

@@ -1,5 +1,5 @@
 /**
- * Riccardo Giannetto Gallery API
+ * Test App API
  *
  * 
  *
@@ -12,47 +12,44 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { Category } from '../model/models';
-import { ListCategories200Response } from '../model/models';
-import { ListPages200Response } from '../model/models';
-import { ListPosts200Response } from '../model/models';
 import { Page } from '../model/models';
+import { PaginatedCategoryList } from '../model/models';
+import { PaginatedPageList } from '../model/models';
+import { PaginatedPostPreviewList } from '../model/models';
 import { Post } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
 
-export interface ListCategoriesRequestParams {
+export interface BlogCategoriesListRequestParams {
     limit?: number;
     offset?: number;
 }
 
-export interface ListPagesRequestParams {
+export interface BlogCategoriesRetrieveRequestParams {
+    id: number;
+}
+
+export interface BlogPagesListRequestParams {
     limit?: number;
     offset?: number;
 }
 
-export interface ListPostsRequestParams {
-    page?: number;
-    pageSize?: number;
-    categoriesName?: string;
-    search?: string;
-    ordering?: string;
-}
-
-export interface RetrieveCategoryRequestParams {
-    id: string;
-}
-
-export interface RetrievePageRequestParams {
+export interface BlogPagesRetrieveRequestParams {
     tag: string;
 }
 
-export interface RetrievePostRequestParams {
-    id: string;
+export interface BlogPostsListRequestParams {
     categoriesName?: string;
-    search?: string;
     ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+}
+
+export interface BlogPostsRetrieveRequestParams {
+    id: number;
 }
 
 
@@ -65,41 +62,41 @@ export interface BlogServiceInterface {
      * API endpoint that allows groups to be viewed or edited.
 * @param requestParameters
      */
-    listCategories(requestParameters: ListCategoriesRequestParams, extraHttpRequestParams?: any): Observable<ListCategories200Response>;
-
-    /**
-     * 
-     * 
-* @param requestParameters
-     */
-    listPages(requestParameters: ListPagesRequestParams, extraHttpRequestParams?: any): Observable<ListPages200Response>;
-
-    /**
-     * 
-     * 
-* @param requestParameters
-     */
-    listPosts(requestParameters: ListPostsRequestParams, extraHttpRequestParams?: any): Observable<ListPosts200Response>;
+    blogCategoriesList(requestParameters: BlogCategoriesListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedCategoryList>;
 
     /**
      * 
      * API endpoint that allows groups to be viewed or edited.
 * @param requestParameters
      */
-    retrieveCategory(requestParameters: RetrieveCategoryRequestParams, extraHttpRequestParams?: any): Observable<Category>;
+    blogCategoriesRetrieve(requestParameters: BlogCategoriesRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Category>;
 
     /**
      * 
      * 
 * @param requestParameters
      */
-    retrievePage(requestParameters: RetrievePageRequestParams, extraHttpRequestParams?: any): Observable<Page>;
+    blogPagesList(requestParameters: BlogPagesListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedPageList>;
 
     /**
      * 
      * 
 * @param requestParameters
      */
-    retrievePost(requestParameters: RetrievePostRequestParams, extraHttpRequestParams?: any): Observable<Post>;
+    blogPagesRetrieve(requestParameters: BlogPagesRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Page>;
+
+    /**
+     * 
+     * 
+* @param requestParameters
+     */
+    blogPostsList(requestParameters: BlogPostsListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedPostPreviewList>;
+
+    /**
+     * 
+     * 
+* @param requestParameters
+     */
+    blogPostsRetrieve(requestParameters: BlogPostsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Post>;
 
 }

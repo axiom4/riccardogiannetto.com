@@ -16,7 +16,7 @@ import {
 import { IMAGE_LOADER, ImageLoaderConfig, NgFor, NgIf } from '@angular/common';
 import {
   ImageGallery,
-  ListImageGalleriesRequestParams,
+  PortfolioImagesListRequestParams,
   PortfolioService,
 } from '../../../core/api/v1';
 
@@ -188,13 +188,13 @@ export class GalleryLightboxComponent implements OnInit {
 
   loadItems(): void {
     this.isLoading = true;
-    const params: ListImageGalleriesRequestParams = {
-      gallery: '1',
+    const params: PortfolioImagesListRequestParams = {
+      gallery: 1,
       page: this.page,
       pageSize: this.perPage,
       ordering: '-date',
     };
-    this.portfolioService.listImageGalleries(params).subscribe((data) => {
+    this.portfolioService.portfolioImagesList(params).subscribe((data) => {
       if (this.data.length != this.columns) {
         this.data = [];
 

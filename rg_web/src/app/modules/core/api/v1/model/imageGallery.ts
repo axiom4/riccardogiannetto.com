@@ -1,5 +1,5 @@
 /**
- * Riccardo Giannetto Gallery API
+ * Test App API
  *
  * 
  *
@@ -10,14 +10,14 @@
 
 
 export interface ImageGallery { 
-    readonly url?: string;
-    readonly author?: string;
+    readonly url: string;
+    readonly author: string;
     title: string;
-    image: Blob;
+    image: string;
     width: number;
     height: number;
-    readonly created_at?: string;
-    readonly updated_at?: string;
+    readonly created_at: string;
+    readonly updated_at: string;
     camera_model?: string;
     lens_model?: string;
     iso_speed?: number | null;

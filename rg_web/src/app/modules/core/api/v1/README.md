@@ -1,6 +1,6 @@
 # @
 
-API app riccardogiannetto.com
+Test description
 
 The version of the OpenAPI document: 1.0.0
 

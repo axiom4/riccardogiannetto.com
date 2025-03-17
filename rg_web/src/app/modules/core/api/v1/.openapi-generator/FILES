@@ -1,4 +1,5 @@
 .gitignore
+.openapi-generator-ignore
 README.md
 api.base.service.ts
 api.module.ts
@@ -14,15 +15,15 @@ index.ts
 model/category.ts
 model/gallery.ts
 model/imageGallery.ts
-model/listCategories200Response.ts
-model/listGalleries200Response.ts
-model/listImageGalleries200Response.ts
-model/listPages200Response.ts
-model/listPosts200Response.ts
 model/models.ts
 model/page.ts
-model/pageAuthor.ts
+model/paginatedCategoryList.ts
+model/paginatedGalleryList.ts
+model/paginatedImageGalleryList.ts
+model/paginatedPageList.ts
+model/paginatedPostPreviewList.ts
 model/post.ts
 model/postPreview.ts
+model/user.ts
 param.ts
 variables.ts
