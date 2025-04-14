@@ -22,11 +22,11 @@ incremental==24.7.2
 inflection==0.5.1
 jsonschema==4.23.0
 jsonschema-specifications==2024.10.1
-Markdown==3.7
+Markdown==3.8
 mysqlclient==2.2.7
 numpy==2.2.4
 opencv-python==4.11.0.86
-pillow==11.1.0
+pillow==11.2.1
 psutil==7.0.0
 pyasn1==0.6.1
 pyasn1_modules==0.4.2
@@ -44,8 +44,8 @@ six==1.17.0
 sqlparse==0.5.3
 Twisted==24.11.0
 txaio==23.1.1
-typing_extensions==4.13.1
+typing_extensions==4.13.2
 uritemplate==4.1.1
-urllib3==2.3.0
+urllib3==2.4.0
 wrapt==1.17.2
 zope.interface==7.2
