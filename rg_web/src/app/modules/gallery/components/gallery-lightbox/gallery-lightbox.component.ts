@@ -13,7 +13,7 @@ import {
   trigger,
   AnimationEvent,
 } from '@angular/animations';
-import { IMAGE_LOADER, ImageLoaderConfig, NgFor, NgIf } from '@angular/common';
+import { IMAGE_LOADER, ImageLoaderConfig } from '@angular/common';
 import {
   ImageGallery,
   PortfolioImagesListRequestParams,
@@ -26,7 +26,7 @@ const galleryLoaderProvider = (config: ImageLoaderConfig) => {
 
 @Component({
   selector: 'app-gallery-lightbox',
-  imports: [NgFor, NgIf],
+  imports: [],
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
   providers: [

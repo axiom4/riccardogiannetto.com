@@ -1,74 +1,81 @@
 <div #container class="gallery-lightbox-container">
-  <div
-    #galleryItem
-    *ngFor="let column of data; let col = index"
-    class="gallery"
-  >
-    <div *ngFor="let data of column; let i = index" class="gallery-img">
-      <img
-        #galleryImg
-        (click)="onPreviewImage(col, i)"
-        alt="{{ data.title }}"
-        onKeyPress=""
-        onKeyDown=""
-        onKeyUp=""
-        src="{{ data.url }}/width/{{ getGalleryPreviewWidth() }}"
-        width="{{ getGalleryPreviewWidth() }}"
-        height="{{ getGalleryPreviewHeight(data.width, data.height) }}"
-        srcset="{{ data.url }}/width/700 1200w, {{ data.url }}/width/1000 1024w, {{ data.url }}/width/1200 650w"
-        sizes="(max-width: 1024px) 700px, (max-width: 650px) 1000px, 1200px"
-        priority
-        placeholder
-      />
-    </div>
-  </div>
-  <div *ngIf="showMask" class="lightbox" [@animation-leave]="{ value: 'hide' }">
-    <span class="count"> {{ imageNum }}/{{ totalImageCount }} </span>
-    <button
-      type="button"
-      (click)="onclosePreview()"
-      *ngIf="previewImage"
-      class="close-btn"
-      title="Close"
-    >
-      <span
-        class="icon-lightbox-carousel"
-        onKeyPress=""
-        onKeyDown=""
-        onKeyUp=""
-      >
-        Close
-      </span>
-    </button>
-    <button
-      *ngIf="controls"
-      type="button"
-      class="btn-lightbox-carousel btn-prev"
-      title="Previous"
-      (click)="prev()"
-    >
-      <span class="icon-lightbox-carousel">Prev</span>
-    </button>
-    <button
-      type="button"
-      *ngIf="controls"
-      class="btn-lightbox-carousel btn-next"
-      title="Next"
-      (click)="next()"
-    >
-      <span class="icon-lightbox-carousel">Next</span>
-    </button>
+  @for (column of data; track column; let col = $index) {
     <div
-      *ngIf="previewImage"
-      [@animation-enter]="{ value: 'visible' }"
-      (@animation-enter.done)="onAnimationEnd($event)"
-      class="lightbox-img"
-    >
-      <img
-        #galleryPreviewImg
-        *ngIf="currentLightboxImg"
-        alt="{{ currentLightboxImg.title }}"
-        src="{{ currentLightboxImg.url }}/width/2400"
+      #galleryItem
+      class="gallery"
+      >
+      @for (data of column; track data; let i = $index) {
+        <div class="gallery-img">
+          <img
+            #galleryImg
+            (click)="onPreviewImage(col, i)"
+            alt="{{ data.title }}"
+            onKeyPress=""
+            onKeyDown=""
+            onKeyUp=""
+            src="{{ data.url }}/width/{{ getGalleryPreviewWidth() }}"
+            width="{{ getGalleryPreviewWidth() }}"
+            height="{{ getGalleryPreviewHeight(data.width, data.height) }}"
+            srcset="{{ data.url }}/width/700 1200w, {{ data.url }}/width/1000 1024w, {{ data.url }}/width/1200 650w"
+            sizes="(max-width: 1024px) 700px, (max-width: 650px) 1000px, 1200px"
+            priority
+            placeholder
+            />
+        </div>
+      }
+    </div>
+  }
+  @if (showMask) {
+    <div class="lightbox" [@animation-leave]="{ value: 'hide' }">
+      <span class="count"> {{ imageNum }}/{{ totalImageCount }} </span>
+      @if (previewImage) {
+        <button
+          type="button"
+          (click)="onclosePreview()"
+          class="close-btn"
+          title="Close"
+          >
+          <span
+            class="icon-lightbox-carousel"
+            onKeyPress=""
+            onKeyDown=""
+            onKeyUp=""
+            >
+            Close
+          </span>
+        </button>
+      }
+      @if (controls) {
+        <button
+          type="button"
+          class="btn-lightbox-carousel btn-prev"
+          title="Previous"
+          (click)="prev()"
+          >
+          <span class="icon-lightbox-carousel">Prev</span>
+        </button>
+      }
+      @if (controls) {
+        <button
+          type="button"
+          class="btn-lightbox-carousel btn-next"
+          title="Next"
+          (click)="next()"
+          >
+          <span class="icon-lightbox-carousel">Next</span>
+        </button>
+      }
+      @if (previewImage) {
+        <div
+          [@animation-enter]="{ value: 'visible' }"
+          (@animation-enter.done)="onAnimationEnd($event)"
+          class="lightbox-img"
+          >
+          @if (currentLightboxImg) {
+            <img
+              #galleryPreviewImg
+              alt="{{ currentLightboxImg.title }}"
+              src="{{ currentLightboxImg.url }}/width/2400"
         width="{{
           getGalleryImageWidth(
             currentLightboxImg.width,
@@ -81,9 +88,12 @@
             currentLightboxImg.height
           )
         }}"
-        priority
-      />
-      <span class="signature">R.G.</span>
+              priority
+              />
+          }
+          <span class="signature">R.G.</span>
+        </div>
+      }
     </div>
-  </div>
+  }
 </div>

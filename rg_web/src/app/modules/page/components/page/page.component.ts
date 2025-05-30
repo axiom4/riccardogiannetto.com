@@ -9,13 +9,13 @@ import { ActivatedRoute, NavigationEnd, Event, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { HighlightService } from '../../../main/highlight.service';
 import { MarkedPipe } from '../../../main/marked.pipe';
-import { DatePipe, NgIf } from '@angular/common';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-page',
   templateUrl: './page.component.html',
   styleUrl: './page.component.scss',
-  imports: [NgIf, DatePipe, MarkedPipe],
+  imports: [DatePipe, MarkedPipe],
   providers: [HighlightService],
 })
 export class PageComponent implements OnInit, OnDestroy, AfterViewChecked {

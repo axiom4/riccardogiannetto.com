@@ -1,6 +1,6 @@
 # @
 
-Test description
+Riccardo Giannetto API for internal use
 
 The version of the OpenAPI document: 1.0.0
 
