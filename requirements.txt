@@ -24,7 +24,7 @@ jsonschema==4.24.0
 jsonschema-specifications==2025.4.1
 Markdown==3.8
 mysqlclient==2.2.7
-numpy==2.2.6
+numpy==2.3.0
 opencv-python==4.11.0.86
 pillow==11.2.1
 psutil==7.0.0
@@ -42,7 +42,7 @@ service-identity==24.2.0
 setuptools==80.9.0
 six==1.17.0
 sqlparse==0.5.3
-Twisted==24.11.0
+Twisted==25.5.0
 txaio==23.1.1
 typing_extensions==4.14.0
 uritemplate==4.2.0
