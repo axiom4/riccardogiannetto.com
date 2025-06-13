@@ -10,8 +10,8 @@
 /* tslint:disable:no-unused-variable member-ordering */
 
 import { Inject, Injectable, Optional }                      from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams,
-         HttpResponse, HttpEvent, HttpParameterCodec, HttpContext 
+import { HttpClient, HttpParams,
+         HttpResponse, HttpEvent, HttpContext 
         }       from '@angular/common/http';
 
 import { Observable }                                        from 'rxjs';
