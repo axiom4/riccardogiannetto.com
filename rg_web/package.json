@@ -18,7 +18,7 @@
     "@angular/forms": "^20.2.4",
     "@angular/platform-browser": "^20.2.4",
     "@angular/platform-browser-dynamic": "^20.2.4",
-    "@angular/router": "^20.2.4",
+    "@angular/router": "^20.3.0",
     "@openapitools/openapi-generator-cli": "^2.23.1",
     "@types/prismjs": "^1.26.5",
     "marked": "^16.2.1",
