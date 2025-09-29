@@ -35,7 +35,7 @@ pycparser==2.23
 Pygments==2.19.2
 pymemcache==4.0.0
 pyOpenSSL==25.3.0
-PyYAML==6.0.2
+PyYAML==6.0.3
 referencing==0.36.2
 rpds-py==0.27.1
 service-identity==24.2.0
@@ -43,9 +43,9 @@ setuptools==80.9.0
 six==1.17.0
 sqlparse==0.5.3
 Twisted==25.5.0
-txaio==25.6.1
+txaio==25.9.2
 typing_extensions==4.15.0
 uritemplate==4.2.0
 urllib3==2.5.0
 wrapt==1.17.3
-zope.interface==8.0
+zope.interface==8.0.1
