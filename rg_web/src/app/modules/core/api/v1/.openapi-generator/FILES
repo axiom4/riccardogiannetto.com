@@ -25,4 +25,5 @@ model/post.ts
 model/postPreview.ts
 model/user.ts
 param.ts
+provide-api.ts
 variables.ts
