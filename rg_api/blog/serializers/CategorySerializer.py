@@ -9,6 +9,6 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
 
-    def get_posts(self, obj):
+    def get_posts(self, obj) -> int:
         posts = obj.post_set.all().count()
         return posts

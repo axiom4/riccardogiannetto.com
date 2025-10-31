@@ -60,6 +60,7 @@ export interface BlogServiceInterface {
     /**
      * 
      * API endpoint that allows groups to be viewed or edited.
+     * @endpoint get /blog/categories
 * @param requestParameters
      */
     blogCategoriesList(requestParameters: BlogCategoriesListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedCategoryList>;
@@ -67,6 +68,7 @@ export interface BlogServiceInterface {
     /**
      * 
      * API endpoint that allows groups to be viewed or edited.
+     * @endpoint get /blog/categories/{id}
 * @param requestParameters
      */
     blogCategoriesRetrieve(requestParameters: BlogCategoriesRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Category>;
@@ -74,6 +76,7 @@ export interface BlogServiceInterface {
     /**
      * 
      * 
+     * @endpoint get /blog/pages
 * @param requestParameters
      */
     blogPagesList(requestParameters: BlogPagesListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedPageList>;
@@ -81,6 +84,7 @@ export interface BlogServiceInterface {
     /**
      * 
      * 
+     * @endpoint get /blog/pages/{tag}
 * @param requestParameters
      */
     blogPagesRetrieve(requestParameters: BlogPagesRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Page>;
@@ -88,6 +92,7 @@ export interface BlogServiceInterface {
     /**
      * 
      * 
+     * @endpoint get /blog/posts
 * @param requestParameters
      */
     blogPostsList(requestParameters: BlogPostsListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedPostPreviewList>;
@@ -95,6 +100,7 @@ export interface BlogServiceInterface {
     /**
      * 
      * 
+     * @endpoint get /blog/posts/{id}
 * @param requestParameters
      */
     blogPostsRetrieve(requestParameters: BlogPostsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Post>;

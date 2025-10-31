@@ -11,7 +11,7 @@
 
 export interface Category { 
     readonly id: number;
-    readonly posts: string;
+    readonly posts: number;
     name: string;
 }
 

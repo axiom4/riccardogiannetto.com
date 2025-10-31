@@ -57,6 +57,7 @@ export interface PortfolioServiceInterface {
     /**
      * 
      * 
+     * @endpoint get /portfolio/galleries
 * @param requestParameters
      */
     portfolioGalleriesList(requestParameters: PortfolioGalleriesListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedGalleryList>;
@@ -64,6 +65,7 @@ export interface PortfolioServiceInterface {
     /**
      * 
      * 
+     * @endpoint get /portfolio/galleries/{id}
 * @param requestParameters
      */
     portfolioGalleriesRetrieve(requestParameters: PortfolioGalleriesRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Gallery>;
@@ -71,6 +73,7 @@ export interface PortfolioServiceInterface {
     /**
      * 
      * 
+     * @endpoint get /portfolio/images
 * @param requestParameters
      */
     portfolioImagesList(requestParameters: PortfolioImagesListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedImageGalleryList>;
@@ -78,6 +81,7 @@ export interface PortfolioServiceInterface {
     /**
      * 
      * 
+     * @endpoint get /portfolio/images/{id}
 * @param requestParameters
      */
     portfolioImagesRetrieve(requestParameters: PortfolioImagesRetrieveRequestParams, extraHttpRequestParams?: any): Observable<ImageGallery>;
@@ -85,6 +89,7 @@ export interface PortfolioServiceInterface {
     /**
      * 
      * 
+     * @endpoint get /portfolio/images/{id}/width/{width}
 * @param requestParameters
      */
     portfolioImagesWidthRetrieve(requestParameters: PortfolioImagesWidthRetrieveRequestParams, extraHttpRequestParams?: any): Observable<ImageGallery>;
