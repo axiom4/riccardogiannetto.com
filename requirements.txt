@@ -13,7 +13,7 @@ django-cors-headers==4.9.0
 django-filter==25.2
 django-mdeditor==0.1.20
 djangorestframework==3.16.1
-drf-spectacular==0.28.0
+drf-spectacular==0.29.0
 ecs-logging==2.2.0
 elastic-apm==6.24.0
 hyperlink==21.0.0
