@@ -97,7 +97,7 @@ export class GalleryLightboxComponent implements OnInit {
   }
 
   @HostListener('document:keydown.escape', ['$event']) onKeydownEscapeHandler(
-    event: KeyboardEvent
+    event: Event
   ) {
     if (this.previewImage) {
       this.previewImage = false;
@@ -105,7 +105,7 @@ export class GalleryLightboxComponent implements OnInit {
   }
 
   @HostListener('document:keydown.arrowLeft', ['$event']) onKeydownLeftHandler(
-    event: KeyboardEvent
+    event: Event
   ) {
     if (this.previewImage) {
       this.prev();
@@ -113,7 +113,7 @@ export class GalleryLightboxComponent implements OnInit {
   }
 
   @HostListener('document:keydown.arrowRight', ['$event'])
-  onKeydownRighttHandler(event: KeyboardEvent) {
+  onKeydownRighttHandler(event: Event) {
     if (this.previewImage) {
       this.next();
     }
