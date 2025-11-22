@@ -1,4 +1,4 @@
-asgiref==3.10.0
+asgiref==3.11.0
 attrs==25.4.0
 autobahn==25.10.2
 Automat==25.4.16
@@ -15,7 +15,6 @@ django-mdeditor==0.1.20
 djangorestframework==3.16.1
 drf-spectacular==0.29.0
 ecs-logging==2.2.0
-elastic-apm==6.24.0
 hyperlink==21.0.0
 idna==3.11
 incremental==24.7.2
