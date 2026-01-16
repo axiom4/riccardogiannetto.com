@@ -51,8 +51,8 @@ export class PageComponent implements OnInit {
         // Timeout to allow DOM update before highlighting
         setTimeout(() => {
           if (!this.highlighted()) {
-             this.highlightService.highlightAll();
-             this.highlighted.set(true);
+            this.highlightService.highlightAll();
+            this.highlighted.set(true);
           }
         });
       },

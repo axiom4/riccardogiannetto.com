@@ -4,7 +4,7 @@ import {
   ElementRef,
   EventEmitter,
   OnInit,
-  Output
+  Output,
 } from '@angular/core';
 import {} from 'rxjs';
 

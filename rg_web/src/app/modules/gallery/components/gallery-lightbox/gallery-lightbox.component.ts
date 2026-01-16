@@ -101,7 +101,7 @@ export class GalleryLightboxComponent implements OnInit {
   }
 
   @HostListener('document:keydown.escape', ['$event']) onKeydownEscapeHandler(
-    event: Event
+    event: Event,
   ) {
     if (this.previewImage()) {
       this.previewImage.set(false);
@@ -109,7 +109,7 @@ export class GalleryLightboxComponent implements OnInit {
   }
 
   @HostListener('document:keydown.arrowLeft', ['$event']) onKeydownLeftHandler(
-    event: Event
+    event: Event,
   ) {
     if (this.previewImage()) {
       this.prev();
@@ -178,7 +178,9 @@ export class GalleryLightboxComponent implements OnInit {
       }
       this.currentRow = this.data()[this.currentColumn].length - 1;
     }
-    this.currentLightboxImg.set(this.data()[this.currentColumn][this.currentRow]);
+    this.currentLightboxImg.set(
+      this.data()[this.currentColumn][this.currentRow],
+    );
   }
 
   next(): void {
@@ -187,7 +189,9 @@ export class GalleryLightboxComponent implements OnInit {
       this.currentRow = 0;
       this.currentColumn = (this.currentColumn + 1) % this.columns;
     }
-    this.currentLightboxImg.set(this.data()[this.currentColumn][this.currentRow]);
+    this.currentLightboxImg.set(
+      this.data()[this.currentColumn][this.currentRow],
+    );
   }
 
   loadItems(): void {
@@ -209,7 +213,7 @@ export class GalleryLightboxComponent implements OnInit {
         }
       } else {
         // Create a deep copy to ensure new references for change detection
-        workingData = currentData.map(col => [...col]);
+        workingData = currentData.map((col) => [...col]);
       }
 
       const items = data.results;
@@ -222,10 +226,10 @@ export class GalleryLightboxComponent implements OnInit {
           workingData[index].push(item);
         }
       });
-      
+
       this.data.set(workingData);
 
-      this.page.update(p => p + 1);
+      this.page.update((p) => p + 1);
       this.totalImageCount = data.count;
 
       this.isLoading.set(false);
@@ -250,9 +254,9 @@ export class GalleryLightboxComponent implements OnInit {
     // Because viewChildren is a signal, we access it like a function
     const galleryItems = this.galleryItem();
     if (galleryItems.length == 0 && data.flat().length > 0) {
-         // If ViewChildren not ready but we have data, we might default to 0
-         // or if it's the very first load.
-         // However, logic relies on assumption columns exist.
+      // If ViewChildren not ready but we have data, we might default to 0
+      // or if it's the very first load.
+      // However, logic relies on assumption columns exist.
     }
 
     for (let i = 0; i < this.columns; i++) {
@@ -266,12 +270,12 @@ export class GalleryLightboxComponent implements OnInit {
 
   getColumnHeight(index: number, data: ImageGallery[][]): number {
     let height = 0;
-    
+
     // Check if column exists in the provided data
-    if(data[index]) {
-        data[index].forEach((item) => {
-            height += item.height / item.width;
-        });
+    if (data[index]) {
+      data[index].forEach((item) => {
+        height += item.height / item.width;
+      });
     }
 
     return height;
@@ -300,14 +304,14 @@ export class GalleryLightboxComponent implements OnInit {
       return Math.floor(this.innerWidth * 0.7);
     }
     return Math.floor(
-      (imageWidth / imageHeight) * Math.floor(this.innerHeight * 0.8)
+      (imageWidth / imageHeight) * Math.floor(this.innerHeight * 0.8),
     );
   }
 
   getGalleryImageHeight(imageWidth: number, imageHeight: number): number {
     if (imageHeight < imageWidth) {
       return Math.floor(
-        (imageHeight / imageWidth) * Math.floor(this.innerWidth * 0.7)
+        (imageHeight / imageWidth) * Math.floor(this.innerWidth * 0.7),
       );
     }
     return Math.floor(this.innerHeight * 0.8);

@@ -3,7 +3,9 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: local("Fantasy"), url(assets/fonts/Fantasy.woff) format("woff");
+  src:
+    local("Fantasy"),
+    url(assets/fonts/Fantasy.woff) format("woff");
 }
 
 html {
@@ -154,7 +156,10 @@ code,
 kbd,
 tt,
 var {
-  font: 15px "Courier 10 Pitch", Courier, monospace;
+  font:
+    15px "Courier 10 Pitch",
+    Courier,
+    monospace;
 }
 
 *,
@@ -711,20 +716,20 @@ article th {
       }
 
       img {
-         position: absolute;
-         top: 0;
-         left: 0;
-         width: 100%;
-         height: 100%;
-         display: block;
-         
-         // Visual styling
-         border-radius: 0.35rem; // Keep on img or wrapper? Wrapper clips, so img inside ok.
-         padding: 10px;
-         border: 1px solid rgba(0, 0, 0, 0.5);
-         box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.5);
-         object-fit: cover;
-         box-sizing: border-box; 
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+
+        // Visual styling
+        border-radius: 0.35rem; // Keep on img or wrapper? Wrapper clips, so img inside ok.
+        padding: 10px;
+        border: 1px solid rgba(0, 0, 0, 0.5);
+        box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.5);
+        object-fit: cover;
+        box-sizing: border-box;
       }
     }
   }
@@ -814,8 +819,11 @@ article th {
       bottom: 110px;
       right: 80px;
       color: rgba(255, 255, 255, 1);
-      text-shadow: -1px 0 rgba(0, 0, 0, 0.56), 0 1px rgba(0, 0, 0, 0.56),
-        1px 0 rgba(0, 0, 0, 0.56), 0 -1px rgba(0, 0, 0, 0.56);
+      text-shadow:
+        -1px 0 rgba(0, 0, 0, 0.56),
+        0 1px rgba(0, 0, 0, 0.56),
+        1px 0 rgba(0, 0, 0, 0.56),
+        0 -1px rgba(0, 0, 0, 0.56);
       opacity: 0.9;
       font-size: 50px;
       display: flex;

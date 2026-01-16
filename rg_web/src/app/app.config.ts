@@ -2,10 +2,7 @@ import { ApplicationConfig } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
 import { routes } from './app.routes';
-import {
-  Configuration,
-  ConfigurationParameters,
-} from './modules/core/api/v1';
+import { Configuration, ConfigurationParameters } from './modules/core/api/v1';
 import { environment } from '../environments/environment';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -24,7 +21,7 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({
         anchorScrolling: 'disabled',
         scrollPositionRestoration: 'top',
-      })
+      }),
     ),
     provideAnimations(),
     { provide: Configuration, useFactory: apiConfigFactory },

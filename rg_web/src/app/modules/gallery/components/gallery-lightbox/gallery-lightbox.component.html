@@ -1,11 +1,12 @@
 <div #container class="gallery-lightbox-container">
   @for (column of data(); track $index; let col = $index) {
-    <div
-      #galleryItem
-      class="gallery"
-      >
+    <div #galleryItem class="gallery">
       @for (item of column; track item.url; let i = $index) {
-        <div class="gallery-img" [class.portrait]="item.height > item.width" [class.landscape]="item.height <= item.width">
+        <div
+          class="gallery-img"
+          [class.portrait]="item.height > item.width"
+          [class.landscape]="item.height <= item.width"
+        >
           <img
             #galleryImg
             (click)="onPreviewImage(col, i)"
@@ -20,7 +21,7 @@
             sizes="(max-width: 1024px) 700px, (max-width: 650px) 1000px, 1200px"
             priority
             placeholder
-            />
+          />
         </div>
       }
     </div>
@@ -34,13 +35,13 @@
           (click)="onclosePreview()"
           class="close-btn"
           title="Close"
-          >
+        >
           <span
             class="icon-lightbox-carousel"
             onKeyPress=""
             onKeyDown=""
             onKeyUp=""
-            >
+          >
             Close
           </span>
         </button>
@@ -51,7 +52,7 @@
           class="btn-lightbox-carousel btn-prev"
           title="Previous"
           (click)="prev()"
-          >
+        >
           <span class="icon-lightbox-carousel">Prev</span>
         </button>
       }
@@ -61,7 +62,7 @@
           class="btn-lightbox-carousel btn-next"
           title="Next"
           (click)="next()"
-          >
+        >
           <span class="icon-lightbox-carousel">Next</span>
         </button>
       }
@@ -70,26 +71,26 @@
           [@animation-enter]="{ value: 'visible' }"
           (@animation-enter.done)="onAnimationEnd($event)"
           class="lightbox-img"
-          >
+        >
           @if (currentLightboxImg()) {
             <img
               #galleryPreviewImg
               alt="{{ currentLightboxImg()!.title }}"
               src="{{ currentLightboxImg()!.url }}/width/2400"
-        width="{{
-          getGalleryImageWidth(
-            currentLightboxImg()!.width,
-            currentLightboxImg()!.height
-          )
-        }}"
-        height="{{
-          getGalleryImageHeight(
-            currentLightboxImg()!.width,
-            currentLightboxImg()!.height
-          )
-        }}"
+              width="{{
+                getGalleryImageWidth(
+                  currentLightboxImg()!.width,
+                  currentLightboxImg()!.height
+                )
+              }}"
+              height="{{
+                getGalleryImageHeight(
+                  currentLightboxImg()!.width,
+                  currentLightboxImg()!.height
+                )
+              }}"
               priority
-              />
+            />
           }
           <span class="signature">R.G.</span>
         </div>
