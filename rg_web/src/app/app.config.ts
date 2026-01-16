@@ -1,9 +1,8 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
 import { routes } from './app.routes';
 import {
-  ApiModule,
   Configuration,
   ConfigurationParameters,
 } from './modules/core/api/v1';
@@ -28,7 +27,7 @@ export const appConfig: ApplicationConfig = {
       })
     ),
     provideAnimations(),
-    importProvidersFrom(ApiModule.forRoot(apiConfigFactory)),
+    { provide: Configuration, useFactory: apiConfigFactory },
     provideHttpClient(withFetch()),
   ],
 };

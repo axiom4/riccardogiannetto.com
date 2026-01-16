@@ -1,11 +1,10 @@
-import { AfterViewChecked, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   BlogPagesRetrieveRequestParams,
   BlogService,
   Page,
 } from '../../../core/api/v1';
-import { Subscription } from 'rxjs';
-import { ActivatedRoute, NavigationEnd, Event, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { HighlightService } from '../../../main/highlight.service';
 import { MarkedPipe } from '../../../main/marked.pipe';
@@ -18,44 +17,25 @@ import { DatePipe } from '@angular/common';
   imports: [DatePipe, MarkedPipe],
   providers: [HighlightService],
 })
-export class PageComponent implements OnInit, OnDestroy, AfterViewChecked {
-  page: Page | undefined;
-  currentRoute: string | undefined;
-  subscription: Subscription | undefined;
-  highlighted: boolean = false;
+export class PageComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private blogService = inject(BlogService);
+  private title = inject(Title);
+  private highlightService = inject(HighlightService);
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private blogService: BlogService,
-    private title: Title,
-    private highlightService: HighlightService
-  ) {}
+  page = signal<Page | undefined>(undefined);
+  highlighted = signal<boolean>(false);
 
-  ngAfterViewChecked() {
-    if (this.page && !this.highlighted) {
-      this.highlightService.highlightAll();
-      this.highlighted = true;
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.subscription) this.subscription.unsubscribe();
-  }
+  constructor() {}
 
   ngOnInit(): void {
-    const tag = this.route.snapshot.paramMap.get('tag');
-    if (tag) {
-      this.getPage(tag);
-    }
-
-    this.subscription = this.router.events.subscribe((event: Event) => {
-      if (event instanceof NavigationEnd) {
-        const tag = this.route.snapshot.paramMap.get('tag');
-        if (tag) {
-          this.page = undefined;
-          this.getPage(tag);
-        }
+    this.route.paramMap.subscribe((params) => {
+      const tag = params.get('tag');
+      if (tag) {
+        this.page.set(undefined);
+        this.highlighted.set(false);
+        this.getPage(tag);
       }
     });
   }
@@ -66,8 +46,15 @@ export class PageComponent implements OnInit, OnDestroy, AfterViewChecked {
     };
     this.blogService.blogPagesRetrieve(params).subscribe({
       next: (page) => {
-        this.page = page;
+        this.page.set(page);
         this.title.setTitle(page.title);
+        // Timeout to allow DOM update before highlighting
+        setTimeout(() => {
+          if (!this.highlighted()) {
+             this.highlightService.highlightAll();
+             this.highlighted.set(true);
+          }
+        });
       },
       error: (error) => {
         this.router.navigate(['/notfound']);

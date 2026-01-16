@@ -1,22 +1,22 @@
 <div #container class="gallery-lightbox-container">
-  @for (column of data; track column; let col = $index) {
+  @for (column of data(); track $index; let col = $index) {
     <div
       #galleryItem
       class="gallery"
       >
-      @for (data of column; track data; let i = $index) {
-        <div class="gallery-img">
+      @for (item of column; track item.url; let i = $index) {
+        <div class="gallery-img" [class.portrait]="item.height > item.width" [class.landscape]="item.height <= item.width">
           <img
             #galleryImg
             (click)="onPreviewImage(col, i)"
-            alt="{{ data.title }}"
+            alt="{{ item.title }}"
             onKeyPress=""
             onKeyDown=""
             onKeyUp=""
-            src="{{ data.url }}/width/{{ getGalleryPreviewWidth() }}"
+            src="{{ item.url }}/width/{{ getGalleryPreviewWidth() }}"
             width="{{ getGalleryPreviewWidth() }}"
-            height="{{ getGalleryPreviewHeight(data.width, data.height) }}"
-            srcset="{{ data.url }}/width/700 1200w, {{ data.url }}/width/1000 1024w, {{ data.url }}/width/1200 650w"
+            height="{{ getGalleryPreviewHeight(item.width, item.height) }}"
+            srcset="{{ item.url }}/width/700 1200w, {{ item.url }}/width/1000 1024w, {{ item.url }}/width/1200 650w"
             sizes="(max-width: 1024px) 700px, (max-width: 650px) 1000px, 1200px"
             priority
             placeholder
@@ -25,10 +25,10 @@
       }
     </div>
   }
-  @if (showMask) {
+  @if (showMask()) {
     <div class="lightbox" [@animation-leave]="{ value: 'hide' }">
       <span class="count"> {{ imageNum }}/{{ totalImageCount }} </span>
-      @if (previewImage) {
+      @if (previewImage()) {
         <button
           type="button"
           (click)="onclosePreview()"
@@ -65,27 +65,27 @@
           <span class="icon-lightbox-carousel">Next</span>
         </button>
       }
-      @if (previewImage) {
+      @if (previewImage()) {
         <div
           [@animation-enter]="{ value: 'visible' }"
           (@animation-enter.done)="onAnimationEnd($event)"
           class="lightbox-img"
           >
-          @if (currentLightboxImg) {
+          @if (currentLightboxImg()) {
             <img
               #galleryPreviewImg
-              alt="{{ currentLightboxImg.title }}"
-              src="{{ currentLightboxImg.url }}/width/2400"
+              alt="{{ currentLightboxImg()!.title }}"
+              src="{{ currentLightboxImg()!.url }}/width/2400"
         width="{{
           getGalleryImageWidth(
-            currentLightboxImg.width,
-            currentLightboxImg.height
+            currentLightboxImg()!.width,
+            currentLightboxImg()!.height
           )
         }}"
         height="{{
           getGalleryImageHeight(
-            currentLightboxImg.width,
-            currentLightboxImg.height
+            currentLightboxImg()!.width,
+            currentLightboxImg()!.height
           )
         }}"
               priority

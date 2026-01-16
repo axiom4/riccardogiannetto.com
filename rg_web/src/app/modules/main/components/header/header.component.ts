@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ElementRef, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -8,9 +8,9 @@ import { RouterLink } from '@angular/router';
     styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-  @ViewChild('menu') menu: any;
+  menu = viewChild<ElementRef>('menu');
   toggleMenu() {
     console.log('toggle menu');
-    this.menu.nativeElement.classList.toggle('visible');
+    this.menu()?.nativeElement.classList.toggle('visible');
   }
 }

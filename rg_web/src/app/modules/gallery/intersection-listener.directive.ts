@@ -10,6 +10,7 @@ import {} from 'rxjs';
 
 @Directive({
   selector: '[appIntersectionListener]',
+  standalone: true,
 })
 export class IntersectionListenerDirective implements AfterViewInit, OnInit {
   @Output() appIntersectionListener = new EventEmitter<boolean>();

@@ -2,9 +2,11 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   OnInit,
   QueryList,
-  ViewChildren,
+  signal,
+  viewChildren,
 } from '@angular/core';
 import {
   animate,
@@ -55,20 +57,22 @@ const galleryLoaderProvider = (config: ImageLoaderConfig) => {
   ],
 })
 export class GalleryLightboxComponent implements OnInit {
-  isLoading = false;
-  data: ImageGallery[][] = [];
-  page = 1;
+  private portfolioService = inject(PortfolioService);
+
+  isLoading = signal(false);
+  data = signal<ImageGallery[][]>([]);
+  page = signal(1);
   perPage = 9;
   innerWidth = 0;
   innerHeight = 0;
-  imageWidth = 0;
+  imageWidth = signal(0);
   index = 0;
 
   columns = 0;
 
-  previewImage = false;
-  showMask = false;
-  currentLightboxImg: ImageGallery | undefined;
+  previewImage = signal(false);
+  showMask = signal(false);
+  currentLightboxImg = signal<ImageGallery | undefined>(undefined);
   currentRow = 0;
   currentColumn = 0;
   controls = true;
@@ -76,17 +80,17 @@ export class GalleryLightboxComponent implements OnInit {
   totalImageCount = 0;
   imageNum = 0;
 
-  @ViewChildren('galleryItem') galleryItem: QueryList<ElementRef> | undefined;
+  galleryItem = viewChildren<ElementRef>('galleryItem');
 
   @HostListener('window:scroll', ['$event'])
   onWindowScroll(event: any) {
     if (
       window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 &&
-      !this.isLoading
+      !this.isLoading()
     ) {
       let imageCount = 0;
 
-      this.data.forEach((column) => {
+      this.data().forEach((column) => {
         imageCount += column.length;
       });
 
@@ -99,22 +103,22 @@ export class GalleryLightboxComponent implements OnInit {
   @HostListener('document:keydown.escape', ['$event']) onKeydownEscapeHandler(
     event: Event
   ) {
-    if (this.previewImage) {
-      this.previewImage = false;
+    if (this.previewImage()) {
+      this.previewImage.set(false);
     }
   }
 
   @HostListener('document:keydown.arrowLeft', ['$event']) onKeydownLeftHandler(
     event: Event
   ) {
-    if (this.previewImage) {
+    if (this.previewImage()) {
       this.prev();
     }
   }
 
   @HostListener('document:keydown.arrowRight', ['$event'])
   onKeydownRighttHandler(event: Event) {
-    if (this.previewImage) {
+    if (this.previewImage()) {
       this.next();
     }
   }
@@ -125,14 +129,14 @@ export class GalleryLightboxComponent implements OnInit {
       this.innerWidth = window.innerWidth;
       this.setColumns(this.innerWidth);
 
-      if (this.data.length != this.columns && !this.isLoading) {
-        this.page = 1;
+      if (this.data().length != this.columns && !this.isLoading()) {
+        this.page.set(1);
         this.loadItems();
       }
     }
   }
 
-  constructor(private portfolioService: PortfolioService) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.totalImageCount = 0;
@@ -144,24 +148,24 @@ export class GalleryLightboxComponent implements OnInit {
   }
 
   onPreviewImage(column: number, row: number): void {
-    this.showMask = true;
-    this.previewImage = true;
+    this.showMask.set(true);
+    this.previewImage.set(true);
 
     this.currentRow = row;
     this.currentColumn = column;
 
-    this.currentLightboxImg = this.data[column][row];
+    this.currentLightboxImg.set(this.data()[column][row]);
   }
 
   onAnimationEnd(event: AnimationEvent): void {
     if (event.toState === 'void') {
-      this.showMask = false;
-      this.previewImage = false;
+      this.showMask.set(false);
+      this.previewImage.set(false);
     }
   }
 
   onclosePreview(): void {
-    this.previewImage = false;
+    this.previewImage.set(false);
   }
 
   prev(): void {
@@ -172,51 +176,59 @@ export class GalleryLightboxComponent implements OnInit {
       } else {
         this.currentColumn = (this.currentColumn - 1) % this.columns;
       }
-      this.currentRow = this.data[this.currentColumn].length - 1;
+      this.currentRow = this.data()[this.currentColumn].length - 1;
     }
-    this.currentLightboxImg = this.data[this.currentColumn][this.currentRow];
+    this.currentLightboxImg.set(this.data()[this.currentColumn][this.currentRow]);
   }
 
   next(): void {
     this.currentRow++;
-    if (this.currentRow > this.data[this.currentColumn].length - 1) {
+    if (this.currentRow > this.data()[this.currentColumn].length - 1) {
       this.currentRow = 0;
       this.currentColumn = (this.currentColumn + 1) % this.columns;
     }
-    this.currentLightboxImg = this.data[this.currentColumn][this.currentRow];
+    this.currentLightboxImg.set(this.data()[this.currentColumn][this.currentRow]);
   }
 
   loadItems(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     const params: PortfolioImagesListRequestParams = {
       gallery: 1,
-      page: this.page,
+      page: this.page(),
       pageSize: this.perPage,
       ordering: '-date',
     };
     this.portfolioService.portfolioImagesList(params).subscribe((data) => {
-      if (this.data.length != this.columns) {
-        this.data = [];
+      let workingData: ImageGallery[][] = [];
 
+      // Initialize or clone data
+      const currentData = this.data();
+      if (currentData.length !== this.columns) {
         for (let i = 0; i < this.columns; i++) {
-          this.data.push(new Array<ImageGallery>());
+          workingData.push([]);
         }
+      } else {
+        // Create a deep copy to ensure new references for change detection
+        workingData = currentData.map(col => [...col]);
       }
 
       const items = data.results;
 
       items.forEach((item: ImageGallery) => {
-        const index = this.getLowerColumnHeightIndex();
+        // Pass workingData so we calculate height based on the current batch state
+        const index = this.getLowerColumnHeightIndex(workingData);
 
-        if (this.data[index] != undefined) {
-          this.data[index].push(item);
+        if (workingData[index] != undefined) {
+          workingData[index].push(item);
         }
       });
+      
+      this.data.set(workingData);
 
-      this.page++;
+      this.page.update(p => p + 1);
       this.totalImageCount = data.count;
 
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
 
@@ -233,12 +245,18 @@ export class GalleryLightboxComponent implements OnInit {
     }
   }
 
-  getLowerColumnHeightIndex(): number {
+  getLowerColumnHeightIndex(data: ImageGallery[][]): number {
     let index = 0;
-    if (this.galleryItem == undefined) return index;
+    // Because viewChildren is a signal, we access it like a function
+    const galleryItems = this.galleryItem();
+    if (galleryItems.length == 0 && data.flat().length > 0) {
+         // If ViewChildren not ready but we have data, we might default to 0
+         // or if it's the very first load.
+         // However, logic relies on assumption columns exist.
+    }
 
     for (let i = 0; i < this.columns; i++) {
-      if (this.getColumnHeight(i) < this.getColumnHeight(index)) {
+      if (this.getColumnHeight(i, data) < this.getColumnHeight(index, data)) {
         index = i;
       }
     }
@@ -246,12 +264,15 @@ export class GalleryLightboxComponent implements OnInit {
     return index;
   }
 
-  getColumnHeight(index: number): number {
+  getColumnHeight(index: number, data: ImageGallery[][]): number {
     let height = 0;
-
-    this.data[index].forEach((item) => {
-      height += item.height / item.width;
-    });
+    
+    // Check if column exists in the provided data
+    if(data[index]) {
+        data[index].forEach((item) => {
+            height += item.height / item.width;
+        });
+    }
 
     return height;
   }
