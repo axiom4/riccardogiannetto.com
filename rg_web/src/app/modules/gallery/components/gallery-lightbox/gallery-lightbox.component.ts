@@ -90,7 +90,7 @@ export class GalleryLightboxComponent implements OnInit {
   imageNum = 0;
 
   private lastItemWasLarge = false;
-  
+
   // Layout State for incremental updates
   private colHeights: number[] = [];
   private processedCount = 0;
@@ -238,7 +238,7 @@ export class GalleryLightboxComponent implements OnInit {
         // We will layout in the next step, but update state first
         return updated;
       });
-      
+
       this.recalculateLayout();
 
       this.page.update((p) => p + 1);
@@ -250,29 +250,29 @@ export class GalleryLightboxComponent implements OnInit {
 
   recalculateLayout(): void {
     const allItems = this.galleryItems();
-    
+
     // Safety: If we have fewer items than processed (reset?), reset state
     if (allItems.length < this.processedCount) {
-        this.processedCount = 0;
-        this.colHeights = new Array(this.columns).fill(0);
-        this.preferRightSide = false;
+      this.processedCount = 0;
+      this.colHeights = new Array(this.columns).fill(0);
+      this.preferRightSide = false;
     }
-    
+
     if (this.processedCount >= allItems.length) return;
 
     const colHeights = this.colHeights;
     const placedItems = allItems.slice(0, this.processedCount);
-    
-    let items = allItems.slice(this.processedCount).map(it => ({
+
+    let items = allItems.slice(this.processedCount).map((it) => ({
       ...it,
       cols: it.baseCols,
-      rows: it.baseRows
+      rows: it.baseRows,
     }));
-    
+
     if (!items.length) return;
-    
+
     // Helper to keep code below happy with local var, syncing to class prop
-    let preferRightSide = this.preferRightSide; 
+    let preferRightSide = this.preferRightSide;
 
     const getEffectiveSize = (item: GalleryItem) => {
       let eCols = item.baseCols;
@@ -296,7 +296,7 @@ export class GalleryLightboxComponent implements OnInit {
 
       // 1. Find the lowest slot (Min-Height Strategy)
       const minH = Math.min(...colHeights);
-      
+
       let startCol = -1;
       let availableWidth = 0;
 
@@ -318,92 +318,95 @@ export class GalleryLightboxComponent implements OnInit {
       // Calculate context bounds for "Flatness" strategy
       // We check neighboring columns to define a "ceiling" we shouldn't exceed
       const leftH = startCol > 0 ? colHeights[startCol - 1] : Infinity;
-      const rightH = startCol + availableWidth < this.columns ? colHeights[startCol + availableWidth] : Infinity;
+      const rightH =
+        startCol + availableWidth < this.columns
+          ? colHeights[startCol + availableWidth]
+          : Infinity;
       const shelfCeiling = Math.min(leftH, rightH);
 
       // 3. Search for the best fitting item (among new items only)
       let bestItemIndex = -1;
       let bestItemMetric = -Infinity;
-      
+
       for (let i = 0; i < items.length; i++) {
         const sz = getEffectiveSize(items[i]);
 
         // Constraint: No vertical overlap with existing large items
         let conflict = false;
         if (sz.eCols >= 2) {
-             const yStart = minH;
-             const yEnd = minH + sz.eRows;
-             
-             // Check against ALL placed items (old + newly placed in this batch)
-             for (const p of placedItems) {
-                 if (p.cols >= 2) {
-                     const pStart = (p.gridRowStart || 0) - 1;
-                     const pEnd = pStart + p.rows;
-                     if (pStart < yEnd && pEnd > yStart) {
-                         conflict = true;
-                         break;
-                     }
-                 }
-             }
+          const yStart = minH;
+          const yEnd = minH + sz.eRows;
+
+          // Check against ALL placed items (old + newly placed in this batch)
+          for (const p of placedItems) {
+            if (p.cols >= 2) {
+              const pStart = (p.gridRowStart || 0) - 1;
+              const pEnd = pStart + p.rows;
+              if (pStart < yEnd && pEnd > yStart) {
+                conflict = true;
+                break;
+              }
+            }
+          }
         }
-        
+
         if (conflict) continue;
 
         // Constraint 2: No adjancent tall items
         if (sz.eRows >= 2 && sz.eCols === 1) {
-            const yStart = minH;
-            const yEnd = minH + sz.eRows;
-            let validPlacementExists = false;
-            
-            for (let offset = 0; offset < availableWidth; offset++) {
-                const tryCol = startCol + offset;
-                let leftBad = false;
-                if (tryCol > 0) {
-                     leftBad = placedItems.some(p => {
-                         if (p.gridColumnStart !== (tryCol - 1) + 1) return false;
-                         if (p.rows < 2) return false;
-                         const pStart = (p.gridRowStart || 0) - 1;
-                         const pEnd = pStart + p.rows;
-                         return (pStart < yEnd && pEnd > yStart);
-                     });
-                }
-                let rightBad = false;
-                if (tryCol < this.columns - 1) {
-                     rightBad = placedItems.some(p => {
-                         if (p.gridColumnStart !== (tryCol + 1) + 1) return false;
-                         if (p.rows < 2) return false;
-                         const pStart = (p.gridRowStart || 0) - 1;
-                         const pEnd = pStart + p.rows;
-                         return (pStart < yEnd && pEnd > yStart);
-                     });
-                }
-                if (!leftBad && !rightBad) {
-                    validPlacementExists = true;
-                    break; 
-                }
-            }
-            if (!validPlacementExists) continue;
-        }
-        
-        if (sz.eCols <= availableWidth) {
-           // METRIC IMPROVEMENT: "Flat Top" Strategy.
-           // If the item fills the width (eCols >= availableWidth), we target the external shelfCeiling.
-           // If the item is narrower (splits the shelf), we are effectively creating a step against our own floor (minH).
-           const localCeiling = (sz.eCols >= availableWidth) ? shelfCeiling : minH;
-           
-           // Calculate how much this item would stick out above the desired ceiling
-           const overshoot = Math.max(0, (minH + sz.eRows) - localCeiling);
-           
-           // Formula:
-           // 1. Width * 1000: Filling width is #1 priority (prevents holes).
-           // 2. Rows * 10: Bigger items make more progress.
-           // 3. Overshoot * -20: Strict penalty for creating jagged columns. OVERSHOOT > ROW GAIN.
-           const metric = (sz.eCols * 1000) + (sz.eRows * 10) - (overshoot * 20);
+          const yStart = minH;
+          const yEnd = minH + sz.eRows;
+          let validPlacementExists = false;
 
-           if (metric > bestItemMetric) {
-             bestItemMetric = metric;
-             bestItemIndex = i;
-           }
+          for (let offset = 0; offset < availableWidth; offset++) {
+            const tryCol = startCol + offset;
+            let leftBad = false;
+            if (tryCol > 0) {
+              leftBad = placedItems.some((p) => {
+                if (p.gridColumnStart !== tryCol - 1 + 1) return false;
+                if (p.rows < 2) return false;
+                const pStart = (p.gridRowStart || 0) - 1;
+                const pEnd = pStart + p.rows;
+                return pStart < yEnd && pEnd > yStart;
+              });
+            }
+            let rightBad = false;
+            if (tryCol < this.columns - 1) {
+              rightBad = placedItems.some((p) => {
+                if (p.gridColumnStart !== tryCol + 1 + 1) return false;
+                if (p.rows < 2) return false;
+                const pStart = (p.gridRowStart || 0) - 1;
+                const pEnd = pStart + p.rows;
+                return pStart < yEnd && pEnd > yStart;
+              });
+            }
+            if (!leftBad && !rightBad) {
+              validPlacementExists = true;
+              break;
+            }
+          }
+          if (!validPlacementExists) continue;
+        }
+
+        if (sz.eCols <= availableWidth) {
+          // METRIC IMPROVEMENT: "Flat Top" Strategy.
+          // If the item fills the width (eCols >= availableWidth), we target the external shelfCeiling.
+          // If the item is narrower (splits the shelf), we are effectively creating a step against our own floor (minH).
+          const localCeiling = sz.eCols >= availableWidth ? shelfCeiling : minH;
+
+          // Calculate how much this item would stick out above the desired ceiling
+          const overshoot = Math.max(0, minH + sz.eRows - localCeiling);
+
+          // Formula:
+          // 1. Width * 1000: Filling width is #1 priority (prevents holes).
+          // 2. Rows * 10: Bigger items make more progress.
+          // 3. Overshoot * -20: Strict penalty for creating jagged columns. OVERSHOOT > ROW GAIN.
+          const metric = sz.eCols * 1000 + sz.eRows * 10 - overshoot * 20;
+
+          if (metric > bestItemMetric) {
+            bestItemMetric = metric;
+            bestItemIndex = i;
+          }
         }
       }
 
@@ -411,33 +414,33 @@ export class GalleryLightboxComponent implements OnInit {
       if (bestItemIndex === -1) {
         // Fallback: Pick the first available item and force-shrink it.
         bestItemIndex = 0;
-        
+
         // Splicing the item out
         const item = items.splice(bestItemIndex, 1)[0];
-        
+
         // Force dimensions to fit 1xN gap
         let forcedRows = 1;
         if (item.baseCols === 2 && item.baseRows === 4) {
-             forcedRows = 2; // squashing 2x4 -> 1x2 to keep some aspect
-        } 
-        
-        item.cols = 1; 
+          forcedRows = 2; // squashing 2x4 -> 1x2 to keep some aspect
+        }
+
+        item.cols = 1;
         item.rows = forcedRows;
-        
+
         item.gridColumnStart = startCol + 1;
         item.gridRowStart = minH + 1;
-        
+
         for (let w = 0; w < item.cols; w++) {
           colHeights[startCol + w] += item.rows;
         }
-        
+
         placedItems.push(item);
         continue;
       }
 
       // 5. Place the Item (Natural Fit)
       const item = items.splice(bestItemIndex, 1)[0];
-      
+
       // Apply natural size
       const naturalSz = getEffectiveSize(item);
       item.cols = naturalSz.eCols;
@@ -447,62 +450,62 @@ export class GalleryLightboxComponent implements OnInit {
       // We must pick an offset (0 to slack) that is VALID (no heavy adjacency collisions).
       let offset = 0;
       const slack = availableWidth - item.cols;
-      
+
       if (slack > 0) {
-          // If 1x2 (Tall, Narrow), we MUST find the valid offset we promised existed in Step 3.
-          if (naturalSz.eRows >= 2 && naturalSz.eCols === 1) {
-             // Search for the valid offset again
-             for (let tryOff = 0; tryOff <= slack; tryOff++) {
-                const tryCol = startCol + tryOff;
-                
-                // Check Left
-                let leftBad = false;
-                if (tryCol > 0) {
-                     leftBad = placedItems.some(p => {
-                         if (p.gridColumnStart !== (tryCol - 1) + 1) return false;
-                         if (p.rows < 2) return false;
-                         const pStart = (p.gridRowStart || 0) - 1;
-                         const pEnd = pStart + p.rows;
-                         return (pStart < minH + item.rows && pEnd > minH);
-                     });
-                }
-                
-                // Check Right
-                let rightBad = false;
-                if (tryCol < this.columns - 1) {
-                     rightBad = placedItems.some(p => {
-                         if (p.gridColumnStart !== (tryCol + 1) + 1) return false;
-                         if (p.rows < 2) return false;
-                         const pStart = (p.gridRowStart || 0) - 1;
-                         const pEnd = pStart + p.rows;
-                         return (pStart < minH + item.rows && pEnd > minH);
-                     });
-                }
-                
-                if (!leftBad && !rightBad) {
-                    offset = tryOff; // Found it!
-                    break;
-                }
-             }
-          } else {
-             // For Wide items (2x2), use the alternating logic (Left/Right preference)
-             offset = preferRightSide ? slack : 0;
+        // If 1x2 (Tall, Narrow), we MUST find the valid offset we promised existed in Step 3.
+        if (naturalSz.eRows >= 2 && naturalSz.eCols === 1) {
+          // Search for the valid offset again
+          for (let tryOff = 0; tryOff <= slack; tryOff++) {
+            const tryCol = startCol + tryOff;
+
+            // Check Left
+            let leftBad = false;
+            if (tryCol > 0) {
+              leftBad = placedItems.some((p) => {
+                if (p.gridColumnStart !== tryCol - 1 + 1) return false;
+                if (p.rows < 2) return false;
+                const pStart = (p.gridRowStart || 0) - 1;
+                const pEnd = pStart + p.rows;
+                return pStart < minH + item.rows && pEnd > minH;
+              });
+            }
+
+            // Check Right
+            let rightBad = false;
+            if (tryCol < this.columns - 1) {
+              rightBad = placedItems.some((p) => {
+                if (p.gridColumnStart !== tryCol + 1 + 1) return false;
+                if (p.rows < 2) return false;
+                const pStart = (p.gridRowStart || 0) - 1;
+                const pEnd = pStart + p.rows;
+                return pStart < minH + item.rows && pEnd > minH;
+              });
+            }
+
+            if (!leftBad && !rightBad) {
+              offset = tryOff; // Found it!
+              break;
+            }
           }
+        } else {
+          // For Wide items (2x2), use the alternating logic (Left/Right preference)
+          offset = preferRightSide ? slack : 0;
+        }
       }
 
       const placeCol = startCol + offset;
-      
+
       // Update alternation state for next time
       // Logic: If we just placed a big item (2 cols) in a multi-col grid (3 or 4 cols)...
       if ((this.columns === 3 || this.columns === 4) && item.cols === 2) {
-          // If we placed it on the Left (col 0), next time prefer Right.
-          if (placeCol === 0) {
-              preferRightSide = true;
-          } 
-          // If we placed it on the Right (offset > 0), next time prefer Left.
-          else {
-              preferRightSide = false;
-          }
+        // If we placed it on the Left (col 0), next time prefer Right.
+        if (placeCol === 0) {
+          preferRightSide = true;
+        }
+        // If we placed it on the Right (offset > 0), next time prefer Left.
+        else {
+          preferRightSide = false;
+        }
       }
 
       item.gridColumnStart = placeCol + 1;
@@ -523,7 +526,7 @@ export class GalleryLightboxComponent implements OnInit {
 
   setColumns(width: number): void {
     const oldCols = this.columns;
-    
+
     if (width < 650) {
       this.columns = 1;
       this.perPage = 5;
@@ -540,9 +543,9 @@ export class GalleryLightboxComponent implements OnInit {
 
     // If columns count changed, or we are initializing, reset layout state
     if (oldCols !== this.columns || this.colHeights.length === 0) {
-       this.colHeights = new Array(this.columns).fill(0);
-       this.processedCount = 0;
-       this.preferRightSide = false;
+      this.colHeights = new Array(this.columns).fill(0);
+      this.processedCount = 0;
+      this.preferRightSide = false;
     }
   }
 

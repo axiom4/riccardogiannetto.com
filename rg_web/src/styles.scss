@@ -693,10 +693,10 @@ article th {
     position: relative;
     display: block;
     width: 100%;
-    
+
     // Default Padding/Size strategy is handled by item-classes now
     // But we keep the container properties
-    height: 0; 
+    height: 0;
 
     img {
       position: absolute;
@@ -714,7 +714,7 @@ article th {
     }
 
     // --- Grid Item Sizes & Alignment ---
-    // Base Calculation: 
+    // Base Calculation:
     // 1 Unit Height (Row) = 66.666% of 1 Unit Width (Col)
     // Gap = var(--gallery-gap)
 
@@ -883,15 +883,15 @@ article th {
     --gallery-gap: 20px;
     padding: 20px;
     gap: var(--gallery-gap);
-    
+
     .gallery-img {
-       // 2x4 items (Portrait) fit in 2 columns (Span 2)
-       // No change needed for span, but verify height?
-       // 2x4 on 3-col grid is 2/3 width.
-       // 2x4 on 2-col grid is 2/2 width (Full width).
-       // Should we shrink it?
-       // If we leave it 2x4, it will be very tall regular portrait.
-       // Let's leave it as is, it overrides are automatic if grid-column span matches.
+      // 2x4 items (Portrait) fit in 2 columns (Span 2)
+      // No change needed for span, but verify height?
+      // 2x4 on 3-col grid is 2/3 width.
+      // 2x4 on 2-col grid is 2/2 width (Full width).
+      // Should we shrink it?
+      // If we leave it 2x4, it will be very tall regular portrait.
+      // Let's leave it as is, it overrides are automatic if grid-column span matches.
     }
 
     .lightbox {
@@ -922,36 +922,36 @@ article th {
     --gallery-gap: 10px;
     padding: 10px;
     gap: var(--gallery-gap);
-    
+
     // Force items to behave linearly on mobile
     .gallery-img {
-       grid-column: span 1 !important;
-       
-       // Reset specialized spans to logical mobile equivalents
-       
-       // 1x1 stays 1x1 (66%)
-       &.item-1x1 { 
-          grid-row: span 1; 
-          padding-bottom: 66.666667%; 
-       }
-       
-       // 1x2 stays 1x2 (133% + gap)
-       &.item-1x2 {
-          grid-row: span 2;
-          padding-bottom: calc(133.333333% + var(--gallery-gap));
-       }
+      grid-column: span 1 !important;
 
-       // 2x2 becomes 1x1 (Landscape)
-       &.item-2x2 {
-          grid-row: span 1 !important;
-          padding-bottom: 66.666667%; 
-       }
+      // Reset specialized spans to logical mobile equivalents
 
-       // 2x4 becomes 1x2 (Portrait)
-       &.item-2x4 {
-          grid-row: span 2 !important;
-          padding-bottom: calc(133.333333% + var(--gallery-gap));
-       }
+      // 1x1 stays 1x1 (66%)
+      &.item-1x1 {
+        grid-row: span 1;
+        padding-bottom: 66.666667%;
+      }
+
+      // 1x2 stays 1x2 (133% + gap)
+      &.item-1x2 {
+        grid-row: span 2;
+        padding-bottom: calc(133.333333% + var(--gallery-gap));
+      }
+
+      // 2x2 becomes 1x1 (Landscape)
+      &.item-2x2 {
+        grid-row: span 1 !important;
+        padding-bottom: 66.666667%;
+      }
+
+      // 2x4 becomes 1x2 (Portrait)
+      &.item-2x4 {
+        grid-row: span 2 !important;
+        padding-bottom: calc(133.333333% + var(--gallery-gap));
+      }
     }
   }
 
