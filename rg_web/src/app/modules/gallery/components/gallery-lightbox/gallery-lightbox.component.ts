@@ -15,7 +15,7 @@ import {
   trigger,
   AnimationEvent,
 } from '@angular/animations';
-import { IMAGE_LOADER, ImageLoaderConfig } from '@angular/common';
+import { IMAGE_LOADER, ImageLoaderConfig, NgClass } from '@angular/common';
 import {
   ImageGallery,
   PortfolioImagesListRequestParams,
@@ -26,9 +26,19 @@ const galleryLoaderProvider = (config: ImageLoaderConfig) => {
   return `${config.src}`;
 };
 
+export interface GalleryItem {
+  data: ImageGallery;
+  cols: number;
+  rows: number;
+  baseCols: number;
+  baseRows: number;
+  gridColumnStart?: number;
+  gridRowStart?: number;
+}
+
 @Component({
   selector: 'app-gallery-lightbox',
-  imports: [],
+  imports: [NgClass],
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
   providers: [
@@ -60,7 +70,7 @@ export class GalleryLightboxComponent implements OnInit {
   private portfolioService = inject(PortfolioService);
 
   isLoading = signal(false);
-  data = signal<ImageGallery[][]>([]);
+  galleryItems = signal<GalleryItem[]>([]);
   page = signal(1);
   perPage = 9;
   innerWidth = 0;
@@ -73,12 +83,18 @@ export class GalleryLightboxComponent implements OnInit {
   previewImage = signal(false);
   showMask = signal(false);
   currentLightboxImg = signal<ImageGallery | undefined>(undefined);
-  currentRow = 0;
-  currentColumn = 0;
+  currentIdx = 0;
   controls = true;
 
   totalImageCount = 0;
   imageNum = 0;
+
+  private lastItemWasLarge = false;
+  
+  // Layout State for incremental updates
+  private colHeights: number[] = [];
+  private processedCount = 0;
+  private preferRightSide = false;
 
   galleryItem = viewChildren<ElementRef>('galleryItem');
 
@@ -88,13 +104,7 @@ export class GalleryLightboxComponent implements OnInit {
       window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 &&
       !this.isLoading()
     ) {
-      let imageCount = 0;
-
-      this.data().forEach((column) => {
-        imageCount += column.length;
-      });
-
-      if (imageCount < this.totalImageCount) {
+      if (this.galleryItems().length < this.totalImageCount) {
         this.loadItems();
       }
     }
@@ -128,11 +138,7 @@ export class GalleryLightboxComponent implements OnInit {
     if (this.innerWidth !== window?.innerWidth) {
       this.innerWidth = window.innerWidth;
       this.setColumns(this.innerWidth);
-
-      if (this.data().length != this.columns && !this.isLoading()) {
-        this.page.set(1);
-        this.loadItems();
-      }
+      this.recalculateLayout();
     }
   }
 
@@ -147,14 +153,12 @@ export class GalleryLightboxComponent implements OnInit {
     this.loadItems();
   }
 
-  onPreviewImage(column: number, row: number): void {
+  onPreviewImage(index: number): void {
     this.showMask.set(true);
     this.previewImage.set(true);
-
-    this.currentRow = row;
-    this.currentColumn = column;
-
-    this.currentLightboxImg.set(this.data()[column][row]);
+    this.currentIdx = index;
+    this.currentLightboxImg.set(this.galleryItems()[index].data);
+    this.imageNum = index + 1;
   }
 
   onAnimationEnd(event: AnimationEvent): void {
@@ -169,29 +173,21 @@ export class GalleryLightboxComponent implements OnInit {
   }
 
   prev(): void {
-    this.currentRow--;
-    if (this.currentRow < 0) {
-      if (this.currentColumn == 0) {
-        this.currentColumn = this.columns - 1;
-      } else {
-        this.currentColumn = (this.currentColumn - 1) % this.columns;
-      }
-      this.currentRow = this.data()[this.currentColumn].length - 1;
+    this.currentIdx--;
+    if (this.currentIdx < 0) {
+      this.currentIdx = this.galleryItems().length - 1;
     }
-    this.currentLightboxImg.set(
-      this.data()[this.currentColumn][this.currentRow],
-    );
+    this.currentLightboxImg.set(this.galleryItems()[this.currentIdx].data);
+    this.imageNum = this.currentIdx + 1;
   }
 
   next(): void {
-    this.currentRow++;
-    if (this.currentRow > this.data()[this.currentColumn].length - 1) {
-      this.currentRow = 0;
-      this.currentColumn = (this.currentColumn + 1) % this.columns;
+    this.currentIdx++;
+    if (this.currentIdx >= this.galleryItems().length) {
+      this.currentIdx = 0;
     }
-    this.currentLightboxImg.set(
-      this.data()[this.currentColumn][this.currentRow],
-    );
+    this.currentLightboxImg.set(this.galleryItems()[this.currentIdx].data);
+    this.imageNum = this.currentIdx + 1;
   }
 
   loadItems(): void {
@@ -203,31 +199,47 @@ export class GalleryLightboxComponent implements OnInit {
       ordering: '-date',
     };
     this.portfolioService.portfolioImagesList(params).subscribe((data) => {
-      let workingData: ImageGallery[][] = [];
+      const newItems: GalleryItem[] = data.results.map((img: ImageGallery) => {
+        const isPortrait = img.height > img.width;
+        let cols = 1;
+        let rows = 1;
 
-      // Initialize or clone data
-      const currentData = this.data();
-      if (currentData.length !== this.columns) {
-        for (let i = 0; i < this.columns; i++) {
-          workingData.push([]);
+        if (isPortrait) {
+          rows = 2;
         }
-      } else {
-        // Create a deep copy to ensure new references for change detection
-        workingData = currentData.map((col) => [...col]);
-      }
 
-      const items = data.results;
-
-      items.forEach((item: ImageGallery) => {
-        // Pass workingData so we calculate height based on the current batch state
-        const index = this.getLowerColumnHeightIndex(workingData);
-
-        if (workingData[index] != undefined) {
-          workingData[index].push(item);
+        // Randomly (20% chance) make it big, BUT only if previous wasn't large
+        if (!this.lastItemWasLarge && Math.random() > 0.8) {
+          if (!isPortrait) {
+            // Landscape -> 2x2
+            cols = 2;
+            rows = 2;
+          } else {
+            // Portrait -> 2 columns, 4 rows
+            cols = 2;
+            rows = 4;
+          }
+          this.lastItemWasLarge = true;
+        } else {
+          this.lastItemWasLarge = false;
         }
+
+        return {
+          data: img,
+          cols,
+          rows,
+          baseCols: cols,
+          baseRows: rows,
+        };
       });
 
-      this.data.set(workingData);
+      this.galleryItems.update((items) => {
+        const updated = [...items, ...newItems];
+        // We will layout in the next step, but update state first
+        return updated;
+      });
+      
+      this.recalculateLayout();
 
       this.page.update((p) => p + 1);
       this.totalImageCount = data.count;
@@ -236,67 +248,310 @@ export class GalleryLightboxComponent implements OnInit {
     });
   }
 
+  recalculateLayout(): void {
+    const allItems = this.galleryItems();
+    
+    // Safety: If we have fewer items than processed (reset?), reset state
+    if (allItems.length < this.processedCount) {
+        this.processedCount = 0;
+        this.colHeights = new Array(this.columns).fill(0);
+        this.preferRightSide = false;
+    }
+    
+    if (this.processedCount >= allItems.length) return;
+
+    const colHeights = this.colHeights;
+    const placedItems = allItems.slice(0, this.processedCount);
+    
+    let items = allItems.slice(this.processedCount).map(it => ({
+      ...it,
+      cols: it.baseCols,
+      rows: it.baseRows
+    }));
+    
+    if (!items.length) return;
+    
+    // Helper to keep code below happy with local var, syncing to class prop
+    let preferRightSide = this.preferRightSide; 
+
+    const getEffectiveSize = (item: GalleryItem) => {
+      let eCols = item.baseCols;
+      let eRows = item.baseRows;
+
+      if (this.columns === 1) {
+        eCols = 1;
+        // Adjust height for single column mobile view
+        if (item.baseCols === 2 && item.baseRows === 2) eRows = 1;
+        if (item.baseCols === 2 && item.baseRows === 4) eRows = 2;
+      } else if (this.columns === 2) {
+        if (eCols > 2) eCols = 2;
+      }
+      return { eCols, eRows };
+    };
+
+    let attempts = 0;
+    // Safety break to prevent infinite loops, though unlikely with splice
+    while (items.length > 0 && attempts < items.length * 2 + 100) {
+      attempts++;
+
+      // 1. Find the lowest slot (Min-Height Strategy)
+      const minH = Math.min(...colHeights);
+      
+      let startCol = -1;
+      let availableWidth = 0;
+
+      for (let c = 0; c < this.columns; c++) {
+        if (colHeights[c] === minH) {
+          // Measure shelf width
+          let w = 0;
+          for (let k = c; k < this.columns; k++) {
+            if (colHeights[k] === minH) w++;
+            else break;
+          }
+          if (w > availableWidth) {
+            availableWidth = w;
+            startCol = c;
+          }
+        }
+      }
+
+      // Calculate context bounds for "Flatness" strategy
+      // We check neighboring columns to define a "ceiling" we shouldn't exceed
+      const leftH = startCol > 0 ? colHeights[startCol - 1] : Infinity;
+      const rightH = startCol + availableWidth < this.columns ? colHeights[startCol + availableWidth] : Infinity;
+      const shelfCeiling = Math.min(leftH, rightH);
+
+      // 3. Search for the best fitting item (among new items only)
+      let bestItemIndex = -1;
+      let bestItemMetric = -Infinity;
+      
+      for (let i = 0; i < items.length; i++) {
+        const sz = getEffectiveSize(items[i]);
+
+        // Constraint: No vertical overlap with existing large items
+        let conflict = false;
+        if (sz.eCols >= 2) {
+             const yStart = minH;
+             const yEnd = minH + sz.eRows;
+             
+             // Check against ALL placed items (old + newly placed in this batch)
+             for (const p of placedItems) {
+                 if (p.cols >= 2) {
+                     const pStart = (p.gridRowStart || 0) - 1;
+                     const pEnd = pStart + p.rows;
+                     if (pStart < yEnd && pEnd > yStart) {
+                         conflict = true;
+                         break;
+                     }
+                 }
+             }
+        }
+        
+        if (conflict) continue;
+
+        // Constraint 2: No adjancent tall items
+        if (sz.eRows >= 2 && sz.eCols === 1) {
+            const yStart = minH;
+            const yEnd = minH + sz.eRows;
+            let validPlacementExists = false;
+            
+            for (let offset = 0; offset < availableWidth; offset++) {
+                const tryCol = startCol + offset;
+                let leftBad = false;
+                if (tryCol > 0) {
+                     leftBad = placedItems.some(p => {
+                         if (p.gridColumnStart !== (tryCol - 1) + 1) return false;
+                         if (p.rows < 2) return false;
+                         const pStart = (p.gridRowStart || 0) - 1;
+                         const pEnd = pStart + p.rows;
+                         return (pStart < yEnd && pEnd > yStart);
+                     });
+                }
+                let rightBad = false;
+                if (tryCol < this.columns - 1) {
+                     rightBad = placedItems.some(p => {
+                         if (p.gridColumnStart !== (tryCol + 1) + 1) return false;
+                         if (p.rows < 2) return false;
+                         const pStart = (p.gridRowStart || 0) - 1;
+                         const pEnd = pStart + p.rows;
+                         return (pStart < yEnd && pEnd > yStart);
+                     });
+                }
+                if (!leftBad && !rightBad) {
+                    validPlacementExists = true;
+                    break; 
+                }
+            }
+            if (!validPlacementExists) continue;
+        }
+        
+        if (sz.eCols <= availableWidth) {
+           // METRIC IMPROVEMENT: "Flat Top" Strategy.
+           // If the item fills the width (eCols >= availableWidth), we target the external shelfCeiling.
+           // If the item is narrower (splits the shelf), we are effectively creating a step against our own floor (minH).
+           const localCeiling = (sz.eCols >= availableWidth) ? shelfCeiling : minH;
+           
+           // Calculate how much this item would stick out above the desired ceiling
+           const overshoot = Math.max(0, (minH + sz.eRows) - localCeiling);
+           
+           // Formula:
+           // 1. Width * 1000: Filling width is #1 priority (prevents holes).
+           // 2. Rows * 10: Bigger items make more progress.
+           // 3. Overshoot * -20: Strict penalty for creating jagged columns. OVERSHOOT > ROW GAIN.
+           const metric = (sz.eCols * 1000) + (sz.eRows * 10) - (overshoot * 20);
+
+           if (metric > bestItemMetric) {
+             bestItemMetric = metric;
+             bestItemIndex = i;
+           }
+        }
+      }
+
+      // 4. Handle "No Item Fits" (The Gap Problem)
+      if (bestItemIndex === -1) {
+        // Fallback: Pick the first available item and force-shrink it.
+        bestItemIndex = 0;
+        
+        // Splicing the item out
+        const item = items.splice(bestItemIndex, 1)[0];
+        
+        // Force dimensions to fit 1xN gap
+        let forcedRows = 1;
+        if (item.baseCols === 2 && item.baseRows === 4) {
+             forcedRows = 2; // squashing 2x4 -> 1x2 to keep some aspect
+        } 
+        
+        item.cols = 1; 
+        item.rows = forcedRows;
+        
+        item.gridColumnStart = startCol + 1;
+        item.gridRowStart = minH + 1;
+        
+        for (let w = 0; w < item.cols; w++) {
+          colHeights[startCol + w] += item.rows;
+        }
+        
+        placedItems.push(item);
+        continue;
+      }
+
+      // 5. Place the Item (Natural Fit)
+      const item = items.splice(bestItemIndex, 1)[0];
+      
+      // Apply natural size
+      const naturalSz = getEffectiveSize(item);
+      item.cols = naturalSz.eCols;
+      item.rows = naturalSz.eRows;
+
+      // Alternating Offset Strategy & Constraint Validation:
+      // We must pick an offset (0 to slack) that is VALID (no heavy adjacency collisions).
+      let offset = 0;
+      const slack = availableWidth - item.cols;
+      
+      if (slack > 0) {
+          // If 1x2 (Tall, Narrow), we MUST find the valid offset we promised existed in Step 3.
+          if (naturalSz.eRows >= 2 && naturalSz.eCols === 1) {
+             // Search for the valid offset again
+             for (let tryOff = 0; tryOff <= slack; tryOff++) {
+                const tryCol = startCol + tryOff;
+                
+                // Check Left
+                let leftBad = false;
+                if (tryCol > 0) {
+                     leftBad = placedItems.some(p => {
+                         if (p.gridColumnStart !== (tryCol - 1) + 1) return false;
+                         if (p.rows < 2) return false;
+                         const pStart = (p.gridRowStart || 0) - 1;
+                         const pEnd = pStart + p.rows;
+                         return (pStart < minH + item.rows && pEnd > minH);
+                     });
+                }
+                
+                // Check Right
+                let rightBad = false;
+                if (tryCol < this.columns - 1) {
+                     rightBad = placedItems.some(p => {
+                         if (p.gridColumnStart !== (tryCol + 1) + 1) return false;
+                         if (p.rows < 2) return false;
+                         const pStart = (p.gridRowStart || 0) - 1;
+                         const pEnd = pStart + p.rows;
+                         return (pStart < minH + item.rows && pEnd > minH);
+                     });
+                }
+                
+                if (!leftBad && !rightBad) {
+                    offset = tryOff; // Found it!
+                    break;
+                }
+             }
+          } else {
+             // For Wide items (2x2), use the alternating logic (Left/Right preference)
+             offset = preferRightSide ? slack : 0;
+          }
+      }
+
+      const placeCol = startCol + offset;
+      
+      // Update alternation state for next time
+      // Logic: If we just placed a big item (2 cols) in a multi-col grid (3 or 4 cols)...
+      if ((this.columns === 3 || this.columns === 4) && item.cols === 2) {
+          // If we placed it on the Left (col 0), next time prefer Right.
+          if (placeCol === 0) {
+              preferRightSide = true;
+          } 
+          // If we placed it on the Right (offset > 0), next time prefer Left.
+          else {
+              preferRightSide = false;
+          }
+      }
+
+      item.gridColumnStart = placeCol + 1;
+      item.gridRowStart = minH + 1;
+
+      for (let w = 0; w < item.cols; w++) {
+        colHeights[placeCol + w] += item.rows;
+      }
+
+      placedItems.push(item);
+    }
+
+    this.preferRightSide = preferRightSide;
+    this.processedCount = placedItems.length;
+
+    this.galleryItems.set(placedItems);
+  }
+
   setColumns(width: number): void {
+    const oldCols = this.columns;
+    
     if (width < 650) {
       this.columns = 1;
       this.perPage = 5;
     } else if (width < 1024) {
       this.columns = 2;
       this.perPage = 8;
-    } else {
+    } else if (width < 1500) {
       this.columns = 3;
       this.perPage = 9;
-    }
-  }
-
-  getLowerColumnHeightIndex(data: ImageGallery[][]): number {
-    let index = 0;
-    // Because viewChildren is a signal, we access it like a function
-    const galleryItems = this.galleryItem();
-    if (galleryItems.length == 0 && data.flat().length > 0) {
-      // If ViewChildren not ready but we have data, we might default to 0
-      // or if it's the very first load.
-      // However, logic relies on assumption columns exist.
+    } else {
+      this.columns = 4;
+      this.perPage = 10;
     }
 
-    for (let i = 0; i < this.columns; i++) {
-      if (this.getColumnHeight(i, data) < this.getColumnHeight(index, data)) {
-        index = i;
-      }
+    // If columns count changed, or we are initializing, reset layout state
+    if (oldCols !== this.columns || this.colHeights.length === 0) {
+       this.colHeights = new Array(this.columns).fill(0);
+       this.processedCount = 0;
+       this.preferRightSide = false;
     }
-
-    return index;
-  }
-
-  getColumnHeight(index: number, data: ImageGallery[][]): number {
-    let height = 0;
-
-    // Check if column exists in the provided data
-    if (data[index]) {
-      data[index].forEach((item) => {
-        height += item.height / item.width;
-      });
-    }
-
-    return height;
   }
 
   getGalleryPreviewWidth(): number {
-    if (this.columns == 3) {
-      return 700;
-    } else if (this.columns == 2) {
-      return 1000;
-    }
-    return 1200;
+    return 700;
   }
 
   getGalleryPreviewHeight(imageWidth: number, imageHeight: number): number {
-    if (this.columns == 3) {
-      return Math.floor((imageHeight / imageWidth) * 700);
-    } else if (this.columns == 2) {
-      return Math.floor((imageHeight / imageWidth) * 1000);
-    }
-    return Math.floor((imageHeight / imageWidth) * 1200);
+    return Math.floor((imageHeight / imageWidth) * 700);
   }
 
   getGalleryImageWidth(imageWidth: number, imageHeight: number): number {

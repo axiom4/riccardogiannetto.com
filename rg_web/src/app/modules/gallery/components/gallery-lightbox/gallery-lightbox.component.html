@@ -1,29 +1,28 @@
 <div #container class="gallery-lightbox-container">
-  @for (column of data(); track $index; let col = $index) {
-    <div #galleryItem class="gallery">
-      @for (item of column; track item.url; let i = $index) {
-        <div
-          class="gallery-img"
-          [class.portrait]="item.height > item.width"
-          [class.landscape]="item.height <= item.width"
-        >
-          <img
-            #galleryImg
-            (click)="onPreviewImage(col, i)"
-            alt="{{ item.title }}"
-            onKeyPress=""
-            onKeyDown=""
-            onKeyUp=""
-            src="{{ item.url }}/width/{{ getGalleryPreviewWidth() }}"
-            width="{{ getGalleryPreviewWidth() }}"
-            height="{{ getGalleryPreviewHeight(item.width, item.height) }}"
-            srcset="{{ item.url }}/width/700 1200w, {{ item.url }}/width/1000 1024w, {{ item.url }}/width/1200 650w"
-            sizes="(max-width: 1024px) 700px, (max-width: 650px) 1000px, 1200px"
-            priority
-            placeholder
-          />
-        </div>
-      }
+  @for (item of galleryItems(); track item.data.url; let i = $index) {
+    <div
+      class="gallery-img"
+      [ngClass]="'item-' + item.cols + 'x' + item.rows"
+      [style.grid-column-start]="item.gridColumnStart"
+      [style.grid-row-start]="item.gridRowStart"
+    >
+      <img
+        #galleryImg
+        (click)="onPreviewImage(i)"
+        alt="{{ item.data.title }}"
+        onKeyPress=""
+        onKeyDown=""
+        onKeyUp=""
+        src="{{ item.data.url }}/width/{{ getGalleryPreviewWidth() }}"
+        width="{{ getGalleryPreviewWidth() }}"
+        height="{{
+          getGalleryPreviewHeight(item.data.width, item.data.height)
+        }}"
+        srcset="{{ item.data.url }}/width/700 1200w, {{ item.data.url }}/width/1000 1024w, {{ item.data.url }}/width/1200 650w"
+        sizes="(max-width: 1024px) 700px, (max-width: 650px) 1000px, 1200px"
+        priority
+        placeholder
+      />
     </div>
   }
   @if (showMask()) {

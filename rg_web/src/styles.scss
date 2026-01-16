@@ -681,56 +681,73 @@ article th {
 .gallery-lightbox-container {
   --gallery-gap: 30px;
   position: relative;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  /* grid-auto-flow: dense; REMOVED to prevent layout desync with JS packing algorithm */
   padding: 30px;
   gap: var(--gallery-gap);
   z-index: 100;
   width: 100%;
 
-  .gallery {
-    line-height: normal; // Reset line-height to avoid issues with inline-blocks
-    flex: 1;
-    // height: auto; -> removed, block default
+  .gallery-img {
+    position: relative;
     display: block;
-    padding: 0;
+    width: 100%;
+    
+    // Default Padding/Size strategy is handled by item-classes now
+    // But we keep the container properties
+    height: 0; 
 
-    .gallery-img {
-      position: relative;
-      display: block;
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      margin-bottom: var(--gallery-gap);
-      // overflow: hidden; // Ensure crop -> Removed to restore shadow
-      // border-radius: 0.35rem; // Moved border radius to wrapper for clean corners -> Removed
+      height: 100%;
+      display: block;
+      border-radius: 0.35rem;
+      padding: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.5);
+      box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.5);
+      object-fit: cover;
+      box-sizing: border-box;
+    }
 
-      &.landscape {
-        padding-bottom: 66.666667%; /* Aspect Ratio 3:2 */
-        height: 0;
-      }
+    // --- Grid Item Sizes & Alignment ---
+    // Base Calculation: 
+    // 1 Unit Height (Row) = 66.666% of 1 Unit Width (Col)
+    // Gap = var(--gallery-gap)
 
-      &.portrait {
-        padding-bottom: calc(133.333333% + var(--gallery-gap)); /* 4/3 + Gap */
-        height: 0;
-      }
+    &.item-1x1 {
+      grid-column-end: span 1;
+      grid-row-end: span 1;
+      padding-bottom: 66.666667%; // 3:2 Ratio
+    }
 
-      img {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: block;
+    &.item-1x2 {
+      grid-column-end: span 1;
+      grid-row-end: span 2;
+      // Height = 2 * Row + Gap
+      // = 2 * 66.66% + Gap
+      padding-bottom: calc(133.333333% + var(--gallery-gap));
+    }
 
-        // Visual styling
-        border-radius: 0.35rem; // Keep on img or wrapper? Wrapper clips, so img inside ok.
-        padding: 10px;
-        border: 1px solid rgba(0, 0, 0, 0.5);
-        box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.5);
-        object-fit: cover;
-        box-sizing: border-box;
-      }
+    &.item-2x2 {
+      grid-column-end: span 2;
+      grid-row-end: span 2;
+      // Width = 2 Units + Gap
+      // Target Height = 2 Rows + Gap = 2 UnitsH + Gap
+      // P = (TargetHeight / Width) * 100%
+      // Calculation derived: 66.66% + (Gap/3)
+      padding-bottom: calc(66.666667% + (var(--gallery-gap) / 3));
+    }
+
+    &.item-2x4 {
+      grid-column-end: span 2;
+      grid-row-end: span 4;
+      // Target Height = 4 Rows + 3 Gaps
+      // Calculation derived: 133.33% + (5/3 * Gap)
+      padding-bottom: calc(133.333333% + (var(--gallery-gap) * 1.666667));
     }
   }
 
@@ -847,6 +864,12 @@ article th {
   }
 }
 
+@media screen and (max-width: 1500px) {
+  .gallery-lightbox-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 @media screen and (max-width: 1024px) {
   .main {
     max-width: 800px;
@@ -856,12 +879,19 @@ article th {
   }
 
   .gallery-lightbox-container {
+    grid-template-columns: repeat(2, 1fr);
     --gallery-gap: 20px;
     padding: 20px;
     gap: var(--gallery-gap);
-    .gallery {
-      padding: 0;
-      // width: 50%; // Controlled by flex + component logic
+    
+    .gallery-img {
+       // 2x4 items (Portrait) fit in 2 columns (Span 2)
+       // No change needed for span, but verify height?
+       // 2x4 on 3-col grid is 2/3 width.
+       // 2x4 on 2-col grid is 2/2 width (Full width).
+       // Should we shrink it?
+       // If we leave it 2x4, it will be very tall regular portrait.
+       // Let's leave it as is, it overrides are automatic if grid-column span matches.
     }
 
     .lightbox {
@@ -888,13 +918,40 @@ article th {
 
 @media screen and (max-width: 650px) {
   .gallery-lightbox-container {
+    grid-template-columns: 1fr;
     --gallery-gap: 10px;
     padding: 10px;
     gap: var(--gallery-gap);
+    
+    // Force items to behave linearly on mobile
+    .gallery-img {
+       grid-column: span 1 !important;
+       
+       // Reset specialized spans to logical mobile equivalents
+       
+       // 1x1 stays 1x1 (66%)
+       &.item-1x1 { 
+          grid-row: span 1; 
+          padding-bottom: 66.666667%; 
+       }
+       
+       // 1x2 stays 1x2 (133% + gap)
+       &.item-1x2 {
+          grid-row: span 2;
+          padding-bottom: calc(133.333333% + var(--gallery-gap));
+       }
 
-    .gallery {
-      padding: 0;
-      // width: 100%; // Controlled by flex + component logic
+       // 2x2 becomes 1x1 (Landscape)
+       &.item-2x2 {
+          grid-row: span 1 !important;
+          padding-bottom: 66.666667%; 
+       }
+
+       // 2x4 becomes 1x2 (Portrait)
+       &.item-2x4 {
+          grid-row: span 2 !important;
+          padding-bottom: calc(133.333333% + var(--gallery-gap));
+       }
     }
   }
 
