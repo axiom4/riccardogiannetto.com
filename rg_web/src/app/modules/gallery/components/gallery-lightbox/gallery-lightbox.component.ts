@@ -249,13 +249,19 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
           document.documentElement.scrollTop ||
           document.body.scrollTop ||
           0;
-        const bottomDist =
-          document.body.offsetHeight - (scrollPos + window.innerHeight);
 
-        if (bottomDist < window.innerHeight * 2 && this.hasNextPage) {
+        const scrollHeight =
+          document.documentElement.scrollHeight || document.body.scrollHeight;
+        const clientHeight =
+          document.documentElement.clientHeight || window.innerHeight;
+
+        const bottomDist = scrollHeight - (scrollPos + clientHeight);
+
+        // Increase buffer slightly to ensure continuity
+        if (bottomDist < clientHeight * 2.5 && this.hasNextPage) {
           this.loadItems();
         }
-      }, 50);
+      }, 100);
     });
   }
 
