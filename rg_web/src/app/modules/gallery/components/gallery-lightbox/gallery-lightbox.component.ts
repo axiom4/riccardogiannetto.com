@@ -222,6 +222,15 @@ export class GalleryLightboxComponent implements OnInit {
       this.totalImageCount = data.count;
 
       this.isLoading.set(false);
+
+      setTimeout(() => {
+        if (
+          document.body.offsetHeight <= window.innerHeight + 100 &&
+          this.galleryItems().length < this.totalImageCount
+        ) {
+          this.loadItems();
+        }
+      }, 50);
     });
   }
 
