@@ -47,13 +47,15 @@ class ImageRenderer(renderers.BaseRenderer):
             resize = cv2.resize(img, (width, hsize),
                                 interpolation=cv2.INTER_AREA)
 
-            # Variable quality based on image width
-            # Reduce quality for smaller images to save bandwidth
-            quality = 85
-            if width <= 600:
-                quality = 50
-            elif width <= 1000:
-                quality = 70
+            # Variable quality based on image width to minimize size with imperceptible loss
+            if width <= 400:
+                quality = 45  # Aggressive compression for small thumbnails
+            elif width <= 800:
+                quality = 60  # Medium compression for mobile/tablet sizes
+            elif width <= 1200:
+                quality = 70  # Good balance for standard desktop views
+            else:
+                quality = 75  # Higher quality for large, detailed viewing
 
             _, im_buf_arr = cv2.imencode(
                 ".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), quality])
