@@ -46,7 +46,10 @@
       @if (previousLightboxImg(); as prevImg) {
         <img
           class="lightbox-image previous"
-          [ngClass]="{ 'image-anim-a': imageAnimA(), 'image-anim-b': !imageAnimA() }"
+          [ngClass]="{
+            'image-anim-a': imageAnimA(),
+            'image-anim-b': !imageAnimA(),
+          }"
           alt="{{ prevImg.title }}"
           src="{{ prevImg.url }}/width/{{ getLightboxRenderWidth() }}"
           width="{{ getGalleryImageWidth(prevImg.width, prevImg.height) }}"
