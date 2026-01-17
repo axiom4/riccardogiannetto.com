@@ -31,16 +31,16 @@ export interface GalleryItem {
   gridRowStart?: number;
 }
 
-@Component({, LightboxComponent],
+@Component({
+  selector: 'app-gallery-lightbox',
+  imports: [NgClass, LightboxComponent],
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
   providers: [
     {
       provide: IMAGE_LOADER,
       useValue: galleryLoaderProvider,
-    }  animate('250ms', style({ opacity: 0.8 })),
-      ]),
-    ]),
+    },
   ],
 })
 export class GalleryLightboxComponent implements OnInit {
@@ -104,8 +104,31 @@ export class GalleryLightboxComponent implements OnInit {
   }
 
   @HostListener('document:keydown.arrowRight', ['$event'])
-  onKeydownRighttHandler(event: Event) {
-    if (this.prev
+  onKeydownRightHandler(event: Event) {
+    if (this.previewImage()) {
+      this.next();
+    }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (this.innerWidth !== window?.innerWidth) {
+      this.innerWidth = window.innerWidth;
+      this.setColumns(this.innerWidth);
+      this.recalculateLayout();
+    }
+  }
+
+  constructor() {}
+
+  ngOnInit(): void {
+    this.totalImageCount = 0;
+    this.innerWidth = window.innerWidth;
+    this.innerHeight = window.innerHeight;
+
+    this.setColumns(this.innerWidth);
+    this.loadItems();
+  }
 
   onPreviewImage(index: number): void {
     this.showMask.set(true);
