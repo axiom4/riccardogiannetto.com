@@ -51,7 +51,7 @@ class ImageRenderer(renderers.BaseRenderer):
             if width <= 400:
                 quality = 45  # Aggressive compression for small thumbnails
             elif width <= 800:
-                quality = 60  # Medium compression for mobile/tablet sizes
+                quality = 50  # Medium compression for mobile/tablet sizes
             elif width <= 1200:
                 quality = 70  # Good balance for standard desktop views
             else:
