@@ -109,7 +109,7 @@ export class LightboxComponent implements OnInit {
     if (typeof window !== 'undefined') {
       const width = Math.min(
         this.innerWidth * (window.devicePixelRatio || 1),
-        2500
+        2500,
       );
       return Math.floor(width);
     }
@@ -121,14 +121,14 @@ export class LightboxComponent implements OnInit {
       return Math.floor(this.innerWidth * 0.7);
     }
     return Math.floor(
-      (imageWidth / imageHeight) * Math.floor(this.innerHeight * 0.8)
+      (imageWidth / imageHeight) * Math.floor(this.innerHeight * 0.8),
     );
   }
 
   getGalleryImageHeight(imageWidth: number, imageHeight: number): number {
     if (imageHeight < imageWidth) {
       return Math.floor(
-        (imageHeight / imageWidth) * Math.floor(this.innerWidth * 0.7)
+        (imageHeight / imageWidth) * Math.floor(this.innerWidth * 0.7),
       );
     }
     return Math.floor(this.innerHeight * 0.8);
