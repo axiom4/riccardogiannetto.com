@@ -8,19 +8,14 @@ import {
   signal,
   viewChildren,
 } from '@angular/core';
-import {
-  animate,
-  style,
-  transition,
-  trigger,
-  AnimationEvent,
-} from '@angular/animations';
 import { IMAGE_LOADER, ImageLoaderConfig, NgClass } from '@angular/common';
 import {
   ImageGallery,
   PortfolioImagesListRequestParams,
   PortfolioService,
 } from '../../../core/api/v1';
+import { LightboxComponent } from '../lightbox/lightbox.component';
+import { AnimationEvent } from '@angular/animations';
 
 const galleryLoaderProvider = (config: ImageLoaderConfig) => {
   return `${config.src}`;
@@ -36,32 +31,14 @@ export interface GalleryItem {
   gridRowStart?: number;
 }
 
-@Component({
-  selector: 'app-gallery-lightbox',
-  imports: [NgClass],
+@Component({, LightboxComponent],
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
   providers: [
     {
       provide: IMAGE_LOADER,
       useValue: galleryLoaderProvider,
-    },
-  ],
-  animations: [
-    trigger('animation-enter', [
-      transition('void => visible', [
-        style({ transform: 'scale(0.5)' }),
-        animate('150ms', style({ transform: 'scale(1)' })),
-      ]),
-      transition('visible => void', [
-        style({ transform: 'scale(1)' }),
-        animate('150ms', style({ transform: 'scale(0.5)' })),
-      ]),
-    ]),
-    trigger('animation-leave', [
-      transition(':leave', [
-        style({ opacity: 1 }),
-        animate('250ms', style({ opacity: 0.8 })),
+    }  animate('250ms', style({ opacity: 0.8 })),
       ]),
     ]),
   ],
@@ -128,30 +105,7 @@ export class GalleryLightboxComponent implements OnInit {
 
   @HostListener('document:keydown.arrowRight', ['$event'])
   onKeydownRighttHandler(event: Event) {
-    if (this.previewImage()) {
-      this.next();
-    }
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
-    if (this.innerWidth !== window?.innerWidth) {
-      this.innerWidth = window.innerWidth;
-      this.setColumns(this.innerWidth);
-      this.recalculateLayout();
-    }
-  }
-
-  constructor() {}
-
-  ngOnInit(): void {
-    this.totalImageCount = 0;
-    this.innerWidth = window.innerWidth;
-    this.innerHeight = window.innerHeight;
-
-    this.setColumns(this.innerWidth);
-    this.loadItems();
-  }
+    if (this.prev
 
   onPreviewImage(index: number): void {
     this.showMask.set(true);
