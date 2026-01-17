@@ -1,11 +1,14 @@
 import {
   Component,
+  effect,
   ElementRef,
   HostListener,
   inject,
+  OnDestroy,
   OnInit,
   QueryList,
   signal,
+  viewChild,
   viewChildren,
 } from '@angular/core';
 import { IMAGE_LOADER, ImageLoaderConfig, NgClass } from '@angular/common';
@@ -43,7 +46,7 @@ export interface GalleryItem {
     },
   ],
 })
-export class GalleryLightboxComponent implements OnInit {
+export class GalleryLightboxComponent implements OnInit, OnDestroy {
   private portfolioService = inject(PortfolioService);
 
   isLoading = signal(false);
@@ -64,6 +67,7 @@ export class GalleryLightboxComponent implements OnInit {
   controls = true;
 
   totalImageCount = 0;
+  hasNextPage = true;
   imageNum = 0;
 
   private lastItemWasLarge = false;
@@ -74,17 +78,41 @@ export class GalleryLightboxComponent implements OnInit {
   private preferRightSide = false;
 
   galleryItem = viewChildren<ElementRef>('galleryItem');
+  sentinel = viewChild<ElementRef>('sentinel');
+  private observer: IntersectionObserver | undefined;
 
-  @HostListener('window:scroll', ['$event'])
-  onWindowScroll(event: any) {
-    if (
-      window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 &&
-      !this.isLoading()
-    ) {
-      if (this.galleryItems().length < this.totalImageCount) {
-        this.loadItems();
+  constructor() {
+    effect(() => {
+      const el = this.sentinel();
+      if (el) {
+        this.setupObserver(el.nativeElement);
       }
-    }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.observer?.disconnect();
+  }
+
+  setupObserver(target: Element) {
+    this.observer?.disconnect();
+
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !this.isLoading() && this.hasNextPage) {
+            this.loadItems();
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: '200%',
+        threshold: 0.1,
+      },
+    );
+
+    this.observer.observe(target);
   }
 
   @HostListener('document:keydown.escape', ['$event']) onKeydownEscapeHandler(
@@ -118,8 +146,6 @@ export class GalleryLightboxComponent implements OnInit {
       this.recalculateLayout();
     }
   }
-
-  constructor() {}
 
   ngOnInit(): void {
     this.totalImageCount = 0;
@@ -168,6 +194,7 @@ export class GalleryLightboxComponent implements OnInit {
   }
 
   loadItems(): void {
+    if (!this.hasNextPage) return;
     this.isLoading.set(true);
     const params: PortfolioImagesListRequestParams = {
       gallery: 1,
@@ -220,6 +247,7 @@ export class GalleryLightboxComponent implements OnInit {
 
       this.page.update((p) => p + 1);
       this.totalImageCount = data.count;
+      this.hasNextPage = !!data.next;
 
       this.isLoading.set(false);
 
@@ -239,10 +267,15 @@ export class GalleryLightboxComponent implements OnInit {
         // However, with 4 columns, we consume items fast.
         // We want to ensure we fill the SCREEN.
 
-        if (
-          document.body.offsetHeight <= window.innerHeight + 200 &&
-          this.galleryItems().length < this.totalImageCount
-        ) {
+        const scrollPos =
+          window.scrollY ||
+          document.documentElement.scrollTop ||
+          document.body.scrollTop ||
+          0;
+        const bottomDist =
+          document.body.offsetHeight - (scrollPos + window.innerHeight);
+
+        if (bottomDist < window.innerHeight * 2 && this.hasNextPage) {
           this.loadItems();
         }
       }, 50);
