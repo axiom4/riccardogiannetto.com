@@ -8,13 +8,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { HighlightService } from '../../../main/highlight.service';
 import { MarkedPipe } from '../../../main/marked.pipe';
-import { DatePipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-page',
   templateUrl: './page.component.html',
   styleUrl: './page.component.scss',
-  imports: [DatePipe, MarkedPipe],
+  imports: [DatePipe, MarkedPipe, AsyncPipe],
   providers: [HighlightService],
 })
 export class PageComponent implements OnInit {
