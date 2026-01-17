@@ -11,12 +11,13 @@ from gallery.models import Gallery, ImageGallery
 
 User = get_user_model()
 
+
 class GalleryImageInline(admin.TabularInline):
     model = ImageGallery
-    readonly_fields = ['image_tag', 'width', 'height', 'created_at', 'updated_at']
+    readonly_fields = ['image_tag', 'width',
+                       'height', 'created_at', 'updated_at']
     extra = 0
     list_per_page = 12
-
 
 
 class GalleryAdmin(admin.ModelAdmin):
@@ -31,6 +32,7 @@ class GalleryAdmin(admin.ModelAdmin):
 
     inlines = [GalleryImageInline]
 
+
 class MultiFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
 
@@ -40,28 +42,32 @@ class BulkUploadForm(forms.Form):
         label='Images folder',
         help_text='Select a folder from your computer.',
         widget=MultiFileInput(
-            attrs={'webkitdirectory': True, 'directory': True, 'multiple': True},
+            attrs={'webkitdirectory': True,
+                   'directory': True, 'multiple': True},
         ),
         required=False,
     )
     gallery = forms.ModelChoiceField(queryset=Gallery.objects.all())
-    author = forms.ModelChoiceField(queryset=User.objects.all(), required=False)
+    author = forms.ModelChoiceField(
+        queryset=User.objects.all(), required=False)
 
 
 class ImageGalleryAdmin(admin.ModelAdmin):
     fields = [
         ('title',),
-        ('image', 'image_tag'), 
-        ('gallery', 'author', 'date'), 
-        ('width', 'height'), 
+        ('image', 'image_tag'),
+        ('gallery', 'author', 'date'),
+        ('width', 'height'),
         ('created_at', 'updated_at'),
-        ('camera_model', 'lens_model'), 
+        ('camera_model', 'lens_model'),
         ('iso_speed', 'aperture_f_number', 'shutter_speed', 'focal_length'),
         ('artist', 'copyright')
     ]
-    list_display = ('title', 'gallery', 'image_tag', 'author', 'width', 'height','created_at', 'updated_at')
+    list_display = ('title', 'gallery', 'image_tag', 'author',
+                    'width', 'height', 'created_at', 'updated_at')
     list_filter = ('gallery__title',)
-    readonly_fields = ['image_tag', 'width', 'height', 'created_at', 'updated_at']
+    readonly_fields = ['image_tag', 'width',
+                       'height', 'created_at', 'updated_at']
     search_fields = ('title', 'gallery__title')
     save_on_top = True
     list_display_links = ('title',)
@@ -97,7 +103,8 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                     messages.error(request, 'No files selected.')
                     return redirect(request.path)
 
-                allowed_exts = {'.jpg', '.jpeg', '.png', '.webp', '.tif', '.tiff', '.heic'}
+                allowed_exts = {'.jpg', '.jpeg', '.png',
+                                '.webp', '.tif', '.tiff', '.heic'}
                 created = 0
                 skipped = 0
                 for upload in uploads:
@@ -111,7 +118,8 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                     if ImageGallery.objects.filter(title=title, gallery=gallery).exists():
                         skipped += 1
                         continue
-                    image = ImageGallery(title=title, gallery=gallery, author=author)
+                    image = ImageGallery(
+                        title=title, gallery=gallery, author=author)
                     image.image.save(base_name, upload, save=True)
                     created += 1
 
