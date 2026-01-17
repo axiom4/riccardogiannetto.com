@@ -44,10 +44,10 @@ class ImageRenderer(renderers.BaseRenderer):
             img = cv2.imread(this_object.image.file.name)
             wpercent = (width/float(img.shape[1]))
             hsize = int((float(img.shape[0])*float(wpercent)))
-            resize = cv2.resize(img, (width, hsize))
+            resize = cv2.resize(img, (width, hsize), interpolation=cv2.INTER_AREA)
 
             _, im_buf_arr = cv2.imencode(
-                ".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), 60])
+                ".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), 75])
             byte_im = im_buf_arr.tobytes()
 
             with open(filename, "wb") as f:
