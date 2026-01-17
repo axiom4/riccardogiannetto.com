@@ -49,7 +49,7 @@ export class GalleryLightboxComponent implements OnInit {
   isLoading = signal(false);
   galleryItems = signal<GalleryItem[]>([]);
   page = signal(1);
-  perPage = 16;
+  perPage = 4;
   innerWidth = 0;
   innerHeight = 0;
   imageWidth = signal(0);
@@ -504,8 +504,8 @@ export class GalleryLightboxComponent implements OnInit {
   setColumns(width: number): void {
     const oldCols = this.columns;
 
-    // Use 16 items per page as requested, adjusting slightly for optimal grid filling where possible
-    this.perPage = 16;
+    // Use 4 items per page as requested
+    this.perPage = 4;
 
     if (width < 650) {
       this.columns = 1;
