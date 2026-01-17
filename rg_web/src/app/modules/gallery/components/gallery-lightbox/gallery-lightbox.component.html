@@ -18,8 +18,16 @@
         height="{{
           getGalleryPreviewHeight(item.data.width, item.data.height)
         }}"
-        srcset="{{ item.data.url }}/width/700 1200w, {{ item.data.url }}/width/1000 1024w, {{ item.data.url }}/width/1200 650w"
-        sizes="(max-width: 1024px) 700px, (max-width: 650px) 1000px, 1200px"
+        srcset="{{ item.data.url }}/width/400 400w, {{
+          item.data.url
+        }}/width/600 600w, {{ item.data.url }}/width/800 800w, {{
+          item.data.url
+        }}/width/1000 1000w, {{ item.data.url }}/width/1200 1200w"
+        sizes="{{
+          item.cols === 2
+            ? '(max-width: 650px) 100vw, (max-width: 1024px) 100vw, (max-width: 1500px) 66vw, 50vw'
+            : '(max-width: 650px) 100vw, (max-width: 1024px) 50vw, (max-width: 1500px) 33vw, 25vw'
+        }}"
         priority
         placeholder
       />
@@ -75,7 +83,9 @@
             <img
               #galleryPreviewImg
               alt="{{ currentLightboxImg()!.title }}"
-              src="{{ currentLightboxImg()!.url }}/width/2400"
+              src="{{ currentLightboxImg()!.url }}/width/{{
+                getLightboxRenderWidth()
+              }}"
               width="{{
                 getGalleryImageWidth(
                   currentLightboxImg()!.width,

@@ -550,11 +550,22 @@ export class GalleryLightboxComponent implements OnInit {
   }
 
   getGalleryPreviewWidth(): number {
-    return 700;
+    return 600;
   }
 
   getGalleryPreviewHeight(imageWidth: number, imageHeight: number): number {
-    return Math.floor((imageHeight / imageWidth) * 700);
+    return Math.floor((imageHeight / imageWidth) * 600);
+  }
+
+  getLightboxRenderWidth(): number {
+    if (typeof window !== 'undefined') {
+      const width = Math.min(
+        this.innerWidth * (window.devicePixelRatio || 1),
+        2500,
+      );
+      return Math.floor(width);
+    }
+    return 1200;
   }
 
   getGalleryImageWidth(imageWidth: number, imageHeight: number): number {
