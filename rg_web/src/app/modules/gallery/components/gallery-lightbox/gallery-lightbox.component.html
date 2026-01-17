@@ -2,17 +2,19 @@
   @for (item of galleryItems(); track item.data.url; let i = $index) {
     <div
       class="gallery-img"
-      [ngClass]="'item-' + item.cols + 'x' + item.rows"
-      [style.grid-column-start]="item.gridColumnStart"
-      [style.grid-row-start]="item.gridRowStart"
+      [ngClass]="
+        'item-' +
+        item.cols +
+        'x' +
+        item.rows +
+        ' col-start-' +
+        item.gridColumnStart
+      "
     >
       <img
         #galleryImg
         (click)="onPreviewImage(i)"
         alt="{{ item.data.title }}"
-        onKeyPress=""
-        onKeyDown=""
-        onKeyUp=""
         src="{{ item.data.url }}/width/{{ getGalleryPreviewWidth() }}"
         width="{{ getGalleryPreviewWidth() }}"
         height="{{

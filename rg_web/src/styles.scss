@@ -683,7 +683,7 @@ article th {
   position: relative;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  /* grid-auto-flow: dense; REMOVED to prevent layout desync with JS packing algorithm */
+  grid-auto-flow: dense;
   padding: 30px;
   gap: var(--gallery-gap);
   z-index: 100;
@@ -693,6 +693,19 @@ article th {
     position: relative;
     display: block;
     width: 100%;
+
+    &.col-start-1 {
+      grid-column-start: 1;
+    }
+    &.col-start-2 {
+      grid-column-start: 2;
+    }
+    &.col-start-3 {
+      grid-column-start: 3;
+    }
+    &.col-start-4 {
+      grid-column-start: 4;
+    }
 
     // Default Padding/Size strategy is handled by item-classes now
     // But we keep the container properties
