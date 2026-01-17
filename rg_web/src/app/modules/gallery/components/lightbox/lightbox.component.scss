@@ -247,13 +247,18 @@
   .lightbox {
     .lightbox-img img {
       display: block;
-      position: relative;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       background-color: #fff;
       outline: 0 solid #fff;
-      object-fit: cover;
-      width: 100%;
-      padding: 10px;
+      object-fit: contain;
+      max-width: 95%;
+      max-height: 95%;
+      width: auto;
       height: auto;
+      padding: 10px;
       border-radius: 0.35rem;
       box-shadow: 0 1px 5px 0 rgba(255, 255, 255, 0.9);
       border: 0px solid rgba(0, 0, 0, 0.7);
