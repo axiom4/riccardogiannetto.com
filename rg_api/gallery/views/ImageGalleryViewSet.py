@@ -47,8 +47,16 @@ class ImageRenderer(renderers.BaseRenderer):
             resize = cv2.resize(img, (width, hsize),
                                 interpolation=cv2.INTER_AREA)
 
+            # Variable quality based on image width
+            # Reduce quality for smaller images to save bandwidth
+            quality = 85
+            if width <= 600:
+                quality = 50
+            elif width <= 1000:
+                quality = 70
+
             _, im_buf_arr = cv2.imencode(
-                ".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), 75])
+                ".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), quality])
             byte_im = im_buf_arr.tobytes()
 
             with open(filename, "wb") as f:
