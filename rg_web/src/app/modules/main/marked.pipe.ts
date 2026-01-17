@@ -1,8 +1,8 @@
-import { Pipe, PipeTransform } from "@angular/core";
+import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-    name: "marked",
-    standalone: true,
+  name: 'marked',
+  standalone: true,
 })
 export class MarkedPipe implements PipeTransform {
   async transform(value: any): Promise<any> {
