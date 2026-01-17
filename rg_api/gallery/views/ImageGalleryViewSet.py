@@ -47,7 +47,7 @@ class ImageRenderer(renderers.BaseRenderer):
             resize = cv2.resize(img, (width, hsize))
 
             _, im_buf_arr = cv2.imencode(
-                ".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), 85])
+                ".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), 60])
             byte_im = im_buf_arr.tobytes()
 
             with open(filename, "wb") as f:
