@@ -93,7 +93,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
 
     def bulk_upload_view(self, request):
         if request.method == 'POST':
-            form = BulkUploadForm(request.POST)
+            form = BulkUploadForm(request.POST, request.FILES)
             if form.is_valid():
                 gallery = form.cleaned_data['gallery']
                 author = form.cleaned_data['author'] or request.user
