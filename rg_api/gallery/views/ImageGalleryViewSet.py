@@ -20,9 +20,9 @@ from django.views.decorators.cache import cache_page
 
 
 class ImageGalleryPagination(PageNumberPagination):
-    page_size = 5
+    page_size = 16
     page_size_query_param = 'page_size'
-    max_page_size = 12
+    max_page_size = 100
 
 
 class ImageRenderer(renderers.BaseRenderer):
@@ -49,7 +49,8 @@ class ImageRenderer(renderers.BaseRenderer):
 
             # Variable quality based on image width to minimize size with imperceptible loss
             if width <= 800:
-                quality = 50  # Aggressive compression for (likely High DPI) mobile/thumbnails
+                # Aggressive compression for (likely High DPI) mobile/thumbnails
+                quality = 50
             elif width <= 1200:
                 quality = 70  # Good balance for standard desktop views
             else:
