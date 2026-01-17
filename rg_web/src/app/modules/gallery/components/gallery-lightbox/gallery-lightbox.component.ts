@@ -223,9 +223,24 @@ export class GalleryLightboxComponent implements OnInit {
 
       this.isLoading.set(false);
 
+      // Trigger recursive check logic
+      // We check if the lowest column height (closest to filled screen) is sufficient
+      // Or if the container height is sufficient.
+
       setTimeout(() => {
+        // Calculate the "logical" minimum height filled by checking the shortest column
+        const minGridRowsFilled = Math.min(...this.colHeights);
+
+        // Estimate row height (approx based on SCSS 1x1 ratio of ~66% width + gaps)
+        // This is a heuristic. For more accuracy we can check the element.
+        // But simply checking total scroll height is usually safer if the header isn't huge.
+        // If we want to be more aggressive, we check document height.
+
+        // However, with 4 columns, we consume items fast.
+        // We want to ensure we fill the SCREEN.
+
         if (
-          document.body.offsetHeight <= window.innerHeight + 100 &&
+          document.body.offsetHeight <= window.innerHeight + 200 &&
           this.galleryItems().length < this.totalImageCount
         ) {
           this.loadItems();
