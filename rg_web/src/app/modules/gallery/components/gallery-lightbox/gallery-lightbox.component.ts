@@ -171,13 +171,13 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   }
 
   loadItems(): void {
-    if (!this.hasNextPage) return;
+    if (!this.hasNextPage || this.isLoading()) return;
     this.isLoading.set(true);
     const params: PortfolioImagesListRequestParams = {
       gallery: 1,
       page: this.page(),
       pageSize: this.perPage,
-      ordering: '-date',
+      ordering: '-date,-id',
     };
     this.portfolioService.portfolioImagesList(params).subscribe((data) => {
       const newItems: GalleryItem[] = data.results.map((img: ImageGallery) => {
@@ -215,7 +215,17 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
       });
 
       this.galleryItems.update((items) => {
-        const updated = [...items, ...newItems];
+        const existingUrls = new Set(items.map((i) => i.data.url));
+        const filteredNewItems = [];
+
+        for (const newItem of newItems) {
+          if (!existingUrls.has(newItem.data.url)) {
+            filteredNewItems.push(newItem);
+            existingUrls.add(newItem.data.url);
+          }
+        }
+
+        const updated = [...items, ...filteredNewItems];
         // We will layout in the next step, but update state first
         return updated;
       });

@@ -33,12 +33,17 @@ class GalleryAdmin(admin.ModelAdmin):
     inlines = [GalleryImageInline]
 
 
-class MultiFileInput(forms.ClearableFileInput):
+class MultiFileInput(forms.FileInput):
     allow_multiple_selected = True
 
 
+class MultipleFileField(forms.FileField):
+    def to_python(self, data):
+        return None  # Bypass validation, handled in view
+
+
 class BulkUploadForm(forms.Form):
-    images = forms.FileField(
+    images = MultipleFileField(
         label='Images folder',
         help_text='Select a folder from your computer.',
         widget=MultiFileInput(

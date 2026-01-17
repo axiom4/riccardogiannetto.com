@@ -80,7 +80,7 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
     pagination_class = ImageGalleryPagination
     renderer_classes = [renderers.BrowsableAPIRenderer, renderers.JSONRenderer]
 
-    ordering_fields = ['title', 'created_at', 'gallery', 'date']
+    ordering_fields = ['title', 'created_at', 'gallery', 'date', 'id']
 
     filterset_fields = ['gallery']
 
