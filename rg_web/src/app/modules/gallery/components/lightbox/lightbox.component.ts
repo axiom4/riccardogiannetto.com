@@ -2,18 +2,13 @@ import {
   Component,
   EventEmitter,
   HostListener,
-  inject,
-  Input,
   OnInit,
   Output,
+  effect,
+  input,
+  signal,
 } from '@angular/core';
-import {
-  animate,
-  AnimationEvent,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
+import { NgClass } from '@angular/common';
 import { ImageGallery } from '../../../../modules/core/api/v1';
 
 @Component({
@@ -21,39 +16,44 @@ import { ImageGallery } from '../../../../modules/core/api/v1';
   templateUrl: './lightbox.component.html',
   styleUrls: ['./lightbox.component.scss'],
   standalone: true, // If using standalone components
-  animations: [
-    trigger('animation-enter', [
-      transition('void => visible', [
-        style({ transform: 'scale(0.5)' }),
-        animate('150ms', style({ transform: 'scale(1)' })),
-      ]),
-      transition('visible => void', [
-        style({ transform: 'scale(1)' }),
-        animate('150ms', style({ transform: 'scale(0.5)' })),
-      ]),
-    ]),
-    trigger('animation-leave', [
-      transition(':leave', [
-        style({ opacity: 1 }),
-        animate('250ms', style({ opacity: 0.8 })),
-      ]),
-    ]),
-  ],
+  imports: [NgClass],
 })
 export class LightboxComponent implements OnInit {
-  @Input() currentLightboxImg: ImageGallery | undefined;
-  @Input() imageNum: number = 0;
-  @Input() totalImageCount: number = 0;
-  @Input() controls: boolean = true;
-  @Input() previewImage: boolean = false;
+  readonly currentLightboxImg = input<ImageGallery>();
+  readonly previousLightboxImg = signal<ImageGallery | undefined>(undefined);
+  readonly lastLightboxImg = signal<ImageGallery | undefined>(undefined);
+  readonly imageNum = input<number>(0);
+  readonly totalImageCount = input<number>(0);
+  readonly controls = input<boolean>(true);
+  readonly previewImage = input<boolean>(false);
+  readonly pageFlipDirection = input<'next' | 'prev'>('next');
 
   @Output() close = new EventEmitter<void>();
   @Output() prevAction = new EventEmitter<void>();
   @Output() nextAction = new EventEmitter<void>();
-  @Output() animationEnd = new EventEmitter<AnimationEvent>();
+  @Output() animationEnd = new EventEmitter<TransitionEvent>();
+
+  readonly imageAnimA = signal(true);
 
   innerWidth = 0;
   innerHeight = 0;
+
+  constructor() {
+    effect(() => {
+      this.imageNum();
+      this.imageAnimA.update((value) => !value);
+    });
+
+    effect(() => {
+      const nextImg = this.currentLightboxImg();
+      const lastImg = this.lastLightboxImg();
+
+      if (nextImg && nextImg !== lastImg) {
+        this.previousLightboxImg.set(lastImg);
+        this.lastLightboxImg.set(nextImg);
+      }
+    });
+  }
 
   ngOnInit(): void {
     if (typeof window !== 'undefined') {
@@ -97,12 +97,14 @@ export class LightboxComponent implements OnInit {
     this.nextAction.emit();
   }
 
-  onAnimationEnd(event: AnimationEvent): void {
-    this.animationEnd.emit(event);
+  onLightboxTransitionEnd(event: TransitionEvent): void {
+    if (!this.previewImage() && event.propertyName === 'opacity') {
+      this.animationEnd.emit(event);
+    }
   }
 
   getIndex(): number {
-    return this.imageNum;
+    return this.imageNum();
   }
 
   getLightboxRenderWidth(): number {

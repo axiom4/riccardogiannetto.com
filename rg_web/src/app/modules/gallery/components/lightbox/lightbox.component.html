@@ -1,6 +1,10 @@
-<div class="lightbox" [@animation-leave]="{ value: 'hide' }">
-  <span class="count"> {{ getIndex() }}/{{ totalImageCount }} </span>
-  @if (previewImage) {
+<div
+  class="lightbox"
+  [class.is-open]="previewImage()"
+  (transitionend)="onLightboxTransitionEnd($event)"
+>
+  <span class="count"> {{ getIndex() }}/{{ totalImageCount() }} </span>
+  @if (previewImage()) {
     <button
       type="button"
       (click)="onclosePreview()"
@@ -17,7 +21,7 @@
       </span>
     </button>
   }
-  @if (controls) {
+  @if (controls()) {
     <button
       type="button"
       class="btn-lightbox-carousel btn-prev"
@@ -27,7 +31,7 @@
       <span class="icon-lightbox-carousel">Prev</span>
     </button>
   }
-  @if (controls) {
+  @if (controls()) {
     <button
       type="button"
       class="btn-lightbox-carousel btn-next"
@@ -37,35 +41,37 @@
       <span class="icon-lightbox-carousel">Next</span>
     </button>
   }
-  @if (previewImage) {
-    <div
-      [@animation-enter]="{ value: 'visible' }"
-      (@animation-enter.done)="onAnimationEnd($event)"
-      class="lightbox-img"
-    >
-      @if (currentLightboxImg) {
+  <div class="lightbox-img" [class.is-open]="previewImage()">
+    <div class="lightbox-frame">
+      @if (previousLightboxImg(); as prevImg) {
+        <img
+          class="lightbox-image previous"
+          [ngClass]="{ 'image-anim-a': imageAnimA(), 'image-anim-b': !imageAnimA() }"
+          alt="{{ prevImg.title }}"
+          src="{{ prevImg.url }}/width/{{ getLightboxRenderWidth() }}"
+          width="{{ getGalleryImageWidth(prevImg.width, prevImg.height) }}"
+          height="{{ getGalleryImageHeight(prevImg.width, prevImg.height) }}"
+          aria-hidden="true"
+        />
+      }
+      @if (currentLightboxImg(); as img) {
         <img
           #galleryPreviewImg
-          alt="{{ currentLightboxImg.title }}"
-          src="{{ currentLightboxImg.url }}/width/{{
-            getLightboxRenderWidth()
-          }}"
-          width="{{
-            getGalleryImageWidth(
-              currentLightboxImg.width,
-              currentLightboxImg.height
-            )
-          }}"
-          height="{{
-            getGalleryImageHeight(
-              currentLightboxImg.width,
-              currentLightboxImg.height
-            )
-          }}"
+          class="lightbox-image current"
+          [ngClass]="{
+            'image-anim-a': imageAnimA(),
+            'image-anim-b': !imageAnimA(),
+            'page-next': pageFlipDirection() === 'next',
+            'page-prev': pageFlipDirection() === 'prev',
+          }"
+          alt="{{ img.title }}"
+          src="{{ img.url }}/width/{{ getLightboxRenderWidth() }}"
+          width="{{ getGalleryImageWidth(img.width, img.height) }}"
+          height="{{ getGalleryImageHeight(img.width, img.height) }}"
           priority
         />
       }
       <span class="signature">R.G.</span>
     </div>
-  }
+  </div>
 </div>

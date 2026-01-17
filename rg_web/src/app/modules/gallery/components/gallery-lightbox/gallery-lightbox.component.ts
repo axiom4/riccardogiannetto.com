@@ -18,7 +18,6 @@ import {
   PortfolioService,
 } from '../../../core/api/v1';
 import { LightboxComponent } from '../lightbox/lightbox.component';
-import { AnimationEvent } from '@angular/animations';
 
 const galleryLoaderProvider = (config: ImageLoaderConfig) => {
   return `${config.src}`;
@@ -69,6 +68,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   totalImageCount = 0;
   hasNextPage = true;
   imageNum = 0;
+  pageFlipDirection = signal<'next' | 'prev'>('next');
 
   private lastItemWasLarge = false;
 
@@ -141,11 +141,9 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     this.imageNum = index + 1;
   }
 
-  onAnimationEnd(event: AnimationEvent): void {
-    if (event.toState === 'void') {
-      this.showMask.set(false);
-      this.previewImage.set(false);
-    }
+  onAnimationEnd(event: TransitionEvent): void {
+    this.showMask.set(false);
+    this.previewImage.set(false);
   }
 
   onclosePreview(): void {
@@ -153,6 +151,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   }
 
   prev(): void {
+    this.pageFlipDirection.set('prev');
     this.currentIdx--;
     if (this.currentIdx < 0) {
       this.currentIdx = this.galleryItems().length - 1;
@@ -162,6 +161,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   }
 
   next(): void {
+    this.pageFlipDirection.set('next');
     this.currentIdx++;
     if (this.currentIdx >= this.galleryItems().length) {
       this.currentIdx = 0;
