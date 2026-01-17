@@ -162,12 +162,30 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
 
   next(): void {
     this.pageFlipDirection.set('next');
-    this.currentIdx++;
-    if (this.currentIdx >= this.galleryItems().length) {
-      this.currentIdx = 0;
+
+    // Pre-load next page if we are close to the end
+    if (this.hasNextPage && this.currentIdx >= this.galleryItems().length - 3) {
+      this.loadItems();
     }
-    this.currentLightboxImg.set(this.galleryItems()[this.currentIdx].data);
-    this.imageNum = this.currentIdx + 1;
+
+    const nextIdx = this.currentIdx + 1;
+
+    if (nextIdx < this.galleryItems().length) {
+      this.currentIdx = nextIdx;
+      this.currentLightboxImg.set(this.galleryItems()[this.currentIdx].data);
+      this.imageNum = this.currentIdx + 1;
+    } else {
+      // End of currently loaded items
+      if (this.hasNextPage) {
+        // Wait for more items to load
+        this.loadItems();
+      } else {
+        // Loop back to start
+        this.currentIdx = 0;
+        this.currentLightboxImg.set(this.galleryItems()[this.currentIdx].data);
+        this.imageNum = this.currentIdx + 1;
+      }
+    }
   }
 
   loadItems(): void {
