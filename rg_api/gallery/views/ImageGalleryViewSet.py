@@ -48,10 +48,8 @@ class ImageRenderer(renderers.BaseRenderer):
                                 interpolation=cv2.INTER_AREA)
 
             # Variable quality based on image width to minimize size with imperceptible loss
-            if width <= 400:
-                quality = 45  # Aggressive compression for small thumbnails
-            elif width <= 800:
-                quality = 50  # Medium compression for mobile/tablet sizes
+            if width <= 800:
+                quality = 50  # Aggressive compression for (likely High DPI) mobile/thumbnails
             elif width <= 1200:
                 quality = 70  # Good balance for standard desktop views
             else:
