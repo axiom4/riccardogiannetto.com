@@ -18,10 +18,12 @@ import cv2
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 
+
 class ImageGalleryPagination(PageNumberPagination):
     page_size = 5
     page_size_query_param = 'page_size'
     max_page_size = 12
+
 
 class ImageRenderer(renderers.BaseRenderer):
     media_type = 'image/webp'
@@ -32,9 +34,10 @@ class ImageRenderer(renderers.BaseRenderer):
     def render(self, data, media_type=None, renderer_context=None):
         width = int(renderer_context['kwargs']['width'])
 
-        this_object = ImageGallery.objects.get(pk=renderer_context['kwargs']['pk'])
+        this_object = ImageGallery.objects.get(
+            pk=renderer_context['kwargs']['pk'])
 
-        filename =f"{settings.MEDIA_ROOT}/preview/{this_object.pk}_{width}.webp"
+        filename = f"{settings.MEDIA_ROOT}/preview/{this_object.pk}_{width}.webp"
 
         if os.path.exists(filename) == False:
 
@@ -43,18 +46,18 @@ class ImageRenderer(renderers.BaseRenderer):
             hsize = int((float(img.shape[0])*float(wpercent)))
             resize = cv2.resize(img, (width, hsize))
 
-            _, im_buf_arr = cv2.imencode(".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), 85])
+            _, im_buf_arr = cv2.imencode(
+                ".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), 85])
             byte_im = im_buf_arr.tobytes()
 
             with open(filename, "wb") as f:
                 f.write(byte_im)
-    
+
             return byte_im
-        
+
         else:
             with open(filename, "rb") as f:
                 return f.read()
-
 
 
 class ImageGalleryViewSet(viewsets.ModelViewSet):
@@ -70,7 +73,6 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
     ordering_fields = ['title', 'created_at', 'gallery', 'date']
 
     filterset_fields = ['gallery']
-    
 
     search_fields = [
         '$title'
@@ -81,7 +83,3 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
     def jpeg(self, request, *args, **kwargs):
         data = self.retrieve(request, *args, **kwargs)
         return data
-
-
-
-
