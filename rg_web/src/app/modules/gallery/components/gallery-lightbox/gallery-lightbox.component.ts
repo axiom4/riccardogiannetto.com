@@ -115,29 +115,6 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     this.observer.observe(target);
   }
 
-  @HostListener('document:keydown.escape', ['$event']) onKeydownEscapeHandler(
-    event: Event,
-  ) {
-    if (this.previewImage()) {
-      this.previewImage.set(false);
-    }
-  }
-
-  @HostListener('document:keydown.arrowLeft', ['$event']) onKeydownLeftHandler(
-    event: Event,
-  ) {
-    if (this.previewImage()) {
-      this.prev();
-    }
-  }
-
-  @HostListener('document:keydown.arrowRight', ['$event'])
-  onKeydownRightHandler(event: Event) {
-    if (this.previewImage()) {
-      this.next();
-    }
-  }
-
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
     if (this.innerWidth !== window?.innerWidth) {
