@@ -168,45 +168,70 @@ class AnalyticsMiddleware:
                 # Update or Create Session
                 # We prioritize creation with geo info.
                 current_time = timezone.now()
+                
+                user_session = None
+                
+                # 1. Try to find an ACTIVE session (last 30m) by Tracking ID / Fingerprint first
+                # This ensures we stitch the session even if session_key changed (Tor)
+                if tracking_id:
+                     user_session = UserSession.objects.filter(
+                        tracking_id=tracking_id,
+                        last_seen_at__gte=current_time - timezone.timedelta(minutes=30)
+                     ).order_by('-last_seen_at').first()
 
-                # Update defaults to include new fields
-                defaults = {
-                    'user': user,
-                    'ip_address': ip,
-                    'city': city,
-                    'country': country,
-                    'user_agent': request.META.get('HTTP_USER_AGENT', ''),
-                    'started_at': current_time,
-                    'last_seen_at': current_time,
-                    'page_count': 1,
-                    'tracking_id': tracking_id,
-                    'device_fingerprint': device_fingerprint
-                }
-
-                # Note: This is synchronous DB hit. In high scale, use cache or async queue.
-                user_session, created = UserSession.objects.get_or_create(
-                    session_key=session_key,
-                    defaults=defaults
-                )
-
-                if not created:
+                if user_session:
+                    # Session Stitching: Capture the new session_key into the existing session
+                    if user_session.session_key != session_key:
+                        # We must check if the new session_key is already taken (rare collision)
+                        if not UserSession.objects.filter(session_key=session_key).exists():
+                            user_session.session_key = session_key
+                    
                     user_session.last_seen_at = current_time
                     user_session.page_count += 1
-                    # Associate user if logged in later
+                    
                     if user and not user_session.user:
                         user_session.user = user
+                    
+                    # Update geo if missing or changed (Tor IP rotation)
+                    if not user_session.ip_address: # Update IP if it was empty, or maybe always update for Tor?
+                        user_session.ip_address = ip
+                        
+                    user_session.save(update_fields=['session_key', 'last_seen_at', 'page_count', 'user', 'ip_address'])
+                    
+                else:
+                    # 2. Fallback: Create new or get by session_key (Standard Django Session behavior)
+                    defaults = {
+                        'user': user,
+                        'ip_address': ip,
+                        'city': city,
+                        'country': country,
+                        'user_agent': request.META.get('HTTP_USER_AGENT', ''),
+                        'started_at': current_time,
+                        'last_seen_at': current_time,
+                        'page_count': 1,
+                        'tracking_id': tracking_id,
+                        'device_fingerprint': device_fingerprint
+                    }
+                    
+                    user_session, created = UserSession.objects.get_or_create(
+                        session_key=session_key,
+                        defaults=defaults
+                    )
+                    
+                    if not created:
+                        # If we matched by session_key, just update stats
+                        user_session.last_seen_at = current_time
+                        user_session.page_count += 1
+                        if user and not user_session.user:
+                             user_session.user = user
 
-                    # Update tracking info if missing
-                    if not user_session.tracking_id:
-                        user_session.tracking_id = tracking_id
-                    if not user_session.device_fingerprint:
-                        user_session.device_fingerprint = device_fingerprint
+                        # Ensure tracking IDs are backfilled if missing
+                        if not user_session.tracking_id:
+                             user_session.tracking_id = tracking_id
+                             user_session.device_fingerprint = device_fingerprint
+                             
+                        user_session.save(update_fields=['last_seen_at', 'page_count', 'user', 'tracking_id', 'device_fingerprint'])
 
-                    user_session.save(
-                        update_fields=['last_seen_at', 'page_count', 'user', 'tracking_id', 'device_fingerprint'])
-
-            except Exception as e:
-                logger.error(f"Session tracking failed: {e}")
 
             UserActivity.objects.create(
                 session=user_session,
