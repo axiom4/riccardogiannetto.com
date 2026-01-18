@@ -1,10 +1,23 @@
 from .models import UserActivity
 import threading
+import logging
+from django.conf import settings
+try:
+    import geoip2.database
+except ImportError:
+    geoip2 = None
 
+logger = logging.getLogger(__name__)
 
 class AnalyticsMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
+        self.reader = None
+        if geoip2 and hasattr(settings, 'GEOIP_PATH'):
+            try:
+                self.reader = geoip2.database.Reader(settings.GEOIP_PATH)
+            except Exception as e:
+                logger.warning(f"GeoIP database not found or invalid: {e}")
 
     def __call__(self, request):
         # Process request before view (and before cache check if cache middleware was used globaly,
@@ -44,6 +57,25 @@ class AnalyticsMiddleware:
             # We don't have access to "viewset action" easily here without using process_view
             # and storing it, but path is the most important.
 
+            city = None
+            country = None
+            lat = None
+            lon = None
+
+            if self.reader and ip:
+                try:
+                    # Handle local IPs
+                    if ip in ['127.0.0.1', 'localhost', '::1']:
+                        pass
+                    else:
+                        response = self.reader.city(ip)
+                        city = response.city.name
+                        country = response.country.name
+                        lat = response.location.latitude
+                        lon = response.location.longitude
+                except Exception:
+                    pass
+
             UserActivity.objects.create(
                 user=user,
                 # e.g. "GET /blog/posts/"
@@ -51,6 +83,10 @@ class AnalyticsMiddleware:
                 path=request.path,
                 method=request.method,
                 ip_address=ip,
+                city=city,
+                country=country,
+                latitude=lat,
+                longitude=lon,
                 user_agent=request.META.get('HTTP_USER_AGENT', ''),
                 payload={}  # Middleware generally doesn't know parsed kwargs easily
             )
