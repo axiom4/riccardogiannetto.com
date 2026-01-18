@@ -45,7 +45,8 @@ class AnalyticsMiddleware:
         if x_forwarded_for:
             ip = x_forwarded_for.split(',')[0].strip()
         else:
-            ip = request.META.get('HTTP_X_REAL_IP') or request.META.get('REMOTE_ADDR')
+            ip = request.META.get(
+                'HTTP_X_REAL_IP') or request.META.get('REMOTE_ADDR')
 
         if not ip:
             return None
