@@ -129,10 +129,30 @@ class AnalyticsMiddleware:
 
                 session_key = request.session.session_key
 
-                # Handle Persistent Tracking ID (Cookie based, lasts 1 year)
+                # Handle Persistent Tracking ID
                 tracking_id = request.COOKIES.get('rg_tid')
+                # Generate Device Fingerprint
+                device_fingerprint = self._get_device_fingerprint(request)
+
                 if not tracking_id:
-                    tracking_id = str(uuid.uuid4())
+                    # Attempt to recover session via Fingerprint (Heuristic for Tor/Privacy Browsers)
+                    # Look for a recent session (last 30 mins) with same fingerprint
+                    # This risks merging concurrent Tor users, but ensures continuity for single users resetting identity
+                    # Since Tor users share identical fingerprints, this effectively groups "Tor Traffic" together
+                    # or maintains continuity for the single user case.
+                    try:
+                        recent_session = UserSession.objects.filter(
+                            device_fingerprint=device_fingerprint,
+                            last_seen_at__gte=timezone.now() - timezone.timedelta(minutes=30)
+                        ).order_by('-last_seen_at').first()
+                        
+                        if recent_session and recent_session.tracking_id:
+                            tracking_id = recent_session.tracking_id
+                        else:
+                            tracking_id = str(uuid.uuid4())
+                    except Exception:
+                         tracking_id = str(uuid.uuid4())
+
                     response.set_cookie(
                         'rg_tid',
                         tracking_id,
@@ -140,9 +160,6 @@ class AnalyticsMiddleware:
                         samesite='Lax',
                         secure=settings.SESSION_COOKIE_SECURE or False
                     )
-
-                # Generate Device Fingerprint
-                device_fingerprint = self._get_device_fingerprint(request)
 
                 # Check for existing session via tracking_id if session_key is new
                 # This helps link sessions if cookies were cleared but tracking_id persists (rare for Tor, common for others)
