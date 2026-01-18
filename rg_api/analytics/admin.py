@@ -13,7 +13,15 @@ class UserSessionAdmin(admin.ModelAdmin):
     list_filter = ('country', 'started_at')
 
     def duration(self, obj):
-        return obj.duration
+        total_seconds = int(obj.duration.total_seconds())
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+        seconds = total_seconds % 60
+        if hours > 0:
+            return f"{hours}h {minutes}m {seconds}s"
+        elif minutes > 0:
+            return f"{minutes}m {seconds}s"
+        return f"{seconds}s"
     duration.short_description = 'Duration'
 
     change_form_template = 'admin/analytics/usersession/change_form.html'
