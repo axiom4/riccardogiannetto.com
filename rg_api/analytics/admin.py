@@ -31,15 +31,21 @@ class UserSessionAdmin(admin.ModelAdmin):
         from django.core.serializers.json import DjangoJSONEncoder
         import json
 
+        response = super().changelist_view(request, extra_context=extra_context)
+
+        try:
+            qs = response.context_data['cl'].queryset
+        except (AttributeError, KeyError):
+            return response
+
         # Aggregate geo data
-        sessions = UserSession.objects.exclude(latitude__isnull=True).exclude(longitude__isnull=True).exclude(
+        sessions = qs.exclude(latitude__isnull=True).exclude(longitude__isnull=True).exclude(
             latitude=0).exclude(longitude=0).values('latitude', 'longitude', 'city', 'country', 'ip_address')
 
-        extra_context = extra_context or {}
-        extra_context['map_locations'] = json.dumps(
+        response.context_data['map_locations'] = json.dumps(
             list(sessions), cls=DjangoJSONEncoder)
 
-        return super().changelist_view(request, extra_context=extra_context)
+        return response
 
     class Media:
         css = {
