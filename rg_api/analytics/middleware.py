@@ -1,7 +1,8 @@
-from .models import UserActivity
+from .models import UserActivity, UserSession
 import threading
 import logging
 from django.conf import settings
+from django.utils import timezone
 try:
     import geoip2.database
 except ImportError:
@@ -73,15 +74,58 @@ class AnalyticsMiddleware:
                     if ip in ['127.0.0.1', '::1']:
                         pass
                     else:
-                        response = self.reader.city(ip)
-                        city = response.city.name
-                        country = response.country.name
-                        lat = response.location.latitude
-                        lon = response.location.longitude
+                        geo_response = self.reader.city(ip)
+                        city = geo_response.city.name
+                        country = geo_response.country.name
+                        lat = geo_response.location.latitude
+                        lon = geo_response.location.longitude
                 except Exception:
                     pass
 
+            # Manage UserSession
+            user_session = None
+            try:
+                if not request.session.session_key:
+                    request.session.save()
+                
+                session_key = request.session.session_key
+
+                # Update or Create Session
+                # We prioritize creation with geo info.
+                current_time = timezone.now()
+                
+                # Check if session exists to update page count
+                # Using update_or_create logic manually to handle efficient updates
+                # We fetch first to see state.
+                
+                # Note: This is synchronous DB hit. In high scale, use cache or async queue.
+                user_session, created = UserSession.objects.get_or_create(
+                    session_key=session_key,
+                    defaults={
+                        'user': user,
+                        'ip_address': ip,
+                        'city': city,
+                        'country': country,
+                        'user_agent': request.META.get('HTTP_USER_AGENT', ''),
+                        'started_at': current_time,
+                        'last_seen_at': current_time,
+                        'page_count': 1
+                    }
+                )
+
+                if not created:
+                    user_session.last_seen_at = current_time
+                    user_session.page_count += 1
+                    # Associate user if logged in later
+                    if user and not user_session.user:
+                        user_session.user = user
+                    user_session.save(update_fields=['last_seen_at', 'page_count', 'user'])
+
+            except Exception as e:
+                logger.error(f"Session tracking failed: {e}")
+
             UserActivity.objects.create(
+                session=user_session,
                 user=user,
                 # e.g. "GET /blog/posts/"
                 action=f"{request.method} {request.path}",
