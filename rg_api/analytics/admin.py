@@ -4,9 +4,10 @@ from .models import UserActivity, UserSession
 
 @admin.register(UserSession)
 class UserSessionAdmin(admin.ModelAdmin):
-    list_display = ('ip_address', 'started_at', 'last_seen_at', 'duration', 'page_count', 'city', 'country')
+    list_display = ('ip_address', 'started_at', 'last_seen_at',
+                    'duration', 'page_count', 'city', 'country')
     readonly_fields = ('started_at', 'last_seen_at', 'duration')
-    
+
     def duration(self, obj):
         return obj.duration
     duration.short_description = 'Duration'

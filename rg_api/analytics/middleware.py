@@ -87,17 +87,17 @@ class AnalyticsMiddleware:
             try:
                 if not request.session.session_key:
                     request.session.save()
-                
+
                 session_key = request.session.session_key
 
                 # Update or Create Session
                 # We prioritize creation with geo info.
                 current_time = timezone.now()
-                
+
                 # Check if session exists to update page count
                 # Using update_or_create logic manually to handle efficient updates
                 # We fetch first to see state.
-                
+
                 # Note: This is synchronous DB hit. In high scale, use cache or async queue.
                 user_session, created = UserSession.objects.get_or_create(
                     session_key=session_key,
@@ -119,7 +119,8 @@ class AnalyticsMiddleware:
                     # Associate user if logged in later
                     if user and not user_session.user:
                         user_session.user = user
-                    user_session.save(update_fields=['last_seen_at', 'page_count', 'user'])
+                    user_session.save(
+                        update_fields=['last_seen_at', 'page_count', 'user'])
 
             except Exception as e:
                 logger.error(f"Session tracking failed: {e}")

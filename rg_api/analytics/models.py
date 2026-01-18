@@ -15,11 +15,11 @@ class UserSession(models.Model):
     city = models.CharField(max_length=100, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
     user_agent = models.TextField(blank=True, null=True)
-    
+
     started_at = models.DateTimeField(auto_now_add=True)
     last_seen_at = models.DateTimeField(auto_now=True)
     page_count = models.PositiveIntegerField(default=1)
-    
+
     class Meta:
         verbose_name = 'User Session'
         verbose_name_plural = 'User Sessions'
@@ -37,8 +37,8 @@ class UserActivity(models.Model):
     session = models.ForeignKey(
         UserSession,
         on_delete=models.SET_NULL,
-        null=True, 
-        blank=True, 
+        null=True,
+        blank=True,
         related_name='activities'
     )
     user = models.ForeignKey(
