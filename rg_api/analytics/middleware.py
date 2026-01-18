@@ -107,23 +107,26 @@ class AnalyticsMiddleware:
             lat = None
             lon = None
 
-            if self.reader and ip:
-                try:
-                    # Handle local IPs
-                    if ip in ['127.0.0.1', '::1']:
-                        if settings.DEBUG:
-                            city = "Rome (Localhost)"
-                            country = "Italy"
-                            lat = 41.9028
-                            lon = 12.4964
-                    else:
+            # Try to get location
+            if ip:
+                # 1. Check Localhost / Dev
+                if ip in ['127.0.0.1', '::1'] and settings.DEBUG:
+                     city = "Rome (Localhost)"
+                     country = "Italy"
+                     lat = 41.9028
+                     lon = 12.4964
+                
+                # 2. Use GeoIP if available and not already set (or if we want real geoip for non-localhost)
+                elif self.reader:
+                    try:
                         geo_response = self.reader.city(ip)
                         city = geo_response.city.name
                         country = geo_response.country.name
                         lat = geo_response.location.latitude
                         lon = geo_response.location.longitude
-                except Exception:
-                    pass
+                    except Exception as e:
+                        # logger.warning(f"GeoIP Lookup failed for {ip}: {e}")
+                        pass
 
             # Manage UserSession
             user_session = None
