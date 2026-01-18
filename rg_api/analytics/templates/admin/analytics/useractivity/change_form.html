@@ -3,19 +3,17 @@
   <h2>Location Map</h2>
   <div id="map" style="height: 400px; width: 100%"></div>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var lat = "{{ original.latitude|stringformat:'f' }}";
-        var lon = "{{ original.longitude|stringformat:'f' }}";
-        var map = L.map('map').setView([lat, lon], 13);
+    document.addEventListener("DOMContentLoaded", function () {
+      var lat = "{{ original.latitude|stringformat:'f' }}";
+      var lon = "{{ original.longitude|stringformat:'f' }}";
+      var map = L.map("map").setView([lat, lon], 13);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "© OpenStreetMap",
+      }).addTo(map);
 
-        L.marker([lat, lon]).addTo(map)
-            .bindPopup('{{ original.city|default:"Unknown City" }}, {{ original.country|default:"Unknown Country" }}')
-            .openPopup();
+      L.marker([lat, lon]).addTo(map).bindPopup('{{ original.city|default:"Unknown City" }}, {{ original.country|default:"Unknown Country" }}').openPopup();
     });
   </script>
 </div>
