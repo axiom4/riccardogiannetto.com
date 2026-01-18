@@ -33,6 +33,7 @@ schema_url_patterns = [
 urlpatterns = [
     path("blog/", include(blog_urls.urlpatterns)),
     path('portfolio/', include('gallery.urls')),
+    path('analytics/', include('analytics.urls')),
     path('admin/', admin.site.urls),
     path('openapi', SpectacularAPIView().as_view(), name='schema'),
     path('',

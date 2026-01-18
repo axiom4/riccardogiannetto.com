@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'mdeditor',
     'blog',
     'gallery',
+    'analytics',
     'drf_spectacular',
 ]
 
