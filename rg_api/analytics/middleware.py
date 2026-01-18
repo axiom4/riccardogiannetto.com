@@ -49,9 +49,13 @@ class AnalyticsMiddleware:
         try:
             x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
             if x_forwarded_for:
-                ip = x_forwarded_for.split(',')[0]
+                ip = x_forwarded_for.split(',')[0].strip()
             else:
                 ip = request.META.get('REMOTE_ADDR')
+
+            # Fix for some dev environments returning 'localhost'
+            if ip == 'localhost':
+                ip = '127.0.0.1'
 
             user = request.user if request.user.is_authenticated else None
 
@@ -66,7 +70,7 @@ class AnalyticsMiddleware:
             if self.reader and ip:
                 try:
                     # Handle local IPs
-                    if ip in ['127.0.0.1', 'localhost', '::1']:
+                    if ip in ['127.0.0.1', '::1']:
                         pass
                     else:
                         response = self.reader.city(ip)
@@ -91,5 +95,6 @@ class AnalyticsMiddleware:
                 user_agent=request.META.get('HTTP_USER_AGENT', ''),
                 payload={}  # Middleware generally doesn't know parsed kwargs easily
             )
-        except Exception:
+        except Exception as e:
+            logger.error(f"Analytics tracking failed: {e}")
             pass
