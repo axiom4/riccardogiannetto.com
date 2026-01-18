@@ -1,10 +1,31 @@
 <div class="header">
   <header class="site-header" role="banner">
-    <div class="site-branding" [class.font-loaded]="fontsLoaded()">
+    <div class="site-branding">
       <h1 class="site-title">
-        <a routerLink="/" rel="home">Riccardo Giannetto</a>
+        <a routerLink="/" rel="home" aria-label="Riccardo Giannetto - Wild Nature Photography">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 313 105" width="313" height="105" class="logo-svg">
+            <style>
+              .logo-text {
+                font-family: "myfantasy", "Brush Script MT", cursive;
+                fill: #595959;
+              }
+              .logo-title {
+                font-size: 60px;
+              }
+              .logo-subtitle {
+                font-size: 25px;
+              }
+            </style>
+            <defs>
+              <filter id="logo-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="2" dy="1" stdDeviation="1" flood-color="#d3d3d3" />
+              </filter>
+            </defs>
+            <text x="50%" y="60" text-anchor="middle" class="logo-text logo-title" filter="url(#logo-shadow)">Riccardo Giannetto</text>
+            <text x="2%" y="90" text-anchor="start" class="logo-text logo-subtitle" filter="url(#logo-shadow)">Wild Nature Photography</text>
+          </svg>
+        </a>
       </h1>
-      <h2 class="site-description">Wild Nature Photography</h2>
     </div>
     <button
       (click)="toggleMenu()"

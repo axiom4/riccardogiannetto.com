@@ -226,33 +226,18 @@ h1.site-title {
   text-shadow: 2px 1px 2px #d3d3d3;
 }
 
-h1.site-title {
-  margin-bottom: 0;
-  font-weight: normal;
-  font-size: 60px;
-}
-
-h1.site-title a,
-h1.site-title a:hover {
-  color: #595959;
-  text-decoration: none;
-}
-
-h2.site-description {
-  font-family: myfantasy, sans-serif;
-  font-size: 25px;
-  margin: 0 10px;
-  position: relative;
-  top: -5px;
-  color: #595959;
-  text-shadow: 2px 1px 2px #d3d3d3;
-}
-
 .site-branding {
   width: 313px;
   position: relative;
   float: left;
-  min-height: 105px; // Reserve space for title + description to avoid CLS
+  min-height: 105px;
+}
+
+.logo-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 313px; /* Ensure SVG doesn't grow beyond intended size */
 }
 
 @media screen and (max-width: 360px) {

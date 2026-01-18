@@ -1,8 +1,2 @@
-.site-branding {
-  opacity: 0;
-  transition: opacity 0.5s ease-out;
+// .site-branding styles are handled globally or inline
 
-  &.font-loaded {
-    opacity: 1;
-  }
-}
