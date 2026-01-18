@@ -45,16 +45,19 @@ export class LightboxComponent implements OnInit {
       this.imageAnimA.update((value) => !value);
     });
 
-    effect(() => {
-      const nextImg = this.currentLightboxImg();
-      const lastImg = this.lastLightboxImg();
+    effect(
+      () => {
+        const nextImg = this.currentLightboxImg();
+        const lastImg = this.lastLightboxImg();
 
-      if (nextImg && nextImg !== lastImg) {
-        this.previousLightboxImg.set(lastImg);
-        this.lastLightboxImg.set(nextImg);
-        this.isLoading.set(true);
-      }
-    }, { allowSignalWrites: true });
+        if (nextImg && nextImg !== lastImg) {
+          this.previousLightboxImg.set(lastImg);
+          this.lastLightboxImg.set(nextImg);
+          this.isLoading.set(true);
+        }
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   ngOnInit(): void {
