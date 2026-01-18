@@ -204,6 +204,10 @@ input[type="submit"]:hover {
   border-color: #dbdbdb;
 }
 
+app-header {
+  display: block; // Fix for Angular host element behavior
+}
+
 .header {
   width: 100%;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -228,22 +232,22 @@ h1.site-title {
 
 .site-branding {
   width: 313px;
+  height: 105px; // Fixed height to prevent layout shift
   position: relative;
   float: left;
-  min-height: 105px;
+  overflow: hidden; // Ensure no content spills out
 }
 
 .logo-svg {
   display: block;
   width: 100%;
-  height: auto;
-  max-width: 313px; /* Ensure SVG doesn't grow beyond intended size */
+  height: 100%; // Fill the fixed container
 }
 
 @media screen and (max-width: 360px) {
   .site-branding {
     width: 260px;
-    min-height: 90px;
+    height: 88px; // Maintain aspect ratio (313x105 -> 260x87.2)
   }
 }
 
