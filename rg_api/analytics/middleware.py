@@ -196,9 +196,15 @@ class AnalyticsMiddleware:
                     # Update geo if missing or changed (Tor IP rotation)
                     if not user_session.ip_address:  # Update IP if it was empty, or maybe always update for Tor?
                         user_session.ip_address = ip
+                        
+                    if city and (user_session.city != city):
+                         user_session.city = city
+                         user_session.country = country
+                         user_session.latitude = lat
+                         user_session.longitude = lon
 
                     user_session.save(update_fields=[
-                                      'session_key', 'last_seen_at', 'page_count', 'user', 'ip_address'])
+                                      'session_key', 'last_seen_at', 'page_count', 'user', 'ip_address', 'city', 'country', 'latitude', 'longitude'])
 
                 else:
                     # 2. Fallback: Create new or get by session_key (Standard Django Session behavior)
@@ -207,6 +213,8 @@ class AnalyticsMiddleware:
                         'ip_address': ip,
                         'city': city,
                         'country': country,
+                        'latitude': lat,
+                        'longitude': lon,
                         'user_agent': request.META.get('HTTP_USER_AGENT', ''),
                         'started_at': current_time,
                         'last_seen_at': current_time,
