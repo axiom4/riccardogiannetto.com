@@ -5,10 +5,15 @@ import { FooterComponent } from './modules/main/components/footer/footer.compone
 import { CookieBannerComponent } from './components/cookie-banner/cookie-banner.component';
 
 @Component({
-    selector: 'app-root',
-    imports: [RouterOutlet, HeaderComponent, FooterComponent, CookieBannerComponent],
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.scss'
+  selector: 'app-root',
+  imports: [
+    RouterOutlet,
+    HeaderComponent,
+    FooterComponent,
+    CookieBannerComponent,
+  ],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss',
 })
 export class AppComponent {
   title = 'Riccardo Giannetto Gallery';

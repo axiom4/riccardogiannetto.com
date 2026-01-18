@@ -133,36 +133,37 @@ class AnalyticsMiddleware:
             try:
                 # Ensure Django session exists
                 if not request.session.session_key:
-                     request.session.save()
+                    request.session.save()
                 session_key = request.session.session_key
 
                 # Generate Device Fingerprint
                 device_fingerprint = self._get_device_fingerprint(request)
-                
+
                 # Handle Persistent Tracking ID from Cookie
                 tracking_id = request.COOKIES.get('rg_tid')
                 current_time = timezone.now()
 
                 if not tracking_id:
-                     # Attempt recovery via Fingerprint
-                     if device_fingerprint:
-                         recent_session = UserSession.objects.filter(
+                    # Attempt recovery via Fingerprint
+                    if device_fingerprint:
+                        recent_session = UserSession.objects.filter(
                             device_fingerprint=device_fingerprint,
-                            last_seen_at__gte=current_time - timezone.timedelta(minutes=30)
-                         ).order_by('-last_seen_at').first()
-                         if recent_session and recent_session.tracking_id:
-                             tracking_id = recent_session.tracking_id
-                    
-                     if not tracking_id:
-                         tracking_id = str(uuid.uuid4())
-                         
-                     # Set cookie
-                     # Use SameSite=None and Secure=True to allow cross-site tracking (e.g. Frontend on different port)
-                     # Note: Secure=True works on localhost and HTTPS.
-                     response.set_cookie(
+                            last_seen_at__gte=current_time -
+                            timezone.timedelta(minutes=30)
+                        ).order_by('-last_seen_at').first()
+                        if recent_session and recent_session.tracking_id:
+                            tracking_id = recent_session.tracking_id
+
+                    if not tracking_id:
+                        tracking_id = str(uuid.uuid4())
+
+                    # Set cookie
+                    # Use SameSite=None and Secure=True to allow cross-site tracking (e.g. Frontend on different port)
+                    # Note: Secure=True works on localhost and HTTPS.
+                    response.set_cookie(
                         'rg_tid',
                         tracking_id,
-                        max_age=31536000, # 1 year
+                        max_age=31536000,  # 1 year
                         samesite='None',
                         secure=True
                     )
@@ -229,11 +230,11 @@ class AnalyticsMiddleware:
                     if not created:
                         user_session.last_seen_at = current_time
                         user_session.page_count += 1
-                        
+
                         if not user_session.tracking_id:
                             user_session.tracking_id = tracking_id
                             user_session.device_fingerprint = device_fingerprint
-                            
+
                         user_session.save(
                             update_fields=['last_seen_at', 'page_count', 'tracking_id', 'device_fingerprint'])
 
