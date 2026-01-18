@@ -111,11 +111,11 @@ class AnalyticsMiddleware:
             if ip:
                 # 1. Check Localhost / Dev
                 if ip in ['127.0.0.1', '::1'] and settings.DEBUG:
-                     city = "Rome (Localhost)"
-                     country = "Italy"
-                     lat = 41.9028
-                     lon = 12.4964
-                
+                    city = "Rome (Localhost)"
+                    country = "Italy"
+                    lat = 41.9028
+                    lon = 12.4964
+
                 # 2. Use GeoIP if available and not already set (or if we want real geoip for non-localhost)
                 elif self.reader:
                     try:
