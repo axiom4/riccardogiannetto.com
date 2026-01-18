@@ -24,7 +24,7 @@ class Post(models.Model):
     categories = models.ManyToManyField(Category)
     author = models.ForeignKey(
         User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):

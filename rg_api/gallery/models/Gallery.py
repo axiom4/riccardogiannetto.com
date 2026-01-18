@@ -16,6 +16,3 @@ class Gallery(models.Model):
 
     class Meta:
         verbose_name_plural = 'galleries'
-        indexes = [
-            models.Index(fields=['tag'])
-        ]

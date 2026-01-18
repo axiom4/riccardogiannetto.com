@@ -11,7 +11,7 @@ class UserSession(models.Model):
         null=True,
         blank=True
     )
-    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True, db_index=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
     latitude = models.FloatField(blank=True, null=True)
@@ -23,17 +23,19 @@ class UserSession(models.Model):
         max_length=255,
         blank=True,
         null=True,
-        help_text="Persistent cookie ID for tracking across sessions"
+        help_text="Persistent cookie ID for tracking across sessions",
+        db_index=True
     )
     device_fingerprint = models.CharField(
         max_length=255,
         blank=True,
         null=True,
-        help_text="Hash of header-based device characteristics"
+        help_text="Hash of header-based device characteristics",
+        db_index=True
     )
 
-    started_at = models.DateTimeField(auto_now_add=True)
-    last_seen_at = models.DateTimeField(auto_now=True)
+    started_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    last_seen_at = models.DateTimeField(auto_now=True, db_index=True)
     page_count = models.PositiveIntegerField(default=1)
 
     class Meta:
@@ -64,17 +66,17 @@ class UserActivity(models.Model):
         blank=True,
         related_name='activities'
     )
-    action = models.CharField(max_length=255)
+    action = models.CharField(max_length=255, db_index=True)
     path = models.CharField(max_length=1024, blank=True)
     method = models.CharField(max_length=10, blank=True)
-    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True, db_index=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
     user_agent = models.TextField(blank=True, null=True)
     payload = models.JSONField(default=dict, blank=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
         verbose_name = 'User Activity'

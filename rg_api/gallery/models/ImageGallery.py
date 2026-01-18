@@ -86,8 +86,8 @@ class ImageGallery(models.Model):
         verbose_name_plural = 'images'
         indexes = [
             models.Index(fields=['title']),
-            models.Index(fields=['author']),
-            models.Index(fields=['gallery']),
+            models.Index(fields=['created_at']),
+            models.Index(fields=['date']),
         ]
 
         
