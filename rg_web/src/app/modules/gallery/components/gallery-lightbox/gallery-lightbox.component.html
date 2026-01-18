@@ -11,9 +11,16 @@
         item.gridColumnStart
       "
     >
+      @if (item.isLoading) {
+        <div class="loading-msg">
+          <img src="assets/camera-loader.svg" width="100" height="100" alt="loading...">
+        </div>
+      }
       <img
         #galleryImg
         (click)="onPreviewImage(i)"
+        (load)="onImageLoad(item)"
+        (error)="onImageLoad(item)"
         alt="{{ item.data.title }}"
         src="{{ item.data.url }}/width/{{ getGalleryPreviewWidth() }}"
         width="{{ getGalleryPreviewWidth() }}"

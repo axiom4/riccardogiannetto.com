@@ -43,6 +43,11 @@
   }
   <div class="lightbox-img" [class.is-open]="previewImage()">
     <div class="lightbox-frame">
+      @if (isLoading()) {
+        <div class="loading-msg">
+          <img src="assets/camera-loader.svg" width="100" height="100" alt="loading...">
+        </div>
+      }
       @if (previousLightboxImg(); as prevImg) {
         <img
           class="lightbox-image previous"
@@ -72,6 +77,8 @@
           width="{{ getGalleryImageWidth(img.width, img.height) }}"
           height="{{ getGalleryImageHeight(img.width, img.height) }}"
           priority
+          (load)="onImageLoad()"
+          (error)="onImageLoad()"
         />
       }
       <span class="signature">R.G.</span>

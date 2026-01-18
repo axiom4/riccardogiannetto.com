@@ -27,6 +27,7 @@ export class LightboxComponent implements OnInit {
   readonly controls = input<boolean>(true);
   readonly previewImage = input<boolean>(false);
   readonly pageFlipDirection = input<'next' | 'prev'>('next');
+  readonly isLoading = signal(true);
 
   @Output() close = new EventEmitter<void>();
   @Output() prevAction = new EventEmitter<void>();
@@ -51,8 +52,9 @@ export class LightboxComponent implements OnInit {
       if (nextImg && nextImg !== lastImg) {
         this.previousLightboxImg.set(lastImg);
         this.lastLightboxImg.set(nextImg);
+        this.isLoading.set(true);
       }
-    });
+    }, { allowSignalWrites: true });
   }
 
   ngOnInit(): void {
@@ -83,6 +85,10 @@ export class LightboxComponent implements OnInit {
   @HostListener('document:keydown.arrowRight', ['$event'])
   onKeydownRightHandler(event: Event) {
     this.nextAction.emit();
+  }
+
+  onImageLoad(): void {
+    this.isLoading.set(false);
   }
 
   onclosePreview(): void {

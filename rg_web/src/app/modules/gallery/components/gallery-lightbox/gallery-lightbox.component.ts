@@ -31,6 +31,7 @@ export interface GalleryItem {
   baseRows: number;
   gridColumnStart?: number;
   gridRowStart?: number;
+  isLoading: boolean;
 }
 
 @Component({
@@ -150,6 +151,10 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     this.previewImage.set(false);
   }
 
+  onImageLoad(item: GalleryItem): void {
+    item.isLoading = false;
+  }
+
   prev(): void {
     this.pageFlipDirection.set('prev');
     this.currentIdx--;
@@ -229,6 +234,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
           rows,
           baseCols: cols,
           baseRows: rows,
+          isLoading: true,
         };
       });
 
