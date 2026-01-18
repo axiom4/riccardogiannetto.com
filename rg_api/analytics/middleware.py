@@ -1,6 +1,7 @@
 from .models import UserActivity, UserSession
 import threading
 import logging
+import ipaddress
 from django.conf import settings
 from django.utils import timezone
 try:
@@ -39,6 +40,31 @@ class AnalyticsMiddleware:
 
         return response
 
+    def _get_client_ip(self, request):
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0].strip()
+        else:
+            ip = request.META.get('HTTP_X_REAL_IP') or request.META.get('REMOTE_ADDR')
+
+        if not ip:
+            return None
+
+        # Clean brackets if present
+        ip = ip.strip('[]')
+
+        if ip == 'localhost':
+            return '127.0.0.1'
+
+        try:
+            ip_obj = ipaddress.ip_address(ip)
+            # Unmap IPv4 mapped IPv6 addresses
+            if isinstance(ip_obj, ipaddress.IPv6Address) and ip_obj.ipv4_mapped:
+                return str(ip_obj.ipv4_mapped)
+            return str(ip_obj)
+        except ValueError:
+            return None
+
     def track_activity(self, request, response):
         if not (200 <= response.status_code < 300):
             return
@@ -48,15 +74,9 @@ class AnalyticsMiddleware:
             return
 
         try:
-            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-            if x_forwarded_for:
-                ip = x_forwarded_for.split(',')[0].strip()
-            else:
-                ip = request.META.get('REMOTE_ADDR')
-
-            # Fix for some dev environments returning 'localhost'
-            if ip == 'localhost':
-                ip = '127.0.0.1'
+            ip = self._get_client_ip(request)
+            if not ip:
+                return
 
             user = request.user if request.user.is_authenticated else None
 
