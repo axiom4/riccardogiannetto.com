@@ -2,6 +2,8 @@ from .models import UserActivity, UserSession
 import threading
 import logging
 import ipaddress
+import hashlib
+import uuid
 from django.conf import settings
 from django.utils import timezone
 try:
@@ -66,6 +68,21 @@ class AnalyticsMiddleware:
         except ValueError:
             return None
 
+    def _get_device_fingerprint(self, request):
+        """
+        Create a hash based on available headers to identify consistent devices/browsers
+        even if cookies are cleared.
+        """
+        components = [
+            request.META.get('HTTP_USER_AGENT', ''),
+            request.META.get('HTTP_ACCEPT_LANGUAGE', ''),
+            request.META.get('HTTP_ACCEPT_ENCODING', ''),
+            request.META.get('HTTP_OOC', ''),  # Sometimes used by opera
+        ]
+        # Create a string from non-empty components
+        fingerprint_source = "|".join([str(c) for c in components if c])
+        return hashlib.sha256(fingerprint_source.encode('utf-8')).hexdigest()
+
     def track_activity(self, request, response):
         if not (200 <= response.status_code < 300):
             return
@@ -111,27 +128,47 @@ class AnalyticsMiddleware:
 
                 session_key = request.session.session_key
 
+                # Handle Persistent Tracking ID (Cookie based, lasts 1 year)
+                tracking_id = request.COOKIES.get('rg_tid')
+                if not tracking_id:
+                    tracking_id = str(uuid.uuid4())
+                    response.set_cookie(
+                        'rg_tid', 
+                        tracking_id, 
+                        max_age=31536000, # 1 year
+                        samesite='Lax',
+                        secure=settings.SESSION_COOKIE_SECURE or False
+                    )
+
+                # Generate Device Fingerprint
+                device_fingerprint = self._get_device_fingerprint(request)
+                
+                # Check for existing session via tracking_id if session_key is new
+                # This helps link sessions if cookies were cleared but tracking_id persists (rare for Tor, common for others)
+                # Or if we want to link via fingerprint (very common for Tor since fingerprint is uniform)
+                
                 # Update or Create Session
                 # We prioritize creation with geo info.
                 current_time = timezone.now()
-
-                # Check if session exists to update page count
-                # Using update_or_create logic manually to handle efficient updates
-                # We fetch first to see state.
+                
+                # Update defaults to include new fields
+                defaults = {
+                    'user': user,
+                    'ip_address': ip,
+                    'city': city,
+                    'country': country,
+                    'user_agent': request.META.get('HTTP_USER_AGENT', ''),
+                    'started_at': current_time,
+                    'last_seen_at': current_time,
+                    'page_count': 1,
+                    'tracking_id': tracking_id,
+                    'device_fingerprint': device_fingerprint
+                }
 
                 # Note: This is synchronous DB hit. In high scale, use cache or async queue.
                 user_session, created = UserSession.objects.get_or_create(
                     session_key=session_key,
-                    defaults={
-                        'user': user,
-                        'ip_address': ip,
-                        'city': city,
-                        'country': country,
-                        'user_agent': request.META.get('HTTP_USER_AGENT', ''),
-                        'started_at': current_time,
-                        'last_seen_at': current_time,
-                        'page_count': 1
-                    }
+                    defaults=defaults
                 )
 
                 if not created:
@@ -140,8 +177,15 @@ class AnalyticsMiddleware:
                     # Associate user if logged in later
                     if user and not user_session.user:
                         user_session.user = user
+                    
+                    # Update tracking info if missing
+                    if not user_session.tracking_id:
+                        user_session.tracking_id = tracking_id
+                    if not user_session.device_fingerprint:
+                        user_session.device_fingerprint = device_fingerprint
+                        
                     user_session.save(
-                        update_fields=['last_seen_at', 'page_count', 'user'])
+                        update_fields=['last_seen_at', 'page_count', 'user', 'tracking_id', 'device_fingerprint'])
 
             except Exception as e:
                 logger.error(f"Session tracking failed: {e}")

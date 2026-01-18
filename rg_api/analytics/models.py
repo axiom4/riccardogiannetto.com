@@ -15,6 +15,20 @@ class UserSession(models.Model):
     city = models.CharField(max_length=100, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
     user_agent = models.TextField(blank=True, null=True)
+    
+    # Advanced Tracking
+    tracking_id = models.CharField(
+        max_length=255, 
+        blank=True, 
+        null=True,
+        help_text="Persistent cookie ID for tracking across sessions"
+    )
+    device_fingerprint = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="Hash of header-based device characteristics"
+    )
 
     started_at = models.DateTimeField(auto_now_add=True)
     last_seen_at = models.DateTimeField(auto_now=True)
