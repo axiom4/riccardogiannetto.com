@@ -1,22 +1,23 @@
 from .models import UserActivity
 import threading
 
+
 class AnalyticsMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        # Process request before view (and before cache check if cache middleware was used globaly, 
+        # Process request before view (and before cache check if cache middleware was used globaly,
         # but here cache_page is used on views, so this runs BEFORE cache_page check)
-        
+
         response = self.get_response(request)
 
         # We log AFTER the response is generated (successfully).
-        # Note: If cache_page intercepts inside the view layer, this middleware 
+        # Note: If cache_page intercepts inside the view layer, this middleware
         # still sees the request and the response coming back from the view "wrapper".
-        
+
         if request.path.startswith('/api/') or request.path.startswith('/blog/') or request.path.startswith('/portfolio/'):
-            # Filter out admin, static, etc if needed. 
+            # Filter out admin, static, etc if needed.
             # Assuming typically API routes are relevant.
             # Adjust filter as needed.
             self.track_activity(request, response)
@@ -40,17 +41,18 @@ class AnalyticsMiddleware:
 
             user = request.user if request.user.is_authenticated else None
 
-            # We don't have access to "viewset action" easily here without using process_view 
+            # We don't have access to "viewset action" easily here without using process_view
             # and storing it, but path is the most important.
-            
+
             UserActivity.objects.create(
                 user=user,
-                action=f"{request.method} {request.path}", # e.g. "GET /blog/posts/"
+                # e.g. "GET /blog/posts/"
+                action=f"{request.method} {request.path}",
                 path=request.path,
                 method=request.method,
                 ip_address=ip,
                 user_agent=request.META.get('HTTP_USER_AGENT', ''),
-                payload={} # Middleware generally doesn't know parsed kwargs easily
+                payload={}  # Middleware generally doesn't know parsed kwargs easily
             )
         except Exception:
             pass

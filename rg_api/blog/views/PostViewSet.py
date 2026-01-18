@@ -8,6 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 
+
 class PostPagination(PageNumberPagination):
     page_size = 5
     page_size_query_param = 'page_size'
