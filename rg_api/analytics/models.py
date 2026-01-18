@@ -11,7 +11,8 @@ class UserSession(models.Model):
         null=True,
         blank=True
     )
-    ip_address = models.GenericIPAddressField(null=True, blank=True, db_index=True)
+    ip_address = models.GenericIPAddressField(
+        null=True, blank=True, db_index=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
     latitude = models.FloatField(blank=True, null=True)
@@ -69,7 +70,8 @@ class UserActivity(models.Model):
     action = models.CharField(max_length=255, db_index=True)
     path = models.CharField(max_length=1024, blank=True)
     method = models.CharField(max_length=10, blank=True)
-    ip_address = models.GenericIPAddressField(null=True, blank=True, db_index=True)
+    ip_address = models.GenericIPAddressField(
+        null=True, blank=True, db_index=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
     latitude = models.FloatField(blank=True, null=True)

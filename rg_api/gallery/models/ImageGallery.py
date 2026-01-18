@@ -7,12 +7,14 @@ from datetime import datetime
 from gallery.models import Gallery
 from PIL import Image, ExifTags
 
+
 class ImageGallery(models.Model):
     title = models.CharField(max_length=250, null=False, blank=False)
     image = models.ImageField(
         null=False
     )
-    gallery = models.ForeignKey(Gallery, related_name='images', on_delete=models.CASCADE)
+    gallery = models.ForeignKey(
+        Gallery, related_name='images', on_delete=models.CASCADE)
 
     width = models.IntegerField()
     height = models.IntegerField()
@@ -22,7 +24,6 @@ class ImageGallery(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
 
     camera_model = models.CharField(max_length=250, blank=True)
     lens_model = models.CharField(max_length=250, blank=True)
@@ -38,7 +39,7 @@ class ImageGallery(models.Model):
 
     def __str__(self):
         return self.title
-    
+
     def image_tag(self):
         return mark_safe('<img src="%s/%s/width/700" width="150" />' % (settings.IMAGE_GENERATOR_BASE_URL, self.id)) if self.image else ''
 
@@ -81,7 +82,6 @@ class ImageGallery(models.Model):
                     else:
                         setattr(self, attribute, val)
 
-
     class Meta:
         verbose_name_plural = 'images'
         indexes = [
@@ -89,5 +89,3 @@ class ImageGallery(models.Model):
             models.Index(fields=['created_at']),
             models.Index(fields=['date']),
         ]
-
-        
