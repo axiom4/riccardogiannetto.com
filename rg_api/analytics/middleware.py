@@ -111,7 +111,11 @@ class AnalyticsMiddleware:
                 try:
                     # Handle local IPs
                     if ip in ['127.0.0.1', '::1']:
-                        pass
+                         if settings.DEBUG:
+                                city = "Rome (Localhost)"
+                                country = "Italy"
+                                lat = 41.9028
+                                lon = 12.4964
                     else:
                         geo_response = self.reader.city(ip)
                         city = geo_response.city.name
