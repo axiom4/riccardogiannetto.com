@@ -249,11 +249,13 @@ h2.site-description {
   width: 313px;
   position: relative;
   float: left;
+  min-height: 105px; // Reserve space for title + description to avoid CLS
 }
 
 @media screen and (max-width: 360px) {
   .site-branding {
     width: 260px;
+    min-height: 90px;
   }
 }
 
