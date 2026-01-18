@@ -37,7 +37,8 @@ class UserActivityAdmin(admin.ModelAdmin):
         if obj.session:
             from django.utils.html import format_html
             from django.urls import reverse
-            url = reverse('admin:analytics_usersession_change', args=[obj.session.id])
+            url = reverse('admin:analytics_usersession_change',
+                          args=[obj.session.id])
             return format_html('<a href="{}">{}</a>', url, obj.session)
         return "-"
     session_link.short_description = 'Session'
