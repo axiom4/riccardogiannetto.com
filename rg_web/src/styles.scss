@@ -233,12 +233,12 @@ h1.site-title {
 
 .site-branding {
   width: 250px;
-  height: 96px; 
+  height: 96px;
   position: relative;
   float: left;
   overflow: hidden;
   margin-bottom: 10px;
-  
+
   // Start hidden
   opacity: 0;
   transition: opacity 0.5s ease-out;

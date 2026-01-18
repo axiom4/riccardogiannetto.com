@@ -1,4 +1,12 @@
-import { Component, ElementRef, inject, OnInit, PLATFORM_ID, signal, viewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  OnInit,
+  PLATFORM_ID,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -16,9 +24,9 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
       // Use requestAnimationFrame to ensure we are in the next paint frame after init
-      // Or window.onload if strictly "page load" is required, but usually 
+      // Or window.onload if strictly "page load" is required, but usually
       // minimal delay after view init is better for SPA feeling.
-      
+
       // Let's use a small timeout to allow browser to parse SVG/Fonts
       setTimeout(() => {
         this.isLoaded.set(true);
