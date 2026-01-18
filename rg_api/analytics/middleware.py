@@ -34,7 +34,7 @@ class AnalyticsMiddleware:
         # Note: If cache_page intercepts inside the view layer, this middleware
         # still sees the request and the response coming back from the view "wrapper".
 
-        if request.path.startswith('/api/') or request.path.startswith('/blog/') or request.path.startswith('/portfolio/'):
+        if request.path_info.startswith('/api/') or request.path_info.startswith('/blog/') or request.path_info.startswith('/portfolio/'):
             # Filter out admin, static, etc if needed.
             # Assuming typically API routes are relevant.
             # Adjust filter as needed.
@@ -88,7 +88,8 @@ class AnalyticsMiddleware:
             return
 
         # Simple ignoring of assets/admin/etc if not filtered above
-        if request.path.startswith('/api/admin') or request.path.startswith('/static') or request.path.startswith('/media'):
+        # Using path_info for consistency with urls.py structure
+        if request.path_info.startswith('/admin/') or request.path_info.startswith('/static') or request.path_info.startswith('/media'):
             return
 
         try:
