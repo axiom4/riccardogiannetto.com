@@ -6,6 +6,7 @@ from datetime import datetime
 
 from gallery.models import Gallery
 from PIL import Image, ExifTags
+from taggit.managers import TaggableManager
 
 
 class ImageGallery(models.Model):
@@ -15,6 +16,8 @@ class ImageGallery(models.Model):
     )
     gallery = models.ForeignKey(
         Gallery, related_name='images', on_delete=models.CASCADE)
+
+    tags = TaggableManager(blank=True)
 
     width = models.IntegerField()
     height = models.IntegerField()

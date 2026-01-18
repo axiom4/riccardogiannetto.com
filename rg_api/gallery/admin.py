@@ -62,6 +62,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
         ('title',),
         ('image', 'image_tag'),
         ('gallery', 'author', 'date'),
+        ('tags',),
         ('width', 'height'),
         ('created_at', 'updated_at'),
         ('camera_model', 'lens_model'),
@@ -69,15 +70,59 @@ class ImageGalleryAdmin(admin.ModelAdmin):
         ('artist', 'copyright')
     ]
     list_display = ('title', 'gallery', 'image_tag', 'author',
-                    'width', 'height', 'created_at', 'updated_at')
-    list_filter = ('gallery__title',)
+                    'width', 'height', 'tag_list', 'created_at', 'updated_at')
+    list_filter = ('gallery__title', 'tags')
     readonly_fields = ['image_tag', 'width',
                        'height', 'created_at', 'updated_at']
-    search_fields = ('title', 'gallery__title')
+    search_fields = ('title', 'gallery__title', 'tags__name')
     save_on_top = True
     list_display_links = ('title',)
     list_per_page = 12
     change_list_template = 'admin/gallery/imagegallery/change_list.html'
+    actions = ['auto_tag_images']
+
+    def tag_list(self, obj):
+        return u", ".join(o.name for o in obj.tags.all())
+    tag_list.short_description = 'Tags'
+
+    @admin.action(description='Auto-tag selected images')
+    def auto_tag_images(self, request, queryset):
+        from gallery.ml import classify_image
+        count = 0
+        updated = 0
+        for obj in queryset:
+            if obj.image:
+                try:
+                    # Only tag if no tags exist or if requested to overwrite (here we append)
+                    new_tags = classify_image(obj.image.path)
+                    if new_tags:
+                        obj.tags.add(*new_tags)
+                        updated += 1
+                    count += 1
+                except Exception as e:
+                    self.message_user(
+                        request, f"Error processing {obj.title}: {e}", messages.WARNING)
+
+        if updated > 0:
+            self.message_user(
+                request, f"Successfully analyzed {count} images and added tags to {updated}.", messages.SUCCESS)
+        else:
+            self.message_user(
+                request, "No tags added. Check logs or image paths.", messages.WARNING)
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        if obj.image:
+            # If it's a new upload or user didn't manually add tags, try to auto-tag
+            if not obj.tags.exists():
+                from gallery.ml import classify_image
+                try:
+                    new_tags = classify_image(obj.image.path)
+                    if new_tags:
+                        obj.tags.add(*new_tags)
+                except Exception as e:
+                    # Log error but don't stop save
+                    print(f"Auto-tag entry error: {e}")
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(ImageGalleryAdmin, self).get_form(request, obj, **kwargs)
