@@ -233,11 +233,20 @@ h1.site-title {
 
 .site-branding {
   width: 250px;
-  height: 96px; // Adjusted for new viewBox aspect ratio (313/120)
+  height: 96px; 
   position: relative;
   float: left;
   overflow: hidden;
   margin-bottom: 10px;
+  
+  // Start hidden
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+
+  // Reveal only when loaded
+  &.loaded {
+    opacity: 1;
+  }
 }
 
 @media screen and (max-width: 360px) {
