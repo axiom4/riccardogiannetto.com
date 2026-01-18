@@ -6,8 +6,10 @@ from .models import UserActivity, UserSession
 class UserSessionAdmin(admin.ModelAdmin):
     list_display = ('ip_address', 'started_at', 'last_seen_at',
                     'duration', 'page_count', 'city', 'country', 'device_fingerprint')
-    readonly_fields = ('started_at', 'last_seen_at', 'duration', 'tracking_id', 'device_fingerprint')
-    search_fields = ('ip_address', 'city', 'country', 'user_agent', 'tracking_id', 'device_fingerprint')
+    readonly_fields = ('started_at', 'last_seen_at',
+                       'duration', 'tracking_id', 'device_fingerprint')
+    search_fields = ('ip_address', 'city', 'country',
+                     'user_agent', 'tracking_id', 'device_fingerprint')
     list_filter = ('country', 'started_at')
 
     def duration(self, obj):

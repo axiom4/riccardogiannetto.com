@@ -133,24 +133,24 @@ class AnalyticsMiddleware:
                 if not tracking_id:
                     tracking_id = str(uuid.uuid4())
                     response.set_cookie(
-                        'rg_tid', 
-                        tracking_id, 
-                        max_age=31536000, # 1 year
+                        'rg_tid',
+                        tracking_id,
+                        max_age=31536000,  # 1 year
                         samesite='Lax',
                         secure=settings.SESSION_COOKIE_SECURE or False
                     )
 
                 # Generate Device Fingerprint
                 device_fingerprint = self._get_device_fingerprint(request)
-                
+
                 # Check for existing session via tracking_id if session_key is new
                 # This helps link sessions if cookies were cleared but tracking_id persists (rare for Tor, common for others)
                 # Or if we want to link via fingerprint (very common for Tor since fingerprint is uniform)
-                
+
                 # Update or Create Session
                 # We prioritize creation with geo info.
                 current_time = timezone.now()
-                
+
                 # Update defaults to include new fields
                 defaults = {
                     'user': user,
@@ -177,13 +177,13 @@ class AnalyticsMiddleware:
                     # Associate user if logged in later
                     if user and not user_session.user:
                         user_session.user = user
-                    
+
                     # Update tracking info if missing
                     if not user_session.tracking_id:
                         user_session.tracking_id = tracking_id
                     if not user_session.device_fingerprint:
                         user_session.device_fingerprint = device_fingerprint
-                        
+
                     user_session.save(
                         update_fields=['last_seen_at', 'page_count', 'user', 'tracking_id', 'device_fingerprint'])
 
