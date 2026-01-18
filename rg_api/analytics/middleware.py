@@ -131,16 +131,19 @@ class AnalyticsMiddleware:
             # Manage UserSession
             user_session = None
             try:
-                if not request.session.session_key:
-                    request.session.save()
-
-                session_key = request.session.session_key
+                # Do NOT access request.session to avoid generating 'sessionid' cookie
+                # if not request.session.session_key:
+                #     request.session.save()
+                # session_key = request.session.session_key
+                
+                # If user is logged in, we might have a session_key from Django auth, use it if available
+                session_key = getattr(request.session, 'session_key', None)
 
                 # Generate Device Fingerprint
                 device_fingerprint = self._get_device_fingerprint(request)
 
                 # Check for existing session via Fingerprint (Cookie-less heuristic)
-                # This ensures we stitch the session even if session_key changed (Tor)
+                # This ensures we stitch the session even if session_key changed (or is None)
                 # We prioritize creation with geo info.
                 current_time = timezone.now()
 
@@ -157,16 +160,24 @@ class AnalyticsMiddleware:
 
                 if user_session:
                     tracking_id = user_session.tracking_id
+                    
+                    # If we found a session, use its key unless we have a "better" one (e.g. authenticated)
+                    if not session_key:
+                         session_key = user_session.session_key
                 else:
                     tracking_id = str(uuid.uuid4())
+                    if not session_key:
+                        # Generate a pseudo-session key for our db record
+                        session_key = str(uuid.uuid4())
 
                 if user_session:
-
-                    # Session Stitching: Capture the new session_key into the existing session
-                    if user_session.session_key != session_key:
-                        # We must check if the new session_key is already taken (rare collision)
-                        if not UserSession.objects.filter(session_key=session_key).exists():
-                            user_session.session_key = session_key
+                    # Update existing session
+                    
+                    # Update session_key only if we have a real Django session (e.g. login happened) and it differs
+                    real_django_session_key = getattr(request.session, 'session_key', None)
+                    if real_django_session_key and user_session.session_key != real_django_session_key:
+                        if not UserSession.objects.filter(session_key=real_django_session_key).exists():
+                             user_session.session_key = real_django_session_key
 
                     user_session.last_seen_at = current_time
                     user_session.page_count += 1
@@ -174,8 +185,8 @@ class AnalyticsMiddleware:
                     if user and not user_session.user:
                         user_session.user = user
 
-                    # Update geo if missing or changed (Tor IP rotation)
-                    if not user_session.ip_address:  # Update IP if it was empty, or maybe always update for Tor?
+                    # Update geo if missing or changed
+                    if not user_session.ip_address:
                         user_session.ip_address = ip
 
                     if city and (user_session.city != city):
@@ -188,7 +199,7 @@ class AnalyticsMiddleware:
                                       'session_key', 'last_seen_at', 'page_count', 'user', 'ip_address', 'city', 'country', 'latitude', 'longitude'])
 
                 else:
-                    # 2. Fallback: Create new or get by session_key (Standard Django Session behavior)
+                    # 2. Create New Session
                     defaults = {
                         'user': user,
                         'ip_address': ip,
@@ -210,20 +221,11 @@ class AnalyticsMiddleware:
                     )
 
                     if not created:
-                        # If we matched by session_key, just update stats
+                        # Fallback just in case get_or_create found a collision on session_key
                         user_session.last_seen_at = current_time
                         user_session.page_count += 1
-                        if user and not user_session.user:
-                            user_session.user = user
-
-                        # Ensure tracking IDs are backfilled if missing
-                        if not user_session.tracking_id:
-                            user_session.tracking_id = tracking_id
-                            user_session.device_fingerprint = device_fingerprint
-
-                        user_session.save(update_fields=[
-                                          'last_seen_at', 'page_count', 'user', 'tracking_id', 'device_fingerprint'])
-
+                        user_session.save(update_fields=['last_seen_at', 'page_count'])
+                        
             except Exception as e:
                 logger.error(f"Session tracking failed: {e}")
 
