@@ -43,7 +43,7 @@ class AnalyticsMiddleware:
             return
 
         # Simple ignoring of assets/admin/etc if not filtered above
-        if request.path.startswith('/admin') or request.path.startswith('/static') or request.path.startswith('/media'):
+        if request.path.startswith('/api/admin') or request.path.startswith('/static') or request.path.startswith('/media'):
             return
 
         try:
