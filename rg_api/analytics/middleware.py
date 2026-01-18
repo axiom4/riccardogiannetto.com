@@ -136,58 +136,32 @@ class AnalyticsMiddleware:
 
                 session_key = request.session.session_key
 
-                # Handle Persistent Tracking ID
-                tracking_id = request.COOKIES.get('rg_tid')
                 # Generate Device Fingerprint
                 device_fingerprint = self._get_device_fingerprint(request)
 
-                if not tracking_id:
-                    # Attempt to recover session via Fingerprint (Heuristic for Tor/Privacy Browsers)
-                    # Look for a recent session (last 30 mins) with same fingerprint
-                    # This risks merging concurrent Tor users, but ensures continuity for single users resetting identity
-                    # Since Tor users share identical fingerprints, this effectively groups "Tor Traffic" together
-                    # or maintains continuity for the single user case.
-                    try:
-                        recent_session = UserSession.objects.filter(
-                            device_fingerprint=device_fingerprint,
-                            last_seen_at__gte=timezone.now() - timezone.timedelta(minutes=30)
-                        ).order_by('-last_seen_at').first()
-
-                        if recent_session and recent_session.tracking_id:
-                            tracking_id = recent_session.tracking_id
-                        else:
-                            tracking_id = str(uuid.uuid4())
-                    except Exception:
-                        tracking_id = str(uuid.uuid4())
-
-                    response.set_cookie(
-                        'rg_tid',
-                        tracking_id,
-                        max_age=31536000,  # 1 year
-                        samesite='Lax',
-                        secure=settings.SESSION_COOKIE_SECURE or False
-                    )
-
-                # Check for existing session via tracking_id if session_key is new
-                # This helps link sessions if cookies were cleared but tracking_id persists (rare for Tor, common for others)
-                # Or if we want to link via fingerprint (very common for Tor since fingerprint is uniform)
-
-                # Update or Create Session
+                # Check for existing session via Fingerprint (Cookie-less heuristic)
+                # This ensures we stitch the session even if session_key changed (Tor)
                 # We prioritize creation with geo info.
                 current_time = timezone.now()
 
                 user_session = None
+                tracking_id = None
 
-                # 1. Try to find an ACTIVE session (last 30m) by Tracking ID / Fingerprint first
-                # This ensures we stitch the session even if session_key changed (Tor)
-                if tracking_id:
+                # 1. Try to find an ACTIVE session (last 30m) by Fingerprint
+                if device_fingerprint:
                     user_session = UserSession.objects.filter(
-                        tracking_id=tracking_id,
+                        device_fingerprint=device_fingerprint,
                         last_seen_at__gte=current_time -
                         timezone.timedelta(minutes=30)
                     ).order_by('-last_seen_at').first()
 
                 if user_session:
+                    tracking_id = user_session.tracking_id
+                else:
+                    tracking_id = str(uuid.uuid4())
+
+                if user_session:
+
                     # Session Stitching: Capture the new session_key into the existing session
                     if user_session.session_key != session_key:
                         # We must check if the new session_key is already taken (rare collision)
