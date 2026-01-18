@@ -211,13 +211,14 @@ app-header {
 .header {
   width: 100%;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  min-height: 125px; // Reserve space for header to avoid CLS
+  height: 125px; // Fixed total height for header
+  overflow: hidden; // Prevent expansion
 }
 
 header.site-header {
   max-width: 1200px;
   margin: auto;
-  padding: 20px 10px 0;
+  padding: 10px 10px 0; // Reduced top padding
   z-index: 99;
   position: relative;
   // Clearfix for floated children (.site-branding left, .main-navigation right)
@@ -231,23 +232,18 @@ h1.site-title {
 }
 
 .site-branding {
-  width: 313px;
-  height: 105px; // Fixed height to prevent layout shift
+  width: 250px;
+  height: 96px; // Adjusted for new viewBox aspect ratio (313/120)
   position: relative;
   float: left;
-  overflow: hidden; // Ensure no content spills out
-}
-
-.logo-svg {
-  display: block;
-  width: 100%;
-  height: 100%; // Fill the fixed container
+  overflow: hidden;
+  margin-bottom: 10px;
 }
 
 @media screen and (max-width: 360px) {
   .site-branding {
-    width: 260px;
-    height: 88px; // Maintain aspect ratio (313x105 -> 260x87.2)
+    width: 200px;
+    height: 67px;
   }
 }
 
