@@ -131,54 +131,59 @@ class AnalyticsMiddleware:
             # Manage UserSession
             user_session = None
             try:
-                # Do NOT access request.session to avoid generating 'sessionid' cookie
-                # if not request.session.session_key:
-                #     request.session.save()
-                # session_key = request.session.session_key
-
-                # If user is logged in, we might have a session_key from Django auth, use it if available
-                session_key = getattr(request.session, 'session_key', None)
+                # Ensure Django session exists
+                if not request.session.session_key:
+                     request.session.save()
+                session_key = request.session.session_key
 
                 # Generate Device Fingerprint
                 device_fingerprint = self._get_device_fingerprint(request)
-
-                # Check for existing session via Fingerprint (Cookie-less heuristic)
-                # This ensures we stitch the session even if session_key changed (or is None)
-                # We prioritize creation with geo info.
+                
+                # Handle Persistent Tracking ID from Cookie
+                tracking_id = request.COOKIES.get('rg_tid')
                 current_time = timezone.now()
 
-                user_session = None
-                tracking_id = None
+                if not tracking_id:
+                     # Attempt recovery via Fingerprint
+                     if device_fingerprint:
+                         recent_session = UserSession.objects.filter(
+                            device_fingerprint=device_fingerprint,
+                            last_seen_at__gte=current_time - timezone.timedelta(minutes=30)
+                         ).order_by('-last_seen_at').first()
+                         if recent_session and recent_session.tracking_id:
+                             tracking_id = recent_session.tracking_id
+                    
+                     if not tracking_id:
+                         tracking_id = str(uuid.uuid4())
+                         
+                     # Set cookie
+                     # Use SameSite=None and Secure=True to allow cross-site tracking (e.g. Frontend on different port)
+                     # Note: Secure=True works on localhost and HTTPS.
+                     response.set_cookie(
+                        'rg_tid',
+                        tracking_id,
+                        max_age=31536000, # 1 year
+                        samesite='None',
+                        secure=True
+                    )
 
-                # 1. Try to find an ACTIVE session (last 30m) by Fingerprint
-                if device_fingerprint:
+                user_session = None
+
+                # 1. Try to find an ACTIVE session by Tracking ID
+                if tracking_id:
                     user_session = UserSession.objects.filter(
-                        device_fingerprint=device_fingerprint,
+                        tracking_id=tracking_id,
                         last_seen_at__gte=current_time -
                         timezone.timedelta(minutes=30)
                     ).order_by('-last_seen_at').first()
 
                 if user_session:
-                    tracking_id = user_session.tracking_id
-
-                    # If we found a session, use its key unless we have a "better" one (e.g. authenticated)
-                    if not session_key:
-                        session_key = user_session.session_key
-                else:
-                    tracking_id = str(uuid.uuid4())
-                    if not session_key:
-                        # Generate a pseudo-session key for our db record
-                        session_key = str(uuid.uuid4())
-
-                if user_session:
                     # Update existing session
 
-                    # Update session_key only if we have a real Django session (e.g. login happened) and it differs
-                    real_django_session_key = getattr(
-                        request.session, 'session_key', None)
-                    if real_django_session_key and user_session.session_key != real_django_session_key:
-                        if not UserSession.objects.filter(session_key=real_django_session_key).exists():
-                            user_session.session_key = real_django_session_key
+                    # Update session_key if it changed (e.g. login)
+                    if user_session.session_key != session_key:
+                        if not UserSession.objects.filter(session_key=session_key).exists():
+                            user_session.session_key = session_key
 
                     user_session.last_seen_at = current_time
                     user_session.page_count += 1
@@ -222,11 +227,15 @@ class AnalyticsMiddleware:
                     )
 
                     if not created:
-                        # Fallback just in case get_or_create found a collision on session_key
                         user_session.last_seen_at = current_time
                         user_session.page_count += 1
+                        
+                        if not user_session.tracking_id:
+                            user_session.tracking_id = tracking_id
+                            user_session.device_fingerprint = device_fingerprint
+                            
                         user_session.save(
-                            update_fields=['last_seen_at', 'page_count'])
+                            update_fields=['last_seen_at', 'page_count', 'tracking_id', 'device_fingerprint'])
 
             except Exception as e:
                 logger.error(f"Session tracking failed: {e}")
