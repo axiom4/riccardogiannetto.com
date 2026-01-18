@@ -235,6 +235,9 @@ class AnalyticsMiddleware:
                         user_session.save(update_fields=[
                                           'last_seen_at', 'page_count', 'user', 'tracking_id', 'device_fingerprint'])
 
+            except Exception as e:
+                logger.error(f"Session tracking failed: {e}")
+
             UserActivity.objects.create(
                 session=user_session,
                 user=user,
