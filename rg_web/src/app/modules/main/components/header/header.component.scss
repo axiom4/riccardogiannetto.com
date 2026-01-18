@@ -1,0 +1,8 @@
+.site-branding {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+
+  &.font-loaded {
+    opacity: 1;
+  }
+}
