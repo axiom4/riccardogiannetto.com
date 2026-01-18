@@ -145,13 +145,13 @@ class AnalyticsMiddleware:
                             device_fingerprint=device_fingerprint,
                             last_seen_at__gte=timezone.now() - timezone.timedelta(minutes=30)
                         ).order_by('-last_seen_at').first()
-                        
+
                         if recent_session and recent_session.tracking_id:
                             tracking_id = recent_session.tracking_id
                         else:
                             tracking_id = str(uuid.uuid4())
                     except Exception:
-                         tracking_id = str(uuid.uuid4())
+                        tracking_id = str(uuid.uuid4())
 
                     response.set_cookie(
                         'rg_tid',
