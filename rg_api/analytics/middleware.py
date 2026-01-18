@@ -135,7 +135,7 @@ class AnalyticsMiddleware:
                 # if not request.session.session_key:
                 #     request.session.save()
                 # session_key = request.session.session_key
-                
+
                 # If user is logged in, we might have a session_key from Django auth, use it if available
                 session_key = getattr(request.session, 'session_key', None)
 
@@ -160,10 +160,10 @@ class AnalyticsMiddleware:
 
                 if user_session:
                     tracking_id = user_session.tracking_id
-                    
+
                     # If we found a session, use its key unless we have a "better" one (e.g. authenticated)
                     if not session_key:
-                         session_key = user_session.session_key
+                        session_key = user_session.session_key
                 else:
                     tracking_id = str(uuid.uuid4())
                     if not session_key:
@@ -172,12 +172,13 @@ class AnalyticsMiddleware:
 
                 if user_session:
                     # Update existing session
-                    
+
                     # Update session_key only if we have a real Django session (e.g. login happened) and it differs
-                    real_django_session_key = getattr(request.session, 'session_key', None)
+                    real_django_session_key = getattr(
+                        request.session, 'session_key', None)
                     if real_django_session_key and user_session.session_key != real_django_session_key:
                         if not UserSession.objects.filter(session_key=real_django_session_key).exists():
-                             user_session.session_key = real_django_session_key
+                            user_session.session_key = real_django_session_key
 
                     user_session.last_seen_at = current_time
                     user_session.page_count += 1
@@ -224,8 +225,9 @@ class AnalyticsMiddleware:
                         # Fallback just in case get_or_create found a collision on session_key
                         user_session.last_seen_at = current_time
                         user_session.page_count += 1
-                        user_session.save(update_fields=['last_seen_at', 'page_count'])
-                        
+                        user_session.save(
+                            update_fields=['last_seen_at', 'page_count'])
+
             except Exception as e:
                 logger.error(f"Session tracking failed: {e}")
 
