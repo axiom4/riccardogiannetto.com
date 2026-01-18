@@ -1,9 +1,11 @@
-{% extends "admin/change_list.html" %}
-{% load i18n %}
-
-{% block object-tools-items %}
-  {{ block.super }}
-  <li>
-    <a href="truncate/" class="deletelink" style="background: #ba2121; color: white; border-radius: 4px; padding: 5px 10px; font-weight: bold;" onclick="return confirm('Sei sicuro di voler eliminare TUTTE le attività? Questa azione è irreversibile.');">Truncate Table</a>
-  </li>
+{% extends "admin/change_list.html" %} {% load i18n %} {% block object-tools-items %} {{ block.super }}
+<li>
+  <a
+    href="truncate/"
+    class="deletelink"
+    style="background: #ba2121; color: white; border-radius: 4px; padding: 5px 10px; font-weight: bold"
+    onclick="return confirm('Sei sicuro di voler eliminare TUTTE le attività? Questa azione è irreversibile.');"
+    >Truncate Table</a
+  >
+</li>
 {% endblock %}
