@@ -17,6 +17,19 @@ class UserSessionAdmin(admin.ModelAdmin):
     duration.short_description = 'Duration'
 
     change_form_template = 'admin/analytics/usersession/change_form.html'
+    change_list_template = 'admin/analytics/usersession/change_list.html'
+
+    def changelist_view(self, request, extra_context=None):
+        from django.core.serializers.json import DjangoJSONEncoder
+        import json
+
+        # Aggregate geo data
+        sessions = UserSession.objects.exclude(latitude__isnull=True).exclude(longitude__isnull=True).exclude(latitude=0).exclude(longitude=0).values('latitude', 'longitude', 'city', 'country', 'ip_address')
+        
+        extra_context = extra_context or {}
+        extra_context['map_locations'] = json.dumps(list(sessions), cls=DjangoJSONEncoder)
+        
+        return super().changelist_view(request, extra_context=extra_context)
 
     class Media:
         css = {
