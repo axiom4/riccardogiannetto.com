@@ -90,7 +90,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
     ]
     list_display = ('title', 'gallery', 'image_tag', 'author',
                     'width', 'height', 'tag_list', 'created_at', 'updated_at')
-    # Removed 'tags' from list_filter because with ML auto-tagging the list becomes too long. 
+    # Removed 'tags' from list_filter because with ML auto-tagging the list becomes too long.
     # Use the search bar (configured in search_fields) to filter by tag.
     list_filter = ('gallery__title',)
     readonly_fields = ['image_tag', 'width',
@@ -104,7 +104,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
     actions = ['auto_tag_images']
 
     def tag_list(self, obj):
-        # Optimization: Use prefetch_related in the queryset if possible, 
+        # Optimization: Use prefetch_related in the queryset if possible,
         # but here we just slice to avoid fetching thousands of tags.
         tags_qs = obj.tags.all()
         # Evaluate first 4 to check count
