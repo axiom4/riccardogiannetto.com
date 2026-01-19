@@ -82,4 +82,3 @@ urllib3==2.6.3
 wrapt==2.0.1
 yarl==1.22.0
 zope.interface==8.2
-django-admin-autocomplete-filter==0.7.1

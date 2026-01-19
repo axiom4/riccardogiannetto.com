@@ -10,17 +10,6 @@ from django.urls import path
 from gallery.models import Gallery, ImageGallery
 from taggit.models import Tag
 from django.contrib.admin.widgets import AutocompleteSelectMultiple
-from admin_auto_filters.filters import AutocompleteFilter
-
-
-class TagFilter(AutocompleteFilter):
-    title = 'Tags'
-    field_name = 'tags'
-
-
-class GalleryFilter(AutocompleteFilter):
-    title = 'Gallery'
-    field_name = 'gallery'
 
 
 User = get_user_model()
@@ -101,10 +90,9 @@ class ImageGalleryAdmin(admin.ModelAdmin):
     ]
     list_display = ('title', 'gallery', 'image_tag', 'author',
                     'width', 'height', 'tag_list', 'created_at', 'updated_at')
-    # Use AutocompleteFilter for Gallery (FK)
-    # For Tags (TaggableManager), AutocompleteFilter is often incompatible.
-    # Used 'tags__name' in search_fields to allow searching by tag.
-    list_filter = (GalleryFilter, 'created_at')
+    
+    # Standard filters
+    list_filter = ('gallery__title', 'created_at')
     readonly_fields = ['image_tag', 'width',
                        'height', 'created_at', 'updated_at']
     search_fields = ('title', 'gallery__title', 'tags__name')
