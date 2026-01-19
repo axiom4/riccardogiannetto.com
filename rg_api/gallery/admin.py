@@ -200,7 +200,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                     image = ImageGallery(
                         title=title, gallery=gallery, author=author)
                     image.image.save(base_name, upload, save=True)
-                    
+
                     # Auto-tag newly uploaded image
                     try:
                         from gallery.ml import classify_image
