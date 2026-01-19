@@ -30,11 +30,11 @@ def get_model():
 
         # Explicitly set use_fast=True to suppress warning and future-proof
         _processor = Blip2Processor.from_pretrained(model_id, use_fast=True)
-        
+
         # device_map="auto" is excellent for CUDA but can cause shape errors on MPS/Mac.
         # For MPS, it's safer to load manually and move to device.
         try:
-            ignore_mismatched_sizes = True # Sometimes helps with shape variations
+            ignore_mismatched_sizes = True  # Sometimes helps with shape variations
             if device == "cuda":
                 _model = Blip2ForConditionalGeneration.from_pretrained(
                     model_id,
@@ -50,7 +50,7 @@ def get_model():
                 )
                 _model.to("mps")
             else:
-                 _model = Blip2ForConditionalGeneration.from_pretrained(
+                _model = Blip2ForConditionalGeneration.from_pretrained(
                     model_id,
                     dtype=torch.float32
                 )
