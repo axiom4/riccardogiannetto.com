@@ -1,5 +1,6 @@
 from PIL import Image, ExifTags
 
+
 def to_float(value):
     if hasattr(value, 'numerator') and hasattr(value, 'denominator'):
         if value.denominator == 0:
@@ -10,9 +11,11 @@ def to_float(value):
     except:
         # Fallback for tuple encoding (num, den)
         if hasattr(value, '__getitem__') and len(value) == 2:
-             if value[1] == 0: return 0.0
-             return float(value[0]) / float(value[1])
+            if value[1] == 0:
+                return 0.0
+            return float(value[0]) / float(value[1])
         return 0.0
+
 
 def get_decimal_from_dms(dms, ref):
     degrees = to_float(dms[0])
@@ -25,6 +28,7 @@ def get_decimal_from_dms(dms, ref):
         decimal = -decimal
 
     return decimal
+
 
 def get_gps_data(image_path):
     try:
@@ -39,13 +43,13 @@ def get_gps_data(image_path):
 
         if 'GPSInfo' in exif_data:
             gps_info = exif_data['GPSInfo']
-            
+
             # GPS tags are often keys in a dictionary inside GPSInfo
-            gps_latitude = gps_info.get(2) # GPSLatitude
-            gps_latitude_ref = gps_info.get(1) # GPSLatitudeRef
-            gps_longitude = gps_info.get(4) # GPSLongitude
-            gps_longitude_ref = gps_info.get(3) # GPSLongitudeRef
-            gps_altitude = gps_info.get(6) # GPSAltitude
+            gps_latitude = gps_info.get(2)  # GPSLatitude
+            gps_latitude_ref = gps_info.get(1)  # GPSLatitudeRef
+            gps_longitude = gps_info.get(4)  # GPSLongitude
+            gps_longitude_ref = gps_info.get(3)  # GPSLongitudeRef
+            gps_altitude = gps_info.get(6)  # GPSAltitude
 
             lat = None
             lon = None
@@ -54,7 +58,8 @@ def get_gps_data(image_path):
             if gps_latitude and gps_latitude_ref and gps_longitude and gps_longitude_ref:
                 try:
                     lat = get_decimal_from_dms(gps_latitude, gps_latitude_ref)
-                    lon = get_decimal_from_dms(gps_longitude, gps_longitude_ref)
+                    lon = get_decimal_from_dms(
+                        gps_longitude, gps_longitude_ref)
                 except Exception as e:
                     print(f"Error converting DMS: {e}")
 
@@ -65,7 +70,7 @@ def get_gps_data(image_path):
                     pass
 
             return lat, lon, alt
-            
+
     except Exception as e:
         print(f"Error extracting EXIF data: {e}")
         return None, None, None

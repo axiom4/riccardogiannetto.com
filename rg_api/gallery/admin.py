@@ -137,7 +137,8 @@ class ImageGalleryAdmin(admin.ModelAdmin):
             )
         return "No GPS data available"
     map_view.short_description = "Location Map"
-    map_view.allow_tags = True # Required for older Django versions, though format_html handles safety
+    # Required for older Django versions, though format_html handles safety
+    map_view.allow_tags = True
 
     @admin.action(description='Auto-tag selected images')
     def auto_tag_images(self, request, queryset):
@@ -182,7 +183,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                 if alt is not None:
                     obj.altitude = alt
                     updated_gps = True
-                
+
                 if updated_gps:
                     obj.save()
             except Exception as e:
@@ -260,11 +261,12 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                         if alt is not None:
                             image.altitude = alt
                             updated_gps = True
-                        
+
                         if updated_gps:
                             image.save()
                     except Exception as e:
-                        print(f"Bulk upload GPS extraction error for {title}: {e}")
+                        print(
+                            f"Bulk upload GPS extraction error for {title}: {e}")
 
                     # Auto-tag newly uploaded image
                     try:
