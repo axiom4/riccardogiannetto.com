@@ -78,7 +78,8 @@
               "buildTarget": "rg_web:build:production"
             },
             "development": {
-              "buildTarget": "rg_web:build:development"
+              "buildTarget": "rg_web:build:development",
+              "hmr": false
             }
           },
           "defaultConfiguration": "development"

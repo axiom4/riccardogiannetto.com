@@ -1,6 +1,8 @@
 
 # Create your views here.
 import os
+import numpy as np
+from PIL import Image, ImageCms, ImageEnhance
 from django.conf import settings
 from rest_framework import viewsets
 from rest_framework import permissions
@@ -26,8 +28,8 @@ class ImageGalleryPagination(PageNumberPagination):
 
 
 class ImageRenderer(renderers.BaseRenderer):
-    media_type = 'image/webp'
-    format = 'webp'
+    media_type = 'image/jpeg'
+    format = 'jpeg'
     charset = None
     render_style = 'binary'
 
@@ -37,33 +39,78 @@ class ImageRenderer(renderers.BaseRenderer):
         this_object = ImageGallery.objects.get(
             pk=renderer_context['kwargs']['pk'])
 
-        filename = f"{settings.MEDIA_ROOT}/preview/{this_object.pk}_{width}.webp"
+        filename = f"{settings.MEDIA_ROOT}/preview/{this_object.pk}_{width}.jpg"
 
         if os.path.exists(filename) == False:
+            try:
+                # STRATEGY FOR MAX COLOR FIDELITY:
+                # 1. Preserve Original ICC Profile
+                # 2. Use OpenCV Lanczos4 for sharpening/resizing.
+                # 3. Embed the original ICC profile in the output JPEG.
 
-            img = cv2.imread(this_object.image.file.name)
-            wpercent = (width/float(img.shape[1]))
-            hsize = int((float(img.shape[0])*float(wpercent)))
-            resize = cv2.resize(img, (width, hsize),
-                                interpolation=cv2.INTER_AREA)
+                with Image.open(this_object.image.path) as pil_img:
+                    original_icc_profile = pil_img.info.get('icc_profile')
+                    
+                    if pil_img.mode not in ('RGB', 'RGBA'):
+                        pil_img = pil_img.convert('RGB')
+                    
+                    img_array = np.array(pil_img)
+                    if img_array.shape[2] == 4:
+                        cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGBA2BGRA)
+                    else:
+                        cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
 
-            # Variable quality based on image width to minimize size with imperceptible loss
-            if width <= 800:
-                # Aggressive compression for (likely High DPI) mobile/thumbnails
-                quality = 50
-            elif width <= 1200:
-                quality = 70  # Good balance for standard desktop views
-            else:
-                quality = 75  # Higher quality for large, detailed viewing
+                if cv_img is None:
+                    return b""
 
-            _, im_buf_arr = cv2.imencode(
-                ".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), quality])
-            byte_im = im_buf_arr.tobytes()
+                original_height, original_width = cv_img.shape[:2]
+                wpercent = (width / float(original_width))
+                hsize = int((float(original_height) * float(wpercent)))
 
-            with open(filename, "wb") as f:
-                f.write(byte_im)
+                # HIGH QUALITY RESIZING: Lanczos4
+                resize = cv2.resize(cv_img, (width, hsize), interpolation=cv2.INTER_LANCZOS4)
 
-            return byte_im
+                # Quality settings
+                if width <= 800:
+                    quality = 80 
+                elif width <= 1200:
+                    quality = 90
+                else:
+                    quality = 95
+
+                # Return to Pillow
+                if resize.shape[2] == 4:
+                    result_rgb = cv2.cvtColor(resize, cv2.COLOR_BGRA2RGBA)
+                else:
+                    result_rgb = cv2.cvtColor(resize, cv2.COLOR_BGR2RGB)
+                
+                pil_result = Image.fromarray(result_rgb)
+                
+                # Ensure RGB for JPEG (Drop Alpha channel)
+                if pil_result.mode == 'RGBA':
+                    background = Image.new("RGB", pil_result.size, (255, 255, 255))
+                    background.paste(pil_result, mask=pil_result.split()[3])
+                    pil_result = background
+                elif pil_result.mode != 'RGB':
+                    pil_result = pil_result.convert('RGB')
+
+                # KEY STEP: Re-embed the original ICC profile
+                save_kwargs = {
+                    'quality': quality,
+                    'optimize': True,
+                    'subsampling': 0  # 4:4:4 chroma subsampling for best color detail
+                }
+                if original_icc_profile:
+                    save_kwargs['icc_profile'] = original_icc_profile
+
+                pil_result.save(filename, 'JPEG', **save_kwargs)
+                
+                with open(filename, "rb") as f:
+                    return f.read()
+
+            except Exception as e:
+                print(f"Error generating preview: {e}")
+                return b""
 
         else:
             with open(filename, "rb") as f:

@@ -1,14 +1,17 @@
 
 import os
 import cv2
+import numpy as np
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from gallery.models import ImageGallery
+from PIL import Image, ImageCms, ImageEnhance
+import io
 import glob
 
 
 class Command(BaseCommand):
-    help = 'Regenerate all image previews for supported formats'
+    help = 'Regenerate all image previews using OpenCV with Color Profile correction & manual Enhancement'
 
     def add_arguments(self, parser):
         parser.add_argument('--clean', action='store_true',
@@ -21,9 +24,17 @@ class Command(BaseCommand):
         if not os.path.exists(preview_dir):
             os.makedirs(preview_dir)
 
+        # Pre-load sRGB profile
+        try:
+             srgb_profile = ImageCms.createProfile('sRGB')
+        except ImportError:
+             srgb_profile = None
+
         if options['clean']:
             self.stdout.write('Cleaning existing previews...')
-            files = glob.glob(os.path.join(preview_dir, '*.webp'))
+            # Clean both WebP (old) and JPG (new) to ensure a clean slate if switching formats
+            files = glob.glob(os.path.join(preview_dir, '*.webp')) + \
+                    glob.glob(os.path.join(preview_dir, '*.jpg'))
             for f in files:
                 try:
                     os.remove(f)
@@ -36,6 +47,12 @@ class Command(BaseCommand):
         # Common widths used in the application
         widths = [400, 600, 700, 800, 1000, 1200, 2500]
         total_images = images.count()
+        
+        # Configure enhancements
+        # 1. Saturation boost: +10% (Restores perception of depth for sRGB on wide gamut)
+        SATURATION_FACTOR = 1.10 
+        # 2. Sharpness boost: +20% (Compensates for Lanczos smoothing on extreme downscale)
+        SHARPNESS_FACTOR = 1.20
 
         self.stdout.write(
             f'Found {total_images} images. Starting regeneration...')
@@ -48,45 +65,77 @@ class Command(BaseCommand):
                 continue
 
             try:
-                # Read image once per object
-                img = cv2.imread(image_obj.image.path)
-                if img is None:
-                    self.stdout.write(self.style.WARNING(
-                        f'Could not read image ID {image_obj.pk} with OpenCV'))
+                # STRATEGY FOR MAX COLOR FIDELITY:
+                # 1. Preserve Original ICC Profile (Do NOT convert to sRGB blindly)
+                #    This allows browsers to map Wide-Gamut (AdobeRGB/ProPhoto) images correctly.
+                # 2. Use OpenCV Lanczos4 for sharpening/resizing.
+                # 3. Embed the original ICC profile in the output WebP.
+
+                with Image.open(image_obj.image.path) as pil_img:
+                    # Capture the original ICC profile to embed later
+                    original_icc_profile = pil_img.info.get('icc_profile')
+                    
+                    # Ensure strict RGB mode
+                    if pil_img.mode not in ('RGB', 'RGBA'):
+                        pil_img = pil_img.convert('RGB')
+                    
+                    # Convert to Numpy/OpenCV (BGR)
+                    # We treat pixels as raw values, preserving their meaning in the original color space
+                    img_array = np.array(pil_img)
+                    if img_array.shape[2] == 4:
+                         cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGBA2BGRA)
+                    else:
+                         cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
+
+                if cv_img is None:
                     continue
 
-                original_height, original_width = img.shape[:2]
+                original_height, original_width = cv_img.shape[:2]
 
                 for width in widths:
                     filename = os.path.join(
-                        preview_dir, f"{image_obj.pk}_{width}.webp")
+                        preview_dir, f"{image_obj.pk}_{width}.jpg")
 
-                    # If clean wasn't requested, we can optionally skip if exists, but user asked to recreate.
-                    # If clean is false, we might overwrite or skip. "ricreare" implies overwrite if it exists or we assume clean was passed.
-                    # I will simply overwrite to ensure "regenerate" behavior.
-
-                    # Calculate height keeping aspect ratio
                     wpercent = (width / float(original_width))
                     hsize = int((float(original_height) * float(wpercent)))
 
-                    # Resize
-                    resize = cv2.resize(img, (width, hsize),
-                                        interpolation=cv2.INTER_AREA)
+                    # HIGH QUALITY RESIZING: Lanczos4
+                    resize = cv2.resize(cv_img, (width, hsize), interpolation=cv2.INTER_LANCZOS4)
 
-                    # Quality settings matches ImageGalleryViewSet
+                    # Quality settings
                     if width <= 800:
-                        quality = 50
+                        quality = 80 
                     elif width <= 1200:
-                        quality = 70
+                        quality = 90
                     else:
-                        quality = 75
+                        quality = 95
 
-                    _, im_buf_arr = cv2.imencode(
-                        ".webp", resize, [int(cv2.IMWRITE_WEBP_QUALITY), quality])
-                    byte_im = im_buf_arr.tobytes()
+                    # Return to Pillow
+                    if resize.shape[2] == 4:
+                         result_rgb = cv2.cvtColor(resize, cv2.COLOR_BGRA2RGBA)
+                    else:
+                         result_rgb = cv2.cvtColor(resize, cv2.COLOR_BGR2RGB)
+                    
+                    pil_result = Image.fromarray(result_rgb)
+                    
+                    # Ensure RGB for JPEG (Drop Alpha channel)
+                    if pil_result.mode == 'RGBA':
+                        background = Image.new("RGB", pil_result.size, (255, 255, 255))
+                        background.paste(pil_result, mask=pil_result.split()[3]) # 3 is the alpha channel
+                        pil_result = background
+                    elif pil_result.mode != 'RGB':
+                        pil_result = pil_result.convert('RGB')
 
-                    with open(filename, "wb") as f:
-                        f.write(byte_im)
+                    # KEY STEP: Re-embed the original ICC profile
+                    save_kwargs = {
+                        'quality': quality,
+                        'optimize': True,
+                        'subsampling': 0  # 4:4:4 chroma subsampling for best color detail
+                    }
+                    if original_icc_profile:
+                        save_kwargs['icc_profile'] = original_icc_profile
+
+                    pil_result.save(filename, 'JPEG', **save_kwargs)
 
                 if (index + 1) % 10 == 0:
                     self.stdout.write(
