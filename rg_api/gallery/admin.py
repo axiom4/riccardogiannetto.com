@@ -8,6 +8,9 @@ from django.shortcuts import redirect, render
 from django.urls import path
 
 from gallery.models import Gallery, ImageGallery
+from taggit.models import Tag
+from django.contrib.admin.widgets import AutocompleteSelectMultiple
+
 
 User = get_user_model()
 
@@ -57,7 +60,23 @@ class BulkUploadForm(forms.Form):
         queryset=User.objects.all(), required=False)
 
 
+class ImageGalleryForm(forms.ModelForm):
+    tags = forms.ModelMultipleChoiceField(
+        queryset=Tag.objects.all(),
+        required=False,
+        widget=AutocompleteSelectMultiple(
+            ImageGallery._meta.get_field('tags'),
+            admin.site,
+        )
+    )
+
+    class Meta:
+        model = ImageGallery
+        fields = '__all__'
+
+
 class ImageGalleryAdmin(admin.ModelAdmin):
+    form = ImageGalleryForm
     fields = [
         ('title',),
         ('image', 'image_tag'),
@@ -71,10 +90,13 @@ class ImageGalleryAdmin(admin.ModelAdmin):
     ]
     list_display = ('title', 'gallery', 'image_tag', 'author',
                     'width', 'height', 'tag_list', 'created_at', 'updated_at')
-    list_filter = ('gallery__title', 'tags')
+    # Removed 'tags' from list_filter because with ML auto-tagging the list becomes too long. 
+    # Use the search bar (configured in search_fields) to filter by tag.
+    list_filter = ('gallery__title',)
     readonly_fields = ['image_tag', 'width',
                        'height', 'created_at', 'updated_at']
     search_fields = ('title', 'gallery__title', 'tags__name')
+    # autocomplete_fields = ['tags'] # Handled by custom form widget
     save_on_top = True
     list_display_links = ('title',)
     list_per_page = 12
@@ -82,7 +104,14 @@ class ImageGalleryAdmin(admin.ModelAdmin):
     actions = ['auto_tag_images']
 
     def tag_list(self, obj):
-        return u", ".join(o.name for o in obj.tags.all())
+        # Optimization: Use prefetch_related in the queryset if possible, 
+        # but here we just slice to avoid fetching thousands of tags.
+        tags_qs = obj.tags.all()
+        # Evaluate first 4 to check count
+        tags = list(tags_qs[:4])
+        if len(tags) > 3:
+            return f"{', '.join(t.name for t in tags[:3])} (+{obj.tags.count() - 3})"
+        return ", ".join(t.name for t in tags)
     tag_list.short_description = 'Tags'
 
     @admin.action(description='Auto-tag selected images')
