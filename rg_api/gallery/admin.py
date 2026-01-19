@@ -124,30 +124,6 @@ class ImageGalleryAdmin(admin.ModelAdmin):
         return ", ".join(t.name for t in tags)
     tag_list.short_description = 'Tags'
 
-    def map_view(self, obj):
-        if obj.latitude and obj.longitude:
-            from django.utils.html import format_html
-            # Using OpenStreetMap embedded in an iframe
-            # We add specific style to the container div to ensure it takes available space in Django Admin form-row
-            return format_html(
-                '<div style="width: 100%; min-width: 600px; max-width: 100%;">'
-                '<iframe width="100%" height="500" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" '
-                'src="https://www.openstreetmap.org/export/embed.html?bbox={min_lon}%2C{min_lat}%2C{max_lon}%2C{max_lat}&amp;layer=mapnik&amp;marker={lat}%2C{lon}" '
-                'style="border: 1px solid black; width: 100%; display: block;"></iframe>'
-                '</div>'
-                '<br/><small><a href="https://www.openstreetmap.org/?mlat={lat}&amp;mlon={lon}#map=16/{lat}/{lon}" target="_blank">View Larger Map</a></small>',
-                min_lon=obj.longitude - 0.01,
-                min_lat=obj.latitude - 0.01,
-                max_lon=obj.longitude + 0.01,
-                max_lat=obj.latitude + 0.01,
-                lat=obj.latitude,
-                lon=obj.longitude
-            )
-        return "No GPS data available"
-    map_view.short_description = "Location Map"
-    # Required for older Django versions, though format_html handles safety
-    map_view.allow_tags = True
-
     @admin.action(description='Auto-tag selected images')
     def auto_tag_images(self, request, queryset):
         from gallery.ml import classify_image
