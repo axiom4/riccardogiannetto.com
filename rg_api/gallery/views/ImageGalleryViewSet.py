@@ -50,10 +50,10 @@ class ImageRenderer(renderers.BaseRenderer):
 
                 with Image.open(this_object.image.path) as pil_img:
                     original_icc_profile = pil_img.info.get('icc_profile')
-                    
+
                     if pil_img.mode not in ('RGB', 'RGBA'):
                         pil_img = pil_img.convert('RGB')
-                    
+
                     img_array = np.array(pil_img)
                     if img_array.shape[2] == 4:
                         cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGBA2BGRA)
@@ -68,11 +68,12 @@ class ImageRenderer(renderers.BaseRenderer):
                 hsize = int((float(original_height) * float(wpercent)))
 
                 # HIGH QUALITY RESIZING: Lanczos4
-                resize = cv2.resize(cv_img, (width, hsize), interpolation=cv2.INTER_LANCZOS4)
+                resize = cv2.resize(cv_img, (width, hsize),
+                                    interpolation=cv2.INTER_LANCZOS4)
 
                 # Quality settings
                 if width <= 800:
-                    quality = 80 
+                    quality = 80
                 elif width <= 1200:
                     quality = 90
                 else:
@@ -83,12 +84,13 @@ class ImageRenderer(renderers.BaseRenderer):
                     result_rgb = cv2.cvtColor(resize, cv2.COLOR_BGRA2RGBA)
                 else:
                     result_rgb = cv2.cvtColor(resize, cv2.COLOR_BGR2RGB)
-                
+
                 pil_result = Image.fromarray(result_rgb)
-                
+
                 # Ensure RGB for JPEG (Drop Alpha channel)
                 if pil_result.mode == 'RGBA':
-                    background = Image.new("RGB", pil_result.size, (255, 255, 255))
+                    background = Image.new(
+                        "RGB", pil_result.size, (255, 255, 255))
                     background.paste(pil_result, mask=pil_result.split()[3])
                     pil_result = background
                 elif pil_result.mode != 'RGB':
@@ -104,7 +106,7 @@ class ImageRenderer(renderers.BaseRenderer):
                     save_kwargs['icc_profile'] = original_icc_profile
 
                 pil_result.save(filename, 'JPEG', **save_kwargs)
-                
+
                 with open(filename, "rb") as f:
                     return f.read()
 

@@ -26,15 +26,15 @@ class Command(BaseCommand):
 
         # Pre-load sRGB profile
         try:
-             srgb_profile = ImageCms.createProfile('sRGB')
+            srgb_profile = ImageCms.createProfile('sRGB')
         except ImportError:
-             srgb_profile = None
+            srgb_profile = None
 
         if options['clean']:
             self.stdout.write('Cleaning existing previews...')
             # Clean both WebP (old) and JPG (new) to ensure a clean slate if switching formats
             files = glob.glob(os.path.join(preview_dir, '*.webp')) + \
-                    glob.glob(os.path.join(preview_dir, '*.jpg'))
+                glob.glob(os.path.join(preview_dir, '*.jpg'))
             for f in files:
                 try:
                     os.remove(f)
@@ -47,10 +47,10 @@ class Command(BaseCommand):
         # Common widths used in the application
         widths = [400, 600, 700, 800, 1000, 1200, 2500]
         total_images = images.count()
-        
+
         # Configure enhancements
         # 1. Saturation boost: +10% (Restores perception of depth for sRGB on wide gamut)
-        SATURATION_FACTOR = 1.10 
+        SATURATION_FACTOR = 1.10
         # 2. Sharpness boost: +20% (Compensates for Lanczos smoothing on extreme downscale)
         SHARPNESS_FACTOR = 1.20
 
@@ -74,18 +74,18 @@ class Command(BaseCommand):
                 with Image.open(image_obj.image.path) as pil_img:
                     # Capture the original ICC profile to embed later
                     original_icc_profile = pil_img.info.get('icc_profile')
-                    
+
                     # Ensure strict RGB mode
                     if pil_img.mode not in ('RGB', 'RGBA'):
                         pil_img = pil_img.convert('RGB')
-                    
+
                     # Convert to Numpy/OpenCV (BGR)
                     # We treat pixels as raw values, preserving their meaning in the original color space
                     img_array = np.array(pil_img)
                     if img_array.shape[2] == 4:
-                         cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGBA2BGRA)
+                        cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGBA2BGRA)
                     else:
-                         cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
+                        cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
 
                 if cv_img is None:
                     continue
@@ -100,11 +100,12 @@ class Command(BaseCommand):
                     hsize = int((float(original_height) * float(wpercent)))
 
                     # HIGH QUALITY RESIZING: Lanczos4
-                    resize = cv2.resize(cv_img, (width, hsize), interpolation=cv2.INTER_LANCZOS4)
+                    resize = cv2.resize(
+                        cv_img, (width, hsize), interpolation=cv2.INTER_LANCZOS4)
 
                     # Quality settings
                     if width <= 800:
-                        quality = 80 
+                        quality = 80
                     elif width <= 1200:
                         quality = 90
                     else:
@@ -112,16 +113,18 @@ class Command(BaseCommand):
 
                     # Return to Pillow
                     if resize.shape[2] == 4:
-                         result_rgb = cv2.cvtColor(resize, cv2.COLOR_BGRA2RGBA)
+                        result_rgb = cv2.cvtColor(resize, cv2.COLOR_BGRA2RGBA)
                     else:
-                         result_rgb = cv2.cvtColor(resize, cv2.COLOR_BGR2RGB)
-                    
+                        result_rgb = cv2.cvtColor(resize, cv2.COLOR_BGR2RGB)
+
                     pil_result = Image.fromarray(result_rgb)
-                    
+
                     # Ensure RGB for JPEG (Drop Alpha channel)
                     if pil_result.mode == 'RGBA':
-                        background = Image.new("RGB", pil_result.size, (255, 255, 255))
-                        background.paste(pil_result, mask=pil_result.split()[3]) # 3 is the alpha channel
+                        background = Image.new(
+                            "RGB", pil_result.size, (255, 255, 255))
+                        background.paste(pil_result, mask=pil_result.split()[
+                                         3])  # 3 is the alpha channel
                         pil_result = background
                     elif pil_result.mode != 'RGB':
                         pil_result = pil_result.convert('RGB')
