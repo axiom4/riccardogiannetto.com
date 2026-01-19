@@ -10,6 +10,17 @@ from django.urls import path
 from gallery.models import Gallery, ImageGallery
 from taggit.models import Tag
 from django.contrib.admin.widgets import AutocompleteSelectMultiple
+from admin_auto_filters.filters import AutocompleteFilter
+
+
+class TagFilter(AutocompleteFilter):
+    title = 'Tags'
+    field_name = 'tags'
+
+
+class GalleryFilter(AutocompleteFilter):
+    title = 'Gallery'
+    field_name = 'gallery'
 
 
 User = get_user_model()
@@ -90,9 +101,8 @@ class ImageGalleryAdmin(admin.ModelAdmin):
     ]
     list_display = ('title', 'gallery', 'image_tag', 'author',
                     'width', 'height', 'tag_list', 'created_at', 'updated_at')
-    # Removed 'tags' from list_filter because with ML auto-tagging the list becomes too long.
-    # Use the search bar (configured in search_fields) to filter by tag.
-    list_filter = ('gallery__title',)
+    # Use AutocompleteFilter for both Gallery and Tags
+    list_filter = (GalleryFilter, TagFilter)
     readonly_fields = ['image_tag', 'width',
                        'height', 'created_at', 'updated_at']
     search_fields = ('title', 'gallery__title', 'tags__name')

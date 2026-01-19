@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'analytics',
     'drf_spectacular',
     'taggit',
+    'admin_auto_filters',
 ]
 
 MIDDLEWARE = [
