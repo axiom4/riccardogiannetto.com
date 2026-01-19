@@ -101,8 +101,10 @@ class ImageGalleryAdmin(admin.ModelAdmin):
     ]
     list_display = ('title', 'gallery', 'image_tag', 'author',
                     'width', 'height', 'tag_list', 'created_at', 'updated_at')
-    # Use AutocompleteFilter for both Gallery and Tags
-    list_filter = (GalleryFilter, TagFilter)
+    # Use AutocompleteFilter for Gallery (FK)
+    # For Tags (TaggableManager), AutocompleteFilter is often incompatible. 
+    # Used 'tags__name' in search_fields to allow searching by tag.
+    list_filter = (GalleryFilter, 'created_at') 
     readonly_fields = ['image_tag', 'width',
                        'height', 'created_at', 'updated_at']
     search_fields = ('title', 'gallery__title', 'tags__name')
