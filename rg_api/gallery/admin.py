@@ -88,7 +88,6 @@ class ImageGalleryAdmin(admin.ModelAdmin):
         ('iso_speed', 'aperture_f_number', 'shutter_speed', 'focal_length'),
         ('artist', 'copyright'),
         ('latitude', 'longitude', 'altitude', 'location'),
-        ('map_view',)
     ]
     list_display = ('title', 'gallery', 'image_tag', 'author',
                     'width', 'height', 'tag_list', 'created_at', 'updated_at')
@@ -96,7 +95,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
     # Standard filters
     list_filter = ('gallery__title', 'created_at')
     readonly_fields = ['image_tag', 'width',
-                       'height', 'created_at', 'updated_at', 'map_view']
+                       'height', 'created_at', 'updated_at']
     search_fields = ('title', 'gallery__title', 'tags__name')
     # autocomplete_fields = ['tags'] # Handled by custom form widget
     save_on_top = True
@@ -104,6 +103,15 @@ class ImageGalleryAdmin(admin.ModelAdmin):
     list_per_page = 12
     change_list_template = 'admin/gallery/imagegallery/change_list.html'
     actions = ['auto_tag_images']
+
+    class Media:
+        css = {
+            'all': ('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',)
+        }
+        js = (
+            'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+            'gallery/js/admin_map.js',
+        )
 
     def tag_list(self, obj):
         # Optimization: Use prefetch_related in the queryset if possible,
