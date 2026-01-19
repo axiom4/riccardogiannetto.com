@@ -86,7 +86,9 @@ class ImageGalleryAdmin(admin.ModelAdmin):
         ('created_at', 'updated_at'),
         ('camera_model', 'lens_model'),
         ('iso_speed', 'aperture_f_number', 'shutter_speed', 'focal_length'),
-        ('artist', 'copyright')
+        ('artist', 'copyright'),
+        ('latitude', 'longitude', 'altitude', 'location'),
+        ('map_view',)
     ]
     list_display = ('title', 'gallery', 'image_tag', 'author',
                     'width', 'height', 'tag_list', 'created_at', 'updated_at')
@@ -94,7 +96,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
     # Standard filters
     list_filter = ('gallery__title', 'created_at')
     readonly_fields = ['image_tag', 'width',
-                       'height', 'created_at', 'updated_at']
+                       'height', 'created_at', 'updated_at', 'map_view']
     search_fields = ('title', 'gallery__title', 'tags__name')
     # autocomplete_fields = ['tags'] # Handled by custom form widget
     save_on_top = True
@@ -113,6 +115,29 @@ class ImageGalleryAdmin(admin.ModelAdmin):
             return f"{', '.join(t.name for t in tags[:3])} (+{obj.tags.count() - 3})"
         return ", ".join(t.name for t in tags)
     tag_list.short_description = 'Tags'
+
+    def map_view(self, obj):
+        if obj.latitude and obj.longitude:
+            from django.utils.html import format_html
+            # Using OpenStreetMap embedded in an iframe
+            # We add specific style to the container div to ensure it takes available space in Django Admin form-row
+            return format_html(
+                '<div style="width: 100%; min-width: 600px; max-width: 100%;">'
+                '<iframe width="100%" height="500" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" '
+                'src="https://www.openstreetmap.org/export/embed.html?bbox={min_lon}%2C{min_lat}%2C{max_lon}%2C{max_lat}&amp;layer=mapnik&amp;marker={lat}%2C{lon}" '
+                'style="border: 1px solid black; width: 100%; display: block;"></iframe>'
+                '</div>'
+                '<br/><small><a href="https://www.openstreetmap.org/?mlat={lat}&amp;mlon={lon}#map=16/{lat}/{lon}" target="_blank">View Larger Map</a></small>',
+                min_lon=obj.longitude - 0.01,
+                min_lat=obj.latitude - 0.01,
+                max_lon=obj.longitude + 0.01,
+                max_lat=obj.latitude + 0.01,
+                lat=obj.latitude,
+                lon=obj.longitude
+            )
+        return "No GPS data available"
+    map_view.short_description = "Location Map"
+    map_view.allow_tags = True # Required for older Django versions, though format_html handles safety
 
     @admin.action(description='Auto-tag selected images')
     def auto_tag_images(self, request, queryset):
@@ -143,6 +168,26 @@ class ImageGalleryAdmin(admin.ModelAdmin):
         super().save_related(request, form, formsets, change)
         obj = form.instance
         if obj.image:
+            # GPS Data Extraction
+            try:
+                from gallery.exif_utils import get_gps_data
+                lat, lon, alt = get_gps_data(obj.image.path)
+                updated_gps = False
+                if lat is not None:
+                    obj.latitude = lat
+                    updated_gps = True
+                if lon is not None:
+                    obj.longitude = lon
+                    updated_gps = True
+                if alt is not None:
+                    obj.altitude = alt
+                    updated_gps = True
+                
+                if updated_gps:
+                    obj.save()
+            except Exception as e:
+                print(f"GPS extraction error: {e}")
+
             # If it's a new upload or user didn't manually add tags, try to auto-tag
             if not obj.tags.exists():
                 from gallery.ml import classify_image
@@ -200,6 +245,26 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                     image = ImageGallery(
                         title=title, gallery=gallery, author=author)
                     image.image.save(base_name, upload, save=True)
+
+                    # GPS Extraction
+                    try:
+                        from gallery.exif_utils import get_gps_data
+                        lat, lon, alt = get_gps_data(image.image.path)
+                        updated_gps = False
+                        if lat is not None:
+                            image.latitude = lat
+                            updated_gps = True
+                        if lon is not None:
+                            image.longitude = lon
+                            updated_gps = True
+                        if alt is not None:
+                            image.altitude = alt
+                            updated_gps = True
+                        
+                        if updated_gps:
+                            image.save()
+                    except Exception as e:
+                        print(f"Bulk upload GPS extraction error for {title}: {e}")
 
                     # Auto-tag newly uploaded image
                     try:

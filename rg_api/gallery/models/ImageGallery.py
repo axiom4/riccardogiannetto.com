@@ -38,6 +38,11 @@ class ImageGallery(models.Model):
     artist = models.CharField(max_length=250, blank=True)
     copyright = models.CharField(max_length=250, blank=True)
 
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    altitude = models.FloatField(null=True, blank=True)
+    location = models.CharField(max_length=250, blank=True)
+
     date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
