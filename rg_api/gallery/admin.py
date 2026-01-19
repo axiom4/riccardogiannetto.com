@@ -200,6 +200,16 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                     image = ImageGallery(
                         title=title, gallery=gallery, author=author)
                     image.image.save(base_name, upload, save=True)
+                    
+                    # Auto-tag newly uploaded image
+                    try:
+                        from gallery.ml import classify_image
+                        new_tags = classify_image(image.image.path)
+                        if new_tags:
+                            image.tags.add(*new_tags)
+                    except Exception as e:
+                        print(f"Bulk upload auto-tag error for {title}: {e}")
+
                     created += 1
 
                 messages.success(
