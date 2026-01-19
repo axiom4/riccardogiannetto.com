@@ -1,51 +1,83 @@
 import torch
-from torchvision.models import resnet50, ResNet50_Weights
+from transformers import Blip2Processor, Blip2ForConditionalGeneration
 from PIL import Image
 
-# Load model globally to avoid reloading on every request (if possible, but careful with memory)
-# Ideally this should be loaded on startup or on first use and cached.
+# Global variables for model caching
+_processor = None
 _model = None
-_weights = None
-_preprocess = None
-
 
 def get_model():
-    global _model, _weights, _preprocess
+    """
+    Loads Salesforce BLIP-2 (Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models).
+    This model (opt-2.7b) uses a Q-Former to bridge visual features with a language model, creating extremely detailed 
+    and context-aware descriptions that far surpass standard classification or early captioning models.
+    """
+    global _processor, _model
     if _model is None:
-        _weights = ResNet50_Weights.DEFAULT
-        _model = resnet50(weights=_weights)
+        print("Loading BLIP-2 Model (OPT-2.7b)... this may take a moment.")
+        
+        model_id = "Salesforce/blip2-opt-2.7b"
+        
+        # Determine device: MPS (Apple Silicon), CUDA, or CPU
+        device = "cpu"
+        if torch.cuda.is_available():
+            device = "cuda"
+        elif torch.backends.mps.is_available():
+             device = "mps"
+        
+        print(f"Using device: {device}")
+
+        _processor = Blip2Processor.from_pretrained(model_id)
+        # Using device_map="auto" via accelerate if possible, or manual move
+        try:
+             _model = Blip2ForConditionalGeneration.from_pretrained(
+                model_id, 
+                device_map="auto" if device != "cpu" else None,
+                torch_dtype=torch.float16 if device != "cpu" else torch.float32
+            )
+        except Exception:
+             # Fallback if accelerate/device_map fails
+             _model = Blip2ForConditionalGeneration.from_pretrained(model_id)
+             _model.to(device)
+
         _model.eval()
-        _preprocess = _weights.transforms()
-    return _model, _weights, _preprocess
+        print("BLIP-2 model loaded.")
+        
+    return _processor, _model
 
 
 def classify_image(image_path, top_k=5):
     """
-    Classifies an image and returns the top K tags.
+    Generates a sophisticated caption using BLIP-2 and extracts high-level tags.
     """
     try:
-        model, weights, preprocess = get_model()
+        processor, model = get_model()
+        device = model.device
 
-        img = Image.open(image_path).convert('RGB')
-        batch = preprocess(img).unsqueeze(0)
+        raw_image = Image.open(image_path).convert('RGB')
+
+        # BLIP-2 allows asking questions! We can guide it to list objects.
+        # But a general caption is usually best for tagging "wild nature".
+        inputs = processor(images=raw_image, return_tensors="pt").to(device, torch.float16 if device.type != 'cpu' else torch.float32)
 
         with torch.no_grad():
-            prediction = model(batch).squeeze(0).softmax(0)
-
-        # Get top K predictions
-        top_scores, top_indices = torch.topk(prediction, k=top_k)
-
+            generated_ids = model.generate(**inputs, max_new_tokens=50)
+            
+        caption = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
+        print(f"BLIP-2 Caption: {caption}")
+        
+        # Advanced keyword extraction from the rich caption
+        stopwords = {'a', 'an', 'the', 'in', 'on', 'at', 'with', 'and', 'of', 'is', 'are', 'sitting', 'standing', 'looking', 'walking', 'flying', 'background', 'foreground', 'photo', 'picture', 'image', 'view', 'large', 'small', 'close', 'up', 'close-up', 'next', 'to', 'by', 'near', 'front', 'shot', 'full', 'frame'}
+        
+        words = caption.lower().replace('.', '').replace(',', '').split()
         tags = []
-        categories = weights.meta["categories"]
+        for w in words:
+            if w not in stopwords and len(w) > 2:
+                # Basic singularization could happen here, but keeping it simple
+                tags.append(w)
+        
+        return list(set(tags))
 
-        for score, class_id in zip(top_scores, top_indices):
-            # Only include tags with a reasonable confidence (e.g., > 10% or just top K)
-            # For now, we take top K regardless of score but you might want a threshold.
-            if score.item() > 0.05:  # 5% threshold
-                tag = categories[class_id.item()]
-                tags.append(tag)
-
-        return tags
     except Exception as e:
         print(f"Error classifying image {image_path}: {e}")
         return []
