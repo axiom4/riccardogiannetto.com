@@ -90,7 +90,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
     ]
     list_display = ('title', 'gallery', 'image_tag', 'author',
                     'width', 'height', 'tag_list', 'created_at', 'updated_at')
-    
+
     # Standard filters
     list_filter = ('gallery__title', 'created_at')
     readonly_fields = ['image_tag', 'width',
