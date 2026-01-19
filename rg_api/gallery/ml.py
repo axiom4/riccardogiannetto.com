@@ -28,18 +28,37 @@ def get_model():
 
         print(f"Using device: {device}")
 
-        _processor = Blip2Processor.from_pretrained(model_id)
-        # Using device_map="auto" via accelerate if possible, or manual move
+        # Explicitly set use_fast=True to suppress warning and future-proof
+        _processor = Blip2Processor.from_pretrained(model_id, use_fast=True)
+        
+        # device_map="auto" is excellent for CUDA but can cause shape errors on MPS/Mac.
+        # For MPS, it's safer to load manually and move to device.
         try:
-            _model = Blip2ForConditionalGeneration.from_pretrained(
-                model_id,
-                device_map="auto" if device != "cpu" else None,
-                torch_dtype=torch.float16 if device != "cpu" else torch.float32
-            )
-        except Exception:
-            # Fallback if accelerate/device_map fails
+            ignore_mismatched_sizes = True # Sometimes helps with shape variations
+            if device == "cuda":
+                _model = Blip2ForConditionalGeneration.from_pretrained(
+                    model_id,
+                    device_map="auto",
+                    dtype=torch.float16
+                )
+            elif device == "mps":
+                # MPS supports float16 but 'device_map=auto' is risky.
+                # Load normally then move.
+                _model = Blip2ForConditionalGeneration.from_pretrained(
+                    model_id,
+                    dtype=torch.float16
+                )
+                _model.to("mps")
+            else:
+                 _model = Blip2ForConditionalGeneration.from_pretrained(
+                    model_id,
+                    dtype=torch.float32
+                )
+        except Exception as e1:
+            print(f"Primary load failed ({e1}), retrying on CPU/standard...")
+            # Fallback if acceleration fails
             _model = Blip2ForConditionalGeneration.from_pretrained(model_id)
-            _model.to(device)
+            _model.to("cpu")
 
         _model.eval()
         print("BLIP-2 model loaded.")
