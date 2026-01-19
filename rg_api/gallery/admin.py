@@ -139,8 +139,9 @@ class ImageGalleryAdmin(admin.ModelAdmin):
             self.message_user(
                 request, "No tags added. Check logs or image paths.", messages.WARNING)
 
-    def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        obj = form.instance
         if obj.image:
             # If it's a new upload or user didn't manually add tags, try to auto-tag
             if not obj.tags.exists():
@@ -150,7 +151,6 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                     if new_tags:
                         obj.tags.add(*new_tags)
                 except Exception as e:
-                    # Log error but don't stop save
                     print(f"Auto-tag entry error: {e}")
 
     def get_form(self, request, obj=None, **kwargs):
