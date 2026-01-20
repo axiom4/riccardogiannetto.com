@@ -5,6 +5,7 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from gallery.models import ImageGallery
 
+
 @receiver(post_delete, sender=ImageGallery)
 def delete_image_on_delete(sender, instance, **kwargs):
     """
@@ -27,13 +28,13 @@ def delete_image_on_delete(sender, instance, **kwargs):
             os.path.join(preview_dir, f"{instance.pk}_*.jpg"),
             os.path.join(preview_dir, f"{instance.pk}_*.webp"),
         ]
-        
+
         for pattern in patterns:
             for f in glob.glob(pattern):
                 try:
                     os.remove(f)
                 except OSError as e:
                     print(f"Error deleting preview {f}: {e}")
-                    
+
     except Exception as e:
         print(f"Error cleaning up previews for {instance.title}: {e}")
