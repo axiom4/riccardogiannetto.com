@@ -19,7 +19,7 @@
   #progress-bar {
     width: 0%;
     height: 100%;
-    background: #447e9b; 
+    background: #447e9b;
     transition: width 0.2s;
   }
   #progress-text {
@@ -49,23 +49,23 @@
 <form id="bulk-upload-form" method="post" enctype="multipart/form-data" novalidate>
   {% csrf_token %}
   <fieldset class="module aligned">{{ form.as_p }}</fieldset>
-  
+
   <div id="progress-container">
-      <div class="progress-wrapper">
-          <div id="progress-bar"></div>
+    <div class="progress-wrapper">
+      <div id="progress-bar"></div>
+    </div>
+    <div id="progress-text">Ready</div>
+
+    <div id="status-area" style="display: none">
+      <div class="status-line" id="status-current">
+        <span class="status-label">Current</span>
+        <span id="current-file-name">...</span>
       </div>
-      <div id="progress-text">Ready</div>
-      
-      <div id="status-area" style="display:none;">
-          <div class="status-line" id="status-current">
-              <span class="status-label">Current</span>
-              <span id="current-file-name">...</span>
-          </div>
-          <div class="status-line" id="status-last">
-              <span class="status-label">Last</span>
-              <span id="last-file-result">...</span>
-          </div>
+      <div class="status-line" id="status-last">
+        <span class="status-label">Last</span>
+        <span id="last-file-result">...</span>
       </div>
+    </div>
   </div>
 
   <div class="submit-row">
@@ -75,108 +75,108 @@
 </form>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('bulk-upload-form');
-    
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        // Find inputs
-        const fileInput = document.querySelector('input[name="images"]');
-        const galleryInput = document.querySelector('select[name="gallery"]');
-        const authorInput = document.querySelector('select[name="author"]');
-        
-        if (!fileInput || fileInput.files.length === 0) {
-            alert("Please select files to upload.");
-            return;
-        }
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("bulk-upload-form");
 
-        const files = Array.from(fileInput.files);
-        const totalFiles = files.length;
-        
-        // UI Setup
-        const submitBtn = document.getElementById('submit-btn');
-        submitBtn.disabled = true;
-        submitBtn.value = "Processing...";
-        
-        const container = document.getElementById('progress-container');
-        const bar = document.getElementById('progress-bar');
-        const progressText = document.getElementById('progress-text');
-        
-        const statusArea = document.getElementById('status-area');
-        const currentName = document.getElementById('current-file-name');
-        const lastResult = document.getElementById('last-file-result');
-        
-        container.style.display = 'block';
-        statusArea.style.display = 'block';
-        lastResult.textContent = "Waiting to start...";
-        
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        let successCount = 0;
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-        // Batch processing (Sequential)
-        for (let i = 0; i < totalFiles; i++) {
-            const file = files[i];
-            const currentNum = i + 1;
-            
-            // Update Activity
-            progressText.textContent = `Processing ${currentNum} of ${totalFiles}`;
-            currentName.innerHTML = `<strong>${file.name}</strong> <span style='color:#666'>(Uploading, analyzing GPS & Auto-tagging...)</span>`;
-            
-            const formData = new FormData();
-            formData.append('csrfmiddlewaretoken', csrfToken);
-            formData.append('ajax', 'true');
-            formData.append('images', file); 
-            
-            if (galleryInput) formData.append('gallery', galleryInput.value);
-            if (authorInput) formData.append('author', authorInput.value);
+      // Find inputs
+      const fileInput = document.querySelector('input[name="images"]');
+      const galleryInput = document.querySelector('select[name="gallery"]');
+      const authorInput = document.querySelector('select[name="author"]');
 
-            try {
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
+      if (!fileInput || fileInput.files.length === 0) {
+        alert("Please select files to upload.");
+        return;
+      }
 
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.status === 'success') {
-                        if (data.created > 0) {
-                            successCount++;
-                            let msg = `<span style="color:green">✔ ${file.name}</span>`;
-                            if (data.details) {
-                                msg += ` <span style="color:#666">(${data.details})</span>`;
-                            }
-                            lastResult.innerHTML = msg;
-                        } else {
-                            lastResult.innerHTML = `<span style="color:orange">⚠ ${file.name} (Skipped/Duplicate)</span>`;
-                        }
-                    } else {
-                         lastResult.innerHTML = `<span style="color:red">✖ ${file.name}: ${data.message || 'Error'}</span>`;
-                    }
-                } else {
-                    lastResult.innerHTML = `<span style="color:red">✖ ${file.name}: HTTP ${response.status}</span>`;
+      const files = Array.from(fileInput.files);
+      const totalFiles = files.length;
+
+      // UI Setup
+      const submitBtn = document.getElementById("submit-btn");
+      submitBtn.disabled = true;
+      submitBtn.value = "Processing...";
+
+      const container = document.getElementById("progress-container");
+      const bar = document.getElementById("progress-bar");
+      const progressText = document.getElementById("progress-text");
+
+      const statusArea = document.getElementById("status-area");
+      const currentName = document.getElementById("current-file-name");
+      const lastResult = document.getElementById("last-file-result");
+
+      container.style.display = "block";
+      statusArea.style.display = "block";
+      lastResult.textContent = "Waiting to start...";
+
+      const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+      let successCount = 0;
+
+      // Batch processing (Sequential)
+      for (let i = 0; i < totalFiles; i++) {
+        const file = files[i];
+        const currentNum = i + 1;
+
+        // Update Activity
+        progressText.textContent = `Processing ${currentNum} of ${totalFiles}`;
+        currentName.innerHTML = `<strong>${file.name}</strong> <span style='color:#666'>(Uploading, analyzing GPS & Auto-tagging...)</span>`;
+
+        const formData = new FormData();
+        formData.append("csrfmiddlewaretoken", csrfToken);
+        formData.append("ajax", "true");
+        formData.append("images", file);
+
+        if (galleryInput) formData.append("gallery", galleryInput.value);
+        if (authorInput) formData.append("author", authorInput.value);
+
+        try {
+          const response = await fetch(form.action, {
+            method: "POST",
+            body: formData,
+            headers: {
+              "X-Requested-With": "XMLHttpRequest",
+            },
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data.status === "success") {
+              if (data.created > 0) {
+                successCount++;
+                let msg = `<span style="color:green">✔ ${file.name}</span>`;
+                if (data.details) {
+                  msg += ` <span style="color:#666">(${data.details})</span>`;
                 }
-            } catch (err) {
-                console.error(err);
-                lastResult.innerHTML = `<span style="color:red">✖ ${file.name}: Network Error</span>`;
+                lastResult.innerHTML = msg;
+              } else {
+                lastResult.innerHTML = `<span style="color:orange">⚠ ${file.name} (Skipped/Duplicate)</span>`;
+              }
+            } else {
+              lastResult.innerHTML = `<span style="color:red">✖ ${file.name}: ${data.message || "Error"}</span>`;
             }
-
-            // Update Progress
-            const percent = Math.round((currentNum / totalFiles) * 100);
-            bar.style.width = percent + '%';
+          } else {
+            lastResult.innerHTML = `<span style="color:red">✖ ${file.name}: HTTP ${response.status}</span>`;
+          }
+        } catch (err) {
+          console.error(err);
+          lastResult.innerHTML = `<span style="color:red">✖ ${file.name}: Network Error</span>`;
         }
 
-        progressText.textContent = `Done! Uploaded ${successCount} of ${totalFiles}.`;
-        currentName.textContent = "-";
-        submitBtn.value = "Done - Redirecting...";
-        
-        setTimeout(() => {
-            window.location.href = "..";
-        }, 1500);
+        // Update Progress
+        const percent = Math.round((currentNum / totalFiles) * 100);
+        bar.style.width = percent + "%";
+      }
+
+      progressText.textContent = `Done! Uploaded ${successCount} of ${totalFiles}.`;
+      currentName.textContent = "-";
+      submitBtn.value = "Done - Redirecting...";
+
+      setTimeout(() => {
+        window.location.href = "..";
+      }, 1500);
     });
-});
+  });
 </script>
 {% endblock %}

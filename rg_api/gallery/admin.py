@@ -230,7 +230,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                     if ImageGallery.objects.filter(title=title, gallery=gallery).exists():
                         skipped += 1
                         continue
-                    
+
                     video_log = []
 
                     image = ImageGallery(
@@ -266,7 +266,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                             video_log.append(f"Tags: {len(new_tags)}")
                     except Exception as e:
                         print(f"Bulk upload auto-tag error for {title}: {e}")
-                    
+
                     details_list.append(" | ".join(video_log))
                     created += 1
 
