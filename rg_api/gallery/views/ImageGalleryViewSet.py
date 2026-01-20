@@ -119,8 +119,6 @@ class ImageRenderer(renderers.BaseRenderer):
                 return f.read()
 
 
-@method_decorator(cache_page(60 * 60 * 2), name='list')
-@method_decorator(cache_page(60 * 60 * 24), name='retrieve')
 class ImageGalleryViewSet(viewsets.ModelViewSet):
 
     queryset = ImageGallery.objects.all()
