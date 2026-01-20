@@ -4,6 +4,7 @@ from django import forms
 from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.core.files import File
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import path
 
@@ -216,6 +217,8 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                                 '.webp', '.tif', '.tiff', '.heic'}
                 created = 0
                 skipped = 0
+                details_list = []
+
                 for upload in uploads:
                     base_name = os.path.basename(upload.name)
                     _, ext = os.path.splitext(base_name)
@@ -227,6 +230,9 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                     if ImageGallery.objects.filter(title=title, gallery=gallery).exists():
                         skipped += 1
                         continue
+                    
+                    video_log = []
+
                     image = ImageGallery(
                         title=title, gallery=gallery, author=author)
                     # Optimize: save=False prevents DB save, but writes file to disk
@@ -238,6 +244,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                         lat, lon, alt = get_gps_data(image.image.path)
                         if lat is not None:
                             image.latitude = lat
+                            video_log.append("GPS found")
                         if lon is not None:
                             image.longitude = lon
                         if alt is not None:
@@ -256,10 +263,21 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                         new_tags = classify_image(image.image.path)
                         if new_tags:
                             image.tags.add(*new_tags)
+                            video_log.append(f"Tags: {len(new_tags)}")
                     except Exception as e:
                         print(f"Bulk upload auto-tag error for {title}: {e}")
-
+                    
+                    details_list.append(" | ".join(video_log))
                     created += 1
+
+                if request.POST.get('ajax') == 'true':
+                    return JsonResponse({
+                        'status': 'success',
+                        'created': created,
+                        'skipped': skipped,
+                        'details': "; ".join(details_list),
+                        'message': f'Uploaded {created} images.'
+                    })
 
                 messages.success(
                     request,

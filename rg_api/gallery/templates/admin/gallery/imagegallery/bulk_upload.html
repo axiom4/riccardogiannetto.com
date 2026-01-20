@@ -1,11 +1,182 @@
 {% extends "admin/base_site.html" %} {% load i18n %} {% block content %}
 <h1>{% trans "Bulk upload images" %}</h1>
-<form method="post" enctype="multipart/form-data" novalidate>
+
+<style>
+  #progress-container {
+    margin: 20px 0;
+    display: none;
+    border: 1px solid #ccc;
+    padding: 15px;
+    background: #fff;
+  }
+  .progress-wrapper {
+    background: #eee;
+    width: 100%;
+    height: 24px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  #progress-bar {
+    width: 0%;
+    height: 100%;
+    background: #447e9b; 
+    transition: width 0.2s;
+  }
+  #progress-text {
+    font-weight: bold;
+    margin-top: 8px;
+    color: #444;
+  }
+  #status-area {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+  }
+  .status-line {
+    margin-bottom: 5px;
+    font-size: 13px;
+  }
+  .status-label {
+    display: inline-block;
+    width: 60px;
+    color: #888;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+</style>
+
+<form id="bulk-upload-form" method="post" enctype="multipart/form-data" novalidate>
   {% csrf_token %}
   <fieldset class="module aligned">{{ form.as_p }}</fieldset>
+  
+  <div id="progress-container">
+      <div class="progress-wrapper">
+          <div id="progress-bar"></div>
+      </div>
+      <div id="progress-text">Ready</div>
+      
+      <div id="status-area" style="display:none;">
+          <div class="status-line" id="status-current">
+              <span class="status-label">Current</span>
+              <span id="current-file-name">...</span>
+          </div>
+          <div class="status-line" id="status-last">
+              <span class="status-label">Last</span>
+              <span id="last-file-result">...</span>
+          </div>
+      </div>
+  </div>
+
   <div class="submit-row">
-    <input type="submit" value="{% trans 'Upload' %}" class="default" />
+    <input type="submit" value="{% trans 'Upload' %}" class="default" id="submit-btn" />
     <a href=".." class="button">{% trans 'Cancel' %}</a>
   </div>
 </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('bulk-upload-form');
+    
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Find inputs
+        const fileInput = document.querySelector('input[name="images"]');
+        const galleryInput = document.querySelector('select[name="gallery"]');
+        const authorInput = document.querySelector('select[name="author"]');
+        
+        if (!fileInput || fileInput.files.length === 0) {
+            alert("Please select files to upload.");
+            return;
+        }
+
+        const files = Array.from(fileInput.files);
+        const totalFiles = files.length;
+        
+        // UI Setup
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.value = "Processing...";
+        
+        const container = document.getElementById('progress-container');
+        const bar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        
+        const statusArea = document.getElementById('status-area');
+        const currentName = document.getElementById('current-file-name');
+        const lastResult = document.getElementById('last-file-result');
+        
+        container.style.display = 'block';
+        statusArea.style.display = 'block';
+        lastResult.textContent = "Waiting to start...";
+        
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        let successCount = 0;
+
+        // Batch processing (Sequential)
+        for (let i = 0; i < totalFiles; i++) {
+            const file = files[i];
+            const currentNum = i + 1;
+            
+            // Update Activity
+            progressText.textContent = `Processing ${currentNum} of ${totalFiles}`;
+            currentName.innerHTML = `<strong>${file.name}</strong> <span style='color:#666'>(Uploading, analyzing GPS & Auto-tagging...)</span>`;
+            
+            const formData = new FormData();
+            formData.append('csrfmiddlewaretoken', csrfToken);
+            formData.append('ajax', 'true');
+            formData.append('images', file); 
+            
+            if (galleryInput) formData.append('gallery', galleryInput.value);
+            if (authorInput) formData.append('author', authorInput.value);
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        if (data.created > 0) {
+                            successCount++;
+                            let msg = `<span style="color:green">✔ ${file.name}</span>`;
+                            if (data.details) {
+                                msg += ` <span style="color:#666">(${data.details})</span>`;
+                            }
+                            lastResult.innerHTML = msg;
+                        } else {
+                            lastResult.innerHTML = `<span style="color:orange">⚠ ${file.name} (Skipped/Duplicate)</span>`;
+                        }
+                    } else {
+                         lastResult.innerHTML = `<span style="color:red">✖ ${file.name}: ${data.message || 'Error'}</span>`;
+                    }
+                } else {
+                    lastResult.innerHTML = `<span style="color:red">✖ ${file.name}: HTTP ${response.status}</span>`;
+                }
+            } catch (err) {
+                console.error(err);
+                lastResult.innerHTML = `<span style="color:red">✖ ${file.name}: Network Error</span>`;
+            }
+
+            // Update Progress
+            const percent = Math.round((currentNum / totalFiles) * 100);
+            bar.style.width = percent + '%';
+        }
+
+        progressText.textContent = `Done! Uploaded ${successCount} of ${totalFiles}.`;
+        currentName.textContent = "-";
+        submitBtn.value = "Done - Redirecting...";
+        
+        setTimeout(() => {
+            window.location.href = "..";
+        }, 1500);
+    });
+});
+</script>
 {% endblock %}
