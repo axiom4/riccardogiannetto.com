@@ -229,32 +229,30 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                         continue
                     image = ImageGallery(
                         title=title, gallery=gallery, author=author)
-                    image.image.save(base_name, upload, save=True)
+                    # Optimize: save=False prevents DB save, but writes file to disk
+                    image.image.save(base_name, upload, save=False)
 
                     # GPS Extraction
                     try:
                         from gallery.exif_utils import get_gps_data
                         lat, lon, alt = get_gps_data(image.image.path)
-                        updated_gps = False
                         if lat is not None:
                             image.latitude = lat
-                            updated_gps = True
                         if lon is not None:
                             image.longitude = lon
-                            updated_gps = True
                         if alt is not None:
                             image.altitude = alt
-                            updated_gps = True
-
-                        if updated_gps:
-                            image.save()
                     except Exception as e:
                         print(
                             f"Bulk upload GPS extraction error for {title}: {e}")
 
+                    # Single DB save (handles standard EXIF extraction + dims + GPS fields)
+                    image.save()
+
                     # Auto-tag newly uploaded image
                     try:
                         from gallery.ml import classify_image
+                        print(f"Auto-tagging image: {title}")
                         new_tags = classify_image(image.image.path)
                         if new_tags:
                             image.tags.add(*new_tags)
