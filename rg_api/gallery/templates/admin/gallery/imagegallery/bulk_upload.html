@@ -1,4 +1,31 @@
-{% extends "admin/base_site.html" %} {% load i18n %} {% block content %}
+{% extends "admin/base_site.html" %} {% load i18n %}
+
+{% block extrahead %}
+{{ block.super }}
+<script>
+    // Fix for "Added non-passive event listener" warning from Select2/jQuery
+    (function() {
+        function patchJquery(jq) {
+            if (!jq || !jq.event) return;
+            ['wheel', 'mousewheel', 'touchstart', 'touchmove'].forEach(evt => {
+                if (!jq.event.special[evt]) {
+                    jq.event.special[evt] = {
+                        setup: function( _, ns, handle ) {
+                            this.addEventListener(evt, handle, { passive: true });
+                        }
+                    };
+                }
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.jQuery) patchJquery(window.jQuery);
+            if (window.django && window.django.jQuery) patchJquery(window.django.jQuery);
+        });
+    })();
+</script>
+{% endblock %}
+
+{% block content %}
 <h1>{% trans "Bulk upload images" %}</h1>
 
 <style>
