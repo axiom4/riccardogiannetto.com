@@ -851,30 +851,27 @@ article th {
     // Force items to behave linearly on mobile
     .gallery-img {
       grid-column: span 1 !important;
+      grid-row: span 1 !important;
 
       // Reset specialized spans to logical mobile equivalents
 
       // 1x1 stays 1x1 (66%)
       &.item-1x1 {
-        grid-row: span 1;
         padding-bottom: 66.666667%;
       }
 
       // 1x2 stays 1x2 (133% + gap)
       &.item-1x2 {
-        grid-row: span 2;
         padding-bottom: calc(133.333333% + var(--gallery-gap));
       }
 
       // 2x2 becomes 1x1 (Landscape)
       &.item-2x2 {
-        grid-row: span 1 !important;
         padding-bottom: 66.666667%;
       }
 
       // 2x4 becomes 1x2 (Portrait)
       &.item-2x4 {
-        grid-row: span 2 !important;
         padding-bottom: calc(133.333333% + var(--gallery-gap));
       }
     }
