@@ -838,6 +838,7 @@ article th {
     --gallery-gap: 10px;
     padding: 10px;
     gap: var(--gallery-gap);
+    min-height: 100vh; // Ensure container has height before content loads
 
     // Force items to behave linearly on mobile
     .gallery-img {
