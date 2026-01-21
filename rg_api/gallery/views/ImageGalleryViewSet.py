@@ -34,10 +34,16 @@ class ImageRenderer(renderers.BaseRenderer):
     render_style = 'binary'
 
     def render(self, data, media_type=None, renderer_context=None):
+        if renderer_context['response'].status_code != 200:
+            return b""
+
         width = int(renderer_context['kwargs']['width'])
 
-        this_object = ImageGallery.objects.get(
-            pk=renderer_context['kwargs']['pk'])
+        try:
+            this_object = ImageGallery.objects.get(
+                pk=renderer_context['kwargs']['pk'])
+        except ImageGallery.DoesNotExist:
+            return b""
 
         filename = f"{settings.MEDIA_ROOT}/preview/{this_object.pk}_{width}.jpg"
 
