@@ -853,26 +853,28 @@ article th {
       grid-column: span 1 !important;
       grid-row: span 1 !important;
 
-      // Reset specialized spans to logical mobile equivalents
+      // Unwind padding-hack in favor of native aspect-ratio for CLS stability
+      height: auto !important;
+      padding-bottom: 0 !important;
 
-      // 1x1 stays 1x1 (66%)
+      // 1x1 stays 1x1 (Landscape 3:2)
       &.item-1x1 {
-        padding-bottom: 66.666667%;
+        aspect-ratio: 3 / 2;
       }
 
-      // 1x2 stays 1x2 (133% + gap)
+      // 1x2 stays 1x2 (Portrait 3:4)
       &.item-1x2 {
-        padding-bottom: calc(133.333333% + var(--gallery-gap));
+        aspect-ratio: 3 / 4;
       }
 
-      // 2x2 becomes 1x1 (Landscape)
+      // 2x2 becomes 1x1 (Landscape 3:2)
       &.item-2x2 {
-        padding-bottom: 66.666667%;
+        aspect-ratio: 3 / 2;
       }
 
-      // 2x4 becomes 1x2 (Portrait)
+      // 2x4 becomes 1x2 (Portrait 3:4)
       &.item-2x4 {
-        padding-bottom: calc(133.333333% + var(--gallery-gap));
+        aspect-ratio: 3 / 4;
       }
     }
   }
