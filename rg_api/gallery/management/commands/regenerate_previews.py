@@ -105,11 +105,11 @@ class Command(BaseCommand):
 
                     # Quality settings
                     if width <= 800:
-                        quality = 80
+                        quality = 65
                     elif width <= 1200:
-                        quality = 90
+                        quality = 75
                     else:
-                        quality = 95
+                        quality = 82
 
                     # Return to Pillow
                     if resize.shape[2] == 4:
