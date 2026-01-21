@@ -28,8 +28,8 @@ class ImageGalleryPagination(PageNumberPagination):
 
 
 class ImageRenderer(renderers.BaseRenderer):
-    media_type = 'image/jpeg'
-    format = 'jpeg'
+    media_type = 'image/webp'
+    format = 'webp'
     charset = None
     render_style = 'binary'
 
@@ -45,14 +45,14 @@ class ImageRenderer(renderers.BaseRenderer):
         except ImageGallery.DoesNotExist:
             return b""
 
-        filename = f"{settings.MEDIA_ROOT}/preview/{this_object.pk}_{width}.jpg"
+        filename = f"{settings.MEDIA_ROOT}/preview/{this_object.pk}_{width}.webp"
 
         if os.path.exists(filename) == False:
             try:
                 # STRATEGY FOR MAX COLOR FIDELITY:
                 # 1. Preserve Original ICC Profile
                 # 2. Use OpenCV Lanczos4 for sharpening/resizing.
-                # 3. Embed the original ICC profile in the output JPEG.
+                # 3. Embed the original ICC profile in the output WEBP.
 
                 with Image.open(this_object.image.path) as pil_img:
                     original_icc_profile = pil_img.info.get('icc_profile')
@@ -79,11 +79,11 @@ class ImageRenderer(renderers.BaseRenderer):
 
                 # Quality settings
                 if width <= 800:
-                    quality = 80
+                    quality = 75
                 elif width <= 1200:
-                    quality = 90
+                    quality = 80
                 else:
-                    quality = 95
+                    quality = 85
 
                 # Return to Pillow
                 if resize.shape[2] == 4:
@@ -105,13 +105,12 @@ class ImageRenderer(renderers.BaseRenderer):
                 # KEY STEP: Re-embed the original ICC profile
                 save_kwargs = {
                     'quality': quality,
-                    'optimize': True,
-                    'subsampling': 0  # 4:4:4 chroma subsampling for best color detail
+                    'method': 6
                 }
                 if original_icc_profile:
                     save_kwargs['icc_profile'] = original_icc_profile
 
-                pil_result.save(filename, 'JPEG', **save_kwargs)
+                pil_result.save(filename, 'WEBP', **save_kwargs)
 
                 with open(filename, "rb") as f:
                     return f.read()
