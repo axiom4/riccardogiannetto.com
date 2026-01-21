@@ -81,7 +81,7 @@
           src="{{ img.url }}/width/{{ getLightboxRenderWidth() }}"
           width="{{ getGalleryImageWidth(img.width, img.height) }}"
           height="{{ getGalleryImageHeight(img.width, img.height) }}"
-          priority
+          fetchpriority="high"
           (load)="onImageLoad()"
           (error)="onImageLoad()"
         />
