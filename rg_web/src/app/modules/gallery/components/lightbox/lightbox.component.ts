@@ -51,7 +51,7 @@ export class LightboxComponent implements OnInit {
         const lastImg = this.lastLightboxImg();
 
         if (nextImg && nextImg !== lastImg) {
-          this.previousLightboxImg.set(lastImg);
+          this.previousLightboxImg.set(undefined);
           this.lastLightboxImg.set(nextImg);
           this.isLoading.set(true);
         }
