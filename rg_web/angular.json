@@ -38,8 +38,7 @@
               "optimization": {
                 "scripts": true,
                 "styles": {
-                  "minify": true,
-                  "inlineCritical": true
+                  "minify": true
                 },
                 "fonts": true
               },
