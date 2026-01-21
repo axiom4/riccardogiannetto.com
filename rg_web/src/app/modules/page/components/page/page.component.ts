@@ -26,6 +26,7 @@ export class PageComponent implements OnInit {
 
   page = signal<Page | undefined>(undefined);
   highlighted = signal<boolean>(false);
+  tag = signal<string>('');
 
   constructor() {}
 
@@ -33,6 +34,7 @@ export class PageComponent implements OnInit {
     this.route.paramMap.subscribe((params) => {
       const tag = params.get('tag');
       if (tag) {
+        this.tag.set(tag);
         this.page.set(undefined);
         this.highlighted.set(false);
         this.getPage(tag);
