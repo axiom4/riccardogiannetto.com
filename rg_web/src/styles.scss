@@ -877,11 +877,11 @@ article th {
         aspect-ratio: 3 / 4;
       }
     }
-    
+
     // Safety precaution against spill-over
     .gallery-img {
       overflow: hidden;
-      
+
       > img {
         max-width: 100%;
         max-height: 100%;
