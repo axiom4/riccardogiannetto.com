@@ -952,3 +952,12 @@ article th {
   float: left;
   margin: 15px;
 }
+
+@media screen and (max-width: 400px) {
+  .about img {
+    width: 200px;
+    float: none;
+    display: block;
+    margin: 15px auto;
+  }
+}

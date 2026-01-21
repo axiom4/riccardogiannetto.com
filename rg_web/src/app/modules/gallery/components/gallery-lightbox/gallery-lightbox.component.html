@@ -61,7 +61,7 @@
       }
       <img
         #galleryImg
-        [attr.loading]="i > 1 ? 'lazy' : 'eager'"
+        [attr.loading]="i >= 4 ? 'lazy' : 'eager'"
         [attr.fetchpriority]="i === 0 ? 'high' : 'auto'"
         (click)="onPreviewImage(i)"
         (load)="onImageLoad(item)"
