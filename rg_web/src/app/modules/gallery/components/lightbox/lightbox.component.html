@@ -109,6 +109,7 @@
         <img
           #galleryPreviewImg
           class="lightbox-image current"
+          [style.visibility]="isLoading() ? 'hidden' : 'visible'"
           [ngClass]="{
             'image-anim-a': imageAnimA(),
             'image-anim-b': !imageAnimA(),
