@@ -45,7 +45,7 @@ class Command(BaseCommand):
 
         images = ImageGallery.objects.all()
         # Common widths used in the application
-        widths = [400, 600, 700, 800, 1000, 1200, 2500]
+        widths = [400, 500, 600, 700, 800, 900, 1000, 1200, 2500]
         total_images = images.count()
 
         # Configure enhancements
@@ -94,7 +94,7 @@ class Command(BaseCommand):
 
                 for width in widths:
                     filename = os.path.join(
-                        preview_dir, f"{image_obj.pk}_{width}.jpg")
+                        preview_dir, f"{image_obj.pk}_{width}.webp")
 
                     wpercent = (width / float(original_width))
                     hsize = int((float(original_height) * float(wpercent)))
@@ -132,13 +132,12 @@ class Command(BaseCommand):
                     # KEY STEP: Re-embed the original ICC profile
                     save_kwargs = {
                         'quality': quality,
-                        'optimize': True,
-                        'subsampling': 0  # 4:4:4 chroma subsampling for best color detail
+                        'method': 6
                     }
                     if original_icc_profile:
                         save_kwargs['icc_profile'] = original_icc_profile
 
-                    pil_result.save(filename, 'JPEG', **save_kwargs)
+                    pil_result.save(filename, 'WEBP', **save_kwargs)
 
                 if (index + 1) % 10 == 0:
                     self.stdout.write(
