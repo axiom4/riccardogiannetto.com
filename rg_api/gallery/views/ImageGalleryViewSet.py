@@ -57,7 +57,10 @@ class ImageRenderer(renderers.BaseRenderer):
                 with Image.open(this_object.image.path) as pil_img:
                     original_icc_profile = pil_img.info.get('icc_profile')
 
+                    # Only preserve ICC profile if the image is already in RGB/RGBA mode.
+                    # Mapping CMYK profile to RGB image would result in color distortion.
                     if pil_img.mode not in ('RGB', 'RGBA'):
+                        original_icc_profile = None
                         pil_img = pil_img.convert('RGB')
 
                     img_array = np.array(pil_img)
@@ -107,8 +110,9 @@ class ImageRenderer(renderers.BaseRenderer):
                     'quality': quality,
                     'method': 6
                 }
-                # Note: Skipping ICC profile embedding to save space.
-                # Browsers assume sRGB for untagged images.
+                # Embed the original ICC profile in the output WEBP.
+                if original_icc_profile:
+                    save_kwargs['icc_profile'] = original_icc_profile
 
                 pil_result.save(filename, 'WEBP', **save_kwargs)
 
