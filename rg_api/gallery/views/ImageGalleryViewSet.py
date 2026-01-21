@@ -73,17 +73,17 @@ class ImageRenderer(renderers.BaseRenderer):
                 wpercent = (width / float(original_width))
                 hsize = int((float(original_height) * float(wpercent)))
 
-                # HIGH QUALITY RESIZING: Lanczos4
+                # HIGH QUALITY RESIZING: Area (Better for compression)
                 resize = cv2.resize(cv_img, (width, hsize),
-                                    interpolation=cv2.INTER_LANCZOS4)
+                                    interpolation=cv2.INTER_AREA)
 
                 # Quality settings
                 if width <= 800:
-                    quality = 75
+                    quality = 65
                 elif width <= 1200:
-                    quality = 80
+                    quality = 75
                 else:
-                    quality = 85
+                    quality = 82
 
                 # Return to Pillow
                 if resize.shape[2] == 4:
@@ -102,13 +102,13 @@ class ImageRenderer(renderers.BaseRenderer):
                 elif pil_result.mode != 'RGB':
                     pil_result = pil_result.convert('RGB')
 
-                # KEY STEP: Re-embed the original ICC profile
+                # Save as WEBP
                 save_kwargs = {
                     'quality': quality,
                     'method': 6
                 }
-                if original_icc_profile:
-                    save_kwargs['icc_profile'] = original_icc_profile
+                # Note: Skipping ICC profile embedding to save space.
+                # Browsers assume sRGB for untagged images.
 
                 pil_result.save(filename, 'WEBP', **save_kwargs)
 
