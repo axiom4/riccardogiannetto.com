@@ -73,11 +73,16 @@
           getGalleryPreviewHeight(item.data.width, item.data.height)
         }}"
         style="max-width: 100%; height: auto"
-        srcset="{{ item.data.url }}/width/400 400w, {{
-          item.data.url
-        }}/width/600 600w, {{ item.data.url }}/width/800 800w, {{
-          item.data.url
-        }}/width/1000 1000w, {{ item.data.url }}/width/1200 1200w"
+        srcset="
+          {{ item.data.url }}/width/400 400w,
+          {{ item.data.url }}/width/500 500w,
+          {{ item.data.url }}/width/600 600w,
+          {{ item.data.url }}/width/700 700w,
+          {{ item.data.url }}/width/800 800w,
+          {{ item.data.url }}/width/900 900w,
+          {{ item.data.url }}/width/1000 1000w,
+          {{ item.data.url }}/width/1200 1200w
+        "
         sizes="{{
           item.cols === 2
             ? '(max-width: 650px) calc(100vw - 20px), (max-width: 1024px) 100vw, (max-width: 1500px) 66vw, 50vw'
