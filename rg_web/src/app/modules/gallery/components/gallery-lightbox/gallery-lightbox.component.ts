@@ -10,6 +10,7 @@ import {
   signal,
   viewChild,
   viewChildren,
+  afterNextRender,
 } from '@angular/core';
 import { IMAGE_LOADER, ImageLoaderConfig, NgClass } from '@angular/common';
 import {
@@ -58,7 +59,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   imageWidth = signal(0);
   index = 0;
 
-  columns = 0;
+  columns = 1;
 
   previewImage = signal(false);
   showMask = signal(false);
@@ -74,15 +75,25 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   private lastItemWasLarge = false;
 
   // Layout State for incremental updates
-  private colHeights: number[] = [];
+  private colHeights: number[] = [0];
   private processedCount = 0;
   private preferRightSide = false;
 
   galleryItem = viewChildren<ElementRef>('galleryItem');
   sentinel = viewChild<ElementRef>('sentinel');
   private observer: IntersectionObserver | undefined;
+  private isSentinelIntersecting = false;
 
   constructor() {
+    afterNextRender(() => {
+      this.innerWidth = window.innerWidth;
+      this.innerHeight = window.innerHeight;
+      this.setColumns(this.innerWidth);
+      if (this.galleryItems().length > 0) {
+        this.recalculateLayout();
+      }
+    });
+
     effect(() => {
       const el = this.sentinel();
       if (el) {
@@ -101,6 +112,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     this.observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          this.isSentinelIntersecting = entry.isIntersecting;
           if (entry.isIntersecting && !this.isLoading() && this.hasNextPage) {
             this.loadItems();
           }
@@ -127,10 +139,6 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.totalImageCount = 0;
-    this.innerWidth = window.innerWidth;
-    this.innerHeight = window.innerHeight;
-
-    this.setColumns(this.innerWidth);
     this.loadItems();
   }
 
@@ -261,6 +269,17 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
       this.hasNextPage = !!data.next;
 
       this.isLoading.set(false);
+
+      // If sentinel is strictly still visible after load, trigger next load immediately
+      // This replaces the old scrollHeight calculation with a passive check
+      if (this.isSentinelIntersecting && this.hasNextPage) {
+        // Use a microtask or small timeout to let the DOM update first
+        setTimeout(() => {
+          if (this.isSentinelIntersecting) {
+            this.loadItems();
+          }
+        }, 0);
+      }
     });
   }
 
