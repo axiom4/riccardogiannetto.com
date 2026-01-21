@@ -7,8 +7,6 @@ import { environment } from '../environments/environment';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 
-import { provideClientHydration } from '@angular/platform-browser';
-
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
     basePath: environment.api_url,
@@ -28,6 +26,5 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     { provide: Configuration, useFactory: apiConfigFactory },
     provideHttpClient(withFetch()),
-    provideClientHydration(),
   ],
 };
