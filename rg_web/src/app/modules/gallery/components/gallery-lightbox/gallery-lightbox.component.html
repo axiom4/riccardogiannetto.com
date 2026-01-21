@@ -68,10 +68,6 @@
         (error)="onImageLoad(item)"
         alt="{{ item.data.title }}"
         src="{{ item.data.url }}/width/{{ getGalleryPreviewWidth() }}"
-        width="{{ getGalleryPreviewWidth() }}"
-        height="{{
-          getGalleryPreviewHeight(item.data.width, item.data.height)
-        }}"
         srcset="{{ item.data.url }}/width/400 400w, {{
           item.data.url
         }}/width/600 600w, {{ item.data.url }}/width/800 800w, {{
