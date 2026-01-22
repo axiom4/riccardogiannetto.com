@@ -2,6 +2,8 @@
 README.md
 api.base.service.ts
 api.module.ts
+api/analytics.service.ts
+api/analytics.serviceInterface.ts
 api/api.ts
 api/blog.service.ts
 api/blog.serviceInterface.ts
@@ -21,9 +23,11 @@ model/paginatedGalleryList.ts
 model/paginatedImageGalleryList.ts
 model/paginatedPageList.ts
 model/paginatedPostPreviewList.ts
+model/paginatedUserActivityList.ts
 model/post.ts
 model/postPreview.ts
 model/user.ts
+model/userActivity.ts
 param.ts
 provide-api.ts
 query.params.ts

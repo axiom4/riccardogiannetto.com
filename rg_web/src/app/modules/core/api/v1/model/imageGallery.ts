@@ -26,6 +26,10 @@ export interface ImageGallery {
     focal_length?: number | null;
     artist?: string;
     copyright?: string;
+    latitude?: number | null;
+    longitude?: number | null;
+    altitude?: number | null;
+    location?: string;
     date?: string | null;
     gallery: string;
 }

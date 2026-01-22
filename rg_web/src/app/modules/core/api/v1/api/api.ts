@@ -1,7 +1,10 @@
+export * from './analytics.service';
+import { AnalyticsService } from './analytics.service';
+export * from './analytics.serviceInterface';
 export * from './blog.service';
 import { BlogService } from './blog.service';
 export * from './blog.serviceInterface';
 export * from './portfolio.service';
 import { PortfolioService } from './portfolio.service';
 export * from './portfolio.serviceInterface';
-export const APIS = [BlogService, PortfolioService];
+export const APIS = [AnalyticsService, BlogService, PortfolioService];

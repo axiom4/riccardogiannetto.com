@@ -7,6 +7,8 @@ export * from './paginatedGalleryList';
 export * from './paginatedImageGalleryList';
 export * from './paginatedPageList';
 export * from './paginatedPostPreviewList';
+export * from './paginatedUserActivityList';
 export * from './post';
 export * from './postPreview';
 export * from './user';
+export * from './userActivity';
