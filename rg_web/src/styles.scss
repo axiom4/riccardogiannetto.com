@@ -710,6 +710,10 @@ article th {
   z-index: 100;
   width: 100%;
 
+  &.lightbox-open {
+    z-index: 100000 !important;
+  }
+
   .gallery-img {
     position: relative;
     display: block;

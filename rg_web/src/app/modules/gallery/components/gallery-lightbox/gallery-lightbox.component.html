@@ -1,4 +1,8 @@
-<div #container class="gallery-lightbox-container">
+<div
+  #container
+  class="gallery-lightbox-container"
+  [class.lightbox-open]="showMask()"
+>
   @for (item of galleryItems(); track item.data.url; let i = $index) {
     <div
       class="gallery-img"
