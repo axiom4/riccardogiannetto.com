@@ -3,12 +3,14 @@ import {
   EventEmitter,
   HostListener,
   OnInit,
+  OnDestroy,
   Output,
   effect,
   input,
   signal,
+  Inject,
 } from '@angular/core';
-import { NgClass } from '@angular/common';
+import { NgClass, DOCUMENT } from '@angular/common';
 import { ImageGallery } from '../../../../modules/core/api/v1';
 
 @Component({
@@ -18,7 +20,7 @@ import { ImageGallery } from '../../../../modules/core/api/v1';
   standalone: true, // If using standalone components
   imports: [NgClass],
 })
-export class LightboxComponent implements OnInit {
+export class LightboxComponent implements OnInit, OnDestroy {
   readonly currentLightboxImg = input<ImageGallery>();
   readonly previousLightboxImg = signal<ImageGallery | undefined>(undefined);
   readonly lastLightboxImg = signal<ImageGallery | undefined>(undefined);
@@ -39,7 +41,7 @@ export class LightboxComponent implements OnInit {
   innerWidth = 0;
   innerHeight = 0;
 
-  constructor() {
+  constructor(@Inject(DOCUMENT) private document: Document) {
     effect(() => {
       this.imageNum();
       this.imageAnimA.update((value) => !value);
@@ -64,6 +66,13 @@ export class LightboxComponent implements OnInit {
     if (typeof window !== 'undefined') {
       this.innerWidth = window.innerWidth;
       this.innerHeight = window.innerHeight;
+      this.document.body.style.overflow = 'hidden';
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (typeof window !== 'undefined') {
+      this.document.body.style.overflow = '';
     }
   }
 
