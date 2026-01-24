@@ -55,7 +55,7 @@ export class BlogService extends BaseService implements BlogServiceInterface {
         const basePath = inject(BASE_PATH, { optional: true });
         const configuration = inject(Configuration, { optional: true });
 
-        super(basePath, configuration);
+        super(basePath ?? undefined, configuration ?? undefined);
     }
 
     /**
