@@ -14,6 +14,6 @@ export interface PaginatedCategoryList {
     count: number;
     next?: string;
     previous?: string;
-    results: Array<Category>;
+    results: Category[];
 }
 

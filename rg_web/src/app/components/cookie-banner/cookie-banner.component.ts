@@ -9,7 +9,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
   styleUrl: './cookie-banner.component.scss',
 })
 export class CookieBannerComponent implements OnInit {
-  private platformId = inject<Object>(PLATFORM_ID);
+  private platformId = inject<object>(PLATFORM_ID);
 
   accepted = true;
 

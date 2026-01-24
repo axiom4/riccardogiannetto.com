@@ -14,6 +14,6 @@ export interface PaginatedUserActivityList {
     count: number;
     next?: string;
     previous?: string;
-    results: Array<UserActivity>;
+    results: UserActivity[];
 }
 

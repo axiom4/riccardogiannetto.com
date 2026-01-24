@@ -1,4 +1,15 @@
-import { Component, EventEmitter, HostListener, OnInit, OnDestroy, Output, effect, input, signal, inject } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  HostListener,
+  OnInit,
+  OnDestroy,
+  Output,
+  effect,
+  input,
+  signal,
+  inject,
+} from '@angular/core';
 import { NgClass, DOCUMENT } from '@angular/common';
 import { ImageGallery } from '../../../../modules/core/api/v1';
 
@@ -22,7 +33,7 @@ export class LightboxComponent implements OnInit, OnDestroy {
   readonly pageFlipDirection = input<'next' | 'prev'>('next');
   readonly isLoading = signal(true);
 
-  @Output() close = new EventEmitter<void>();
+  @Output() closeLightbox = new EventEmitter<void>();
   @Output() prevAction = new EventEmitter<void>();
   @Output() nextAction = new EventEmitter<void>();
   @Output() animationEnd = new EventEmitter<TransitionEvent>();
@@ -67,26 +78,26 @@ export class LightboxComponent implements OnInit, OnDestroy {
     }
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
+  @HostListener('window:resize')
+  onResize() {
     if (typeof window !== 'undefined') {
       this.innerWidth = window.innerWidth;
       this.innerHeight = window.innerHeight;
     }
   }
 
-  @HostListener('document:keydown.escape', ['$event'])
-  onKeydownEscapeHandler(event: Event) {
-    this.close.emit();
+  @HostListener('document:keydown.escape')
+  onKeydownEscapeHandler() {
+    this.closeLightbox.emit();
   }
 
-  @HostListener('document:keydown.arrowLeft', ['$event'])
-  onKeydownLeftHandler(event: Event) {
+  @HostListener('document:keydown.arrowLeft')
+  onKeydownLeftHandler() {
     this.prevAction.emit();
   }
 
-  @HostListener('document:keydown.arrowRight', ['$event'])
-  onKeydownRightHandler(event: Event) {
+  @HostListener('document:keydown.arrowRight')
+  onKeydownRightHandler() {
     this.nextAction.emit();
   }
 
@@ -95,7 +106,7 @@ export class LightboxComponent implements OnInit, OnDestroy {
   }
 
   onclosePreview(): void {
-    this.close.emit();
+    this.closeLightbox.emit();
   }
 
   prev(): void {

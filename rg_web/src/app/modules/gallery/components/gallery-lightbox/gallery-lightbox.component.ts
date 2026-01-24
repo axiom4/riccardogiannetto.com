@@ -6,7 +6,7 @@ import {
   inject,
   OnDestroy,
   OnInit,
-  QueryList,
+
   signal,
   viewChild,
   viewChildren,
@@ -128,8 +128,8 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     this.observer.observe(target);
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
+  @HostListener('window:resize')
+  onResize() {
     if (this.innerWidth !== window?.innerWidth) {
       this.innerWidth = window.innerWidth;
       this.setColumns(this.innerWidth);
@@ -150,7 +150,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     this.imageNum = index + 1;
   }
 
-  onAnimationEnd(event: TransitionEvent): void {
+  onAnimationEnd(): void {
     this.showMask.set(false);
     this.previewImage.set(false);
   }
@@ -298,7 +298,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     const colHeights = this.colHeights;
     const placedItems = allItems.slice(0, this.processedCount);
 
-    let items = allItems.slice(this.processedCount).map((it) => ({
+    const items = allItems.slice(this.processedCount).map((it) => ({
       ...it,
       cols: it.baseCols,
       rows: it.baseRows,

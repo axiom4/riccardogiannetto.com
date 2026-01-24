@@ -41,10 +41,6 @@ export class ImageLazyLoaderDirective implements AfterViewInit {
     this.renderer.addClass(this.el.nativeElement, 'error');
   }
 
-  ngAfterViewInit() {
-    // this.canLazyLoad() ? this.lazyLoadImage() : this.loadImage();
-  }
-
   // private canLazyLoad() {
   //   return window && 'IntersectionObserver' in window;
   // }

@@ -14,6 +14,6 @@ export interface PaginatedPageList {
     count: number;
     next?: string;
     previous?: string;
-    results: Array<Page>;
+    results: Page[];
 }
 

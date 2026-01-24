@@ -14,6 +14,6 @@ export interface PaginatedGalleryList {
     count: number;
     next?: string;
     previous?: string;
-    results: Array<Gallery>;
+    results: Gallery[];
 }
 

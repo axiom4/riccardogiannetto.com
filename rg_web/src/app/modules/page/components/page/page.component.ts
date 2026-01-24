@@ -28,8 +28,6 @@ export class PageComponent implements OnInit {
   highlighted = signal<boolean>(false);
   tag = signal<string>('');
 
-  constructor() {}
-
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       const tag = params.get('tag');

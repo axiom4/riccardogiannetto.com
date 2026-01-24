@@ -7,7 +7,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-/* tslint:disable:no-unused-variable member-ordering */
 
 import { Injectable, inject }                      from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams,
@@ -70,7 +69,7 @@ export class BlogService extends BaseService implements BlogServiceInterface {
     public blogCategoriesList(requestParameters?: BlogCategoriesListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedCategoryList>;
     public blogCategoriesList(requestParameters?: BlogCategoriesListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedCategoryList>>;
     public blogCategoriesList(requestParameters?: BlogCategoriesListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedCategoryList>>;
-    public blogCategoriesList(requestParameters?: BlogCategoriesListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public blogCategoriesList(requestParameters?: BlogCategoriesListRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const limit = requestParameters?.limit;
         const offset = requestParameters?.offset;
 
@@ -79,7 +78,7 @@ export class BlogService extends BaseService implements BlogServiceInterface {
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'limit',
-            <any>limit,
+            (limit as any),
             QueryParamStyle.Form,
             true,
         );
@@ -88,7 +87,7 @@ export class BlogService extends BaseService implements BlogServiceInterface {
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'offset',
-            <any>offset,
+            (offset as any),
             QueryParamStyle.Form,
             true,
         );
@@ -124,13 +123,13 @@ export class BlogService extends BaseService implements BlogServiceInterface {
             }
         }
 
-        let localVarPath = `/blog/categories`;
+        const localVarPath = `/blog/categories`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<PaginatedCategoryList>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 params: localVarQueryParameters.toHttpParams(),
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,
@@ -151,7 +150,7 @@ export class BlogService extends BaseService implements BlogServiceInterface {
     public blogCategoriesRetrieve(requestParameters: BlogCategoriesRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Category>;
     public blogCategoriesRetrieve(requestParameters: BlogCategoriesRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Category>>;
     public blogCategoriesRetrieve(requestParameters: BlogCategoriesRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Category>>;
-    public blogCategoriesRetrieve(requestParameters: BlogCategoriesRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public blogCategoriesRetrieve(requestParameters: BlogCategoriesRetrieveRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling blogCategoriesRetrieve.');
@@ -187,12 +186,12 @@ export class BlogService extends BaseService implements BlogServiceInterface {
             }
         }
 
-        let localVarPath = `/blog/categories/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        const localVarPath = `/blog/categories/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<Category>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,
@@ -212,7 +211,7 @@ export class BlogService extends BaseService implements BlogServiceInterface {
     public blogPagesList(requestParameters?: BlogPagesListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedPageList>;
     public blogPagesList(requestParameters?: BlogPagesListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedPageList>>;
     public blogPagesList(requestParameters?: BlogPagesListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedPageList>>;
-    public blogPagesList(requestParameters?: BlogPagesListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public blogPagesList(requestParameters?: BlogPagesListRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const limit = requestParameters?.limit;
         const offset = requestParameters?.offset;
 
@@ -221,7 +220,7 @@ export class BlogService extends BaseService implements BlogServiceInterface {
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'limit',
-            <any>limit,
+            (limit as any),
             QueryParamStyle.Form,
             true,
         );
@@ -230,7 +229,7 @@ export class BlogService extends BaseService implements BlogServiceInterface {
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'offset',
-            <any>offset,
+            (offset as any),
             QueryParamStyle.Form,
             true,
         );
@@ -266,13 +265,13 @@ export class BlogService extends BaseService implements BlogServiceInterface {
             }
         }
 
-        let localVarPath = `/blog/pages`;
+        const localVarPath = `/blog/pages`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<PaginatedPageList>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 params: localVarQueryParameters.toHttpParams(),
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,
@@ -292,7 +291,7 @@ export class BlogService extends BaseService implements BlogServiceInterface {
     public blogPagesRetrieve(requestParameters: BlogPagesRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Page>;
     public blogPagesRetrieve(requestParameters: BlogPagesRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Page>>;
     public blogPagesRetrieve(requestParameters: BlogPagesRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Page>>;
-    public blogPagesRetrieve(requestParameters: BlogPagesRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public blogPagesRetrieve(requestParameters: BlogPagesRetrieveRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const tag = requestParameters?.tag;
         if (tag === null || tag === undefined) {
             throw new Error('Required parameter tag was null or undefined when calling blogPagesRetrieve.');
@@ -328,12 +327,12 @@ export class BlogService extends BaseService implements BlogServiceInterface {
             }
         }
 
-        let localVarPath = `/blog/pages/${this.configuration.encodeParam({name: "tag", value: tag, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        const localVarPath = `/blog/pages/${this.configuration.encodeParam({name: "tag", value: tag, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<Page>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,
@@ -353,7 +352,7 @@ export class BlogService extends BaseService implements BlogServiceInterface {
     public blogPostsList(requestParameters?: BlogPostsListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedPostPreviewList>;
     public blogPostsList(requestParameters?: BlogPostsListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedPostPreviewList>>;
     public blogPostsList(requestParameters?: BlogPostsListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedPostPreviewList>>;
-    public blogPostsList(requestParameters?: BlogPostsListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public blogPostsList(requestParameters?: BlogPostsListRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const categoriesName = requestParameters?.categoriesName;
         const ordering = requestParameters?.ordering;
         const page = requestParameters?.page;
@@ -365,7 +364,7 @@ export class BlogService extends BaseService implements BlogServiceInterface {
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'categories__name',
-            <any>categoriesName,
+            (categoriesName as any),
             QueryParamStyle.Form,
             true,
         );
@@ -374,7 +373,7 @@ export class BlogService extends BaseService implements BlogServiceInterface {
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'ordering',
-            <any>ordering,
+            (ordering as any),
             QueryParamStyle.Form,
             true,
         );
@@ -383,7 +382,7 @@ export class BlogService extends BaseService implements BlogServiceInterface {
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'page',
-            <any>page,
+            (page as any),
             QueryParamStyle.Form,
             true,
         );
@@ -392,7 +391,7 @@ export class BlogService extends BaseService implements BlogServiceInterface {
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'page_size',
-            <any>pageSize,
+            (pageSize as any),
             QueryParamStyle.Form,
             true,
         );
@@ -401,7 +400,7 @@ export class BlogService extends BaseService implements BlogServiceInterface {
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'search',
-            <any>search,
+            (search as any),
             QueryParamStyle.Form,
             true,
         );
@@ -437,13 +436,13 @@ export class BlogService extends BaseService implements BlogServiceInterface {
             }
         }
 
-        let localVarPath = `/blog/posts`;
+        const localVarPath = `/blog/posts`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<PaginatedPostPreviewList>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 params: localVarQueryParameters.toHttpParams(),
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,
@@ -463,7 +462,7 @@ export class BlogService extends BaseService implements BlogServiceInterface {
     public blogPostsRetrieve(requestParameters: BlogPostsRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Post>;
     public blogPostsRetrieve(requestParameters: BlogPostsRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Post>>;
     public blogPostsRetrieve(requestParameters: BlogPostsRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Post>>;
-    public blogPostsRetrieve(requestParameters: BlogPostsRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public blogPostsRetrieve(requestParameters: BlogPostsRetrieveRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling blogPostsRetrieve.');
@@ -499,12 +498,12 @@ export class BlogService extends BaseService implements BlogServiceInterface {
             }
         }
 
-        let localVarPath = `/blog/posts/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        const localVarPath = `/blog/posts/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<Post>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,

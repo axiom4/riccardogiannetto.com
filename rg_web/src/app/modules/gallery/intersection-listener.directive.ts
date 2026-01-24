@@ -3,6 +3,7 @@ import {
   Directive,
   ElementRef,
   EventEmitter,
+  inject,
   OnInit,
   Output,
 } from '@angular/core';
@@ -16,7 +17,7 @@ export class IntersectionListenerDirective implements AfterViewInit, OnInit {
   @Output() appIntersectionListener = new EventEmitter<boolean>();
   observer!: IntersectionObserver;
 
-  constructor(private element: ElementRef) {}
+  private element = inject(ElementRef);
 
   ngOnInit(): void {
     this.intersectionObserver();
@@ -27,7 +28,7 @@ export class IntersectionListenerDirective implements AfterViewInit, OnInit {
   }
 
   intersectionObserver() {
-    let options = {
+    const options = {
       root: null,
       rootMargin: '0px',
       threshold: 0.5,

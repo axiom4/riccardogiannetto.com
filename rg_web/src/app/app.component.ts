@@ -17,5 +17,4 @@ import { CookieBannerComponent } from './components/cookie-banner/cookie-banner.
 })
 export class AppComponent {
   title = 'Riccardo Giannetto Gallery';
-  constructor() {}
 }

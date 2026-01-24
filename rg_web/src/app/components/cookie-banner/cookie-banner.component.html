@@ -1,4 +1,5 @@
-<div class="cookie-banner" *ngIf="!accepted">
+@if (!accepted) {
+<div class="cookie-banner">
   <div class="cookie-content">
     <p>
       This site uses cookies to improve your browsing experience. These include
@@ -9,3 +10,4 @@
     </div>
   </div>
 </div>
+}

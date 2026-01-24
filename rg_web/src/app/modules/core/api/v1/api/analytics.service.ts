@@ -7,7 +7,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-/* tslint:disable:no-unused-variable member-ordering */
 
 import { Injectable, inject }                      from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams,
@@ -61,7 +60,7 @@ export class AnalyticsService extends BaseService implements AnalyticsServiceInt
     public analyticsActivitiesCreate(requestParameters: AnalyticsActivitiesCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<UserActivity>;
     public analyticsActivitiesCreate(requestParameters: AnalyticsActivitiesCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<UserActivity>>;
     public analyticsActivitiesCreate(requestParameters: AnalyticsActivitiesCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<UserActivity>>;
-    public analyticsActivitiesCreate(requestParameters: AnalyticsActivitiesCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public analyticsActivitiesCreate(requestParameters: AnalyticsActivitiesCreateRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const userActivity = requestParameters?.userActivity;
         if (userActivity === null || userActivity === undefined) {
             throw new Error('Required parameter userActivity was null or undefined when calling analyticsActivitiesCreate.');
@@ -108,13 +107,13 @@ export class AnalyticsService extends BaseService implements AnalyticsServiceInt
             }
         }
 
-        let localVarPath = `/analytics/activities/`;
+        const localVarPath = `/analytics/activities/`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<UserActivity>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: userActivity,
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,
@@ -134,7 +133,7 @@ export class AnalyticsService extends BaseService implements AnalyticsServiceInt
     public analyticsActivitiesDestroy(requestParameters: AnalyticsActivitiesDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
     public analyticsActivitiesDestroy(requestParameters: AnalyticsActivitiesDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
     public analyticsActivitiesDestroy(requestParameters: AnalyticsActivitiesDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public analyticsActivitiesDestroy(requestParameters: AnalyticsActivitiesDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public analyticsActivitiesDestroy(requestParameters: AnalyticsActivitiesDestroyRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling analyticsActivitiesDestroy.');
@@ -169,12 +168,12 @@ export class AnalyticsService extends BaseService implements AnalyticsServiceInt
             }
         }
 
-        let localVarPath = `/analytics/activities/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
+        const localVarPath = `/analytics/activities/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<any>('delete', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,
@@ -194,7 +193,7 @@ export class AnalyticsService extends BaseService implements AnalyticsServiceInt
     public analyticsActivitiesList(requestParameters?: AnalyticsActivitiesListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedUserActivityList>;
     public analyticsActivitiesList(requestParameters?: AnalyticsActivitiesListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedUserActivityList>>;
     public analyticsActivitiesList(requestParameters?: AnalyticsActivitiesListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedUserActivityList>>;
-    public analyticsActivitiesList(requestParameters?: AnalyticsActivitiesListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public analyticsActivitiesList(requestParameters?: AnalyticsActivitiesListRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const limit = requestParameters?.limit;
         const offset = requestParameters?.offset;
 
@@ -203,7 +202,7 @@ export class AnalyticsService extends BaseService implements AnalyticsServiceInt
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'limit',
-            <any>limit,
+            (limit as any),
             QueryParamStyle.Form,
             true,
         );
@@ -212,7 +211,7 @@ export class AnalyticsService extends BaseService implements AnalyticsServiceInt
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'offset',
-            <any>offset,
+            (offset as any),
             QueryParamStyle.Form,
             true,
         );
@@ -248,13 +247,13 @@ export class AnalyticsService extends BaseService implements AnalyticsServiceInt
             }
         }
 
-        let localVarPath = `/analytics/activities/`;
+        const localVarPath = `/analytics/activities/`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<PaginatedUserActivityList>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 params: localVarQueryParameters.toHttpParams(),
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,
@@ -274,7 +273,7 @@ export class AnalyticsService extends BaseService implements AnalyticsServiceInt
     public analyticsActivitiesPartialUpdate(requestParameters: AnalyticsActivitiesPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<UserActivity>;
     public analyticsActivitiesPartialUpdate(requestParameters: AnalyticsActivitiesPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<UserActivity>>;
     public analyticsActivitiesPartialUpdate(requestParameters: AnalyticsActivitiesPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<UserActivity>>;
-    public analyticsActivitiesPartialUpdate(requestParameters: AnalyticsActivitiesPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public analyticsActivitiesPartialUpdate(requestParameters: AnalyticsActivitiesPartialUpdateRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling analyticsActivitiesPartialUpdate.');
@@ -325,13 +324,13 @@ export class AnalyticsService extends BaseService implements AnalyticsServiceInt
             }
         }
 
-        let localVarPath = `/analytics/activities/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
+        const localVarPath = `/analytics/activities/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<UserActivity>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: userActivity,
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,
@@ -351,7 +350,7 @@ export class AnalyticsService extends BaseService implements AnalyticsServiceInt
     public analyticsActivitiesRetrieve(requestParameters: AnalyticsActivitiesRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<UserActivity>;
     public analyticsActivitiesRetrieve(requestParameters: AnalyticsActivitiesRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<UserActivity>>;
     public analyticsActivitiesRetrieve(requestParameters: AnalyticsActivitiesRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<UserActivity>>;
-    public analyticsActivitiesRetrieve(requestParameters: AnalyticsActivitiesRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public analyticsActivitiesRetrieve(requestParameters: AnalyticsActivitiesRetrieveRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling analyticsActivitiesRetrieve.');
@@ -387,12 +386,12 @@ export class AnalyticsService extends BaseService implements AnalyticsServiceInt
             }
         }
 
-        let localVarPath = `/analytics/activities/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
+        const localVarPath = `/analytics/activities/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<UserActivity>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,
@@ -412,7 +411,7 @@ export class AnalyticsService extends BaseService implements AnalyticsServiceInt
     public analyticsActivitiesUpdate(requestParameters: AnalyticsActivitiesUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<UserActivity>;
     public analyticsActivitiesUpdate(requestParameters: AnalyticsActivitiesUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<UserActivity>>;
     public analyticsActivitiesUpdate(requestParameters: AnalyticsActivitiesUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<UserActivity>>;
-    public analyticsActivitiesUpdate(requestParameters: AnalyticsActivitiesUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public analyticsActivitiesUpdate(requestParameters: AnalyticsActivitiesUpdateRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling analyticsActivitiesUpdate.');
@@ -463,13 +462,13 @@ export class AnalyticsService extends BaseService implements AnalyticsServiceInt
             }
         }
 
-        let localVarPath = `/analytics/activities/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
+        const localVarPath = `/analytics/activities/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<UserActivity>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: userActivity,
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,

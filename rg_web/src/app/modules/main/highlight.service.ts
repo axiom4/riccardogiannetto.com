@@ -4,7 +4,7 @@ import { isPlatformBrowser } from '@angular/common';
 
 @Injectable()
 export class HighlightService {
-  private platformId = inject<Object>(PLATFORM_ID);
+  private platformId = inject<object>(PLATFORM_ID);
 
 
   async highlightAll() {

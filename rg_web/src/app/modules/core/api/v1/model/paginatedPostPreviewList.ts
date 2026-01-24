@@ -14,6 +14,6 @@ export interface PaginatedPostPreviewList {
     count: number;
     next?: string;
     previous?: string;
-    results: Array<PostPreview>;
+    results: PostPreview[];
 }
 

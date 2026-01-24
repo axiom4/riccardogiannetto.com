@@ -7,7 +7,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-/* tslint:disable:no-unused-variable member-ordering */
 
 import { Injectable, inject }                      from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams,
@@ -64,7 +63,7 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
     public portfolioGalleriesList(requestParameters?: PortfolioGalleriesListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedGalleryList>;
     public portfolioGalleriesList(requestParameters?: PortfolioGalleriesListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedGalleryList>>;
     public portfolioGalleriesList(requestParameters?: PortfolioGalleriesListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedGalleryList>>;
-    public portfolioGalleriesList(requestParameters?: PortfolioGalleriesListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public portfolioGalleriesList(requestParameters?: PortfolioGalleriesListRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const ordering = requestParameters?.ordering;
         const page = requestParameters?.page;
         const pageSize = requestParameters?.pageSize;
@@ -76,7 +75,7 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'ordering',
-            <any>ordering,
+            (ordering as any),
             QueryParamStyle.Form,
             true,
         );
@@ -85,7 +84,7 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'page',
-            <any>page,
+            (page as any),
             QueryParamStyle.Form,
             true,
         );
@@ -94,7 +93,7 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'page_size',
-            <any>pageSize,
+            (pageSize as any),
             QueryParamStyle.Form,
             true,
         );
@@ -103,7 +102,7 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'search',
-            <any>search,
+            (search as any),
             QueryParamStyle.Form,
             true,
         );
@@ -112,7 +111,7 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'title',
-            <any>title,
+            (title as any),
             QueryParamStyle.Form,
             true,
         );
@@ -148,13 +147,13 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
             }
         }
 
-        let localVarPath = `/portfolio/galleries`;
+        const localVarPath = `/portfolio/galleries`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<PaginatedGalleryList>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 params: localVarQueryParameters.toHttpParams(),
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,
@@ -174,7 +173,7 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
     public portfolioGalleriesRetrieve(requestParameters: PortfolioGalleriesRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Gallery>;
     public portfolioGalleriesRetrieve(requestParameters: PortfolioGalleriesRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Gallery>>;
     public portfolioGalleriesRetrieve(requestParameters: PortfolioGalleriesRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Gallery>>;
-    public portfolioGalleriesRetrieve(requestParameters: PortfolioGalleriesRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public portfolioGalleriesRetrieve(requestParameters: PortfolioGalleriesRetrieveRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling portfolioGalleriesRetrieve.');
@@ -210,12 +209,12 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
             }
         }
 
-        let localVarPath = `/portfolio/galleries/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        const localVarPath = `/portfolio/galleries/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<Gallery>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,
@@ -235,7 +234,7 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
     public portfolioImagesList(requestParameters?: PortfolioImagesListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedImageGalleryList>;
     public portfolioImagesList(requestParameters?: PortfolioImagesListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedImageGalleryList>>;
     public portfolioImagesList(requestParameters?: PortfolioImagesListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedImageGalleryList>>;
-    public portfolioImagesList(requestParameters?: PortfolioImagesListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public portfolioImagesList(requestParameters?: PortfolioImagesListRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const gallery = requestParameters?.gallery;
         const ordering = requestParameters?.ordering;
         const page = requestParameters?.page;
@@ -247,7 +246,7 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'gallery',
-            <any>gallery,
+            (gallery as any),
             QueryParamStyle.Form,
             true,
         );
@@ -256,7 +255,7 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'ordering',
-            <any>ordering,
+            (ordering as any),
             QueryParamStyle.Form,
             true,
         );
@@ -265,7 +264,7 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'page',
-            <any>page,
+            (page as any),
             QueryParamStyle.Form,
             true,
         );
@@ -274,7 +273,7 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'page_size',
-            <any>pageSize,
+            (pageSize as any),
             QueryParamStyle.Form,
             true,
         );
@@ -283,7 +282,7 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
             'search',
-            <any>search,
+            (search as any),
             QueryParamStyle.Form,
             true,
         );
@@ -319,13 +318,13 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
             }
         }
 
-        let localVarPath = `/portfolio/images`;
+        const localVarPath = `/portfolio/images`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<PaginatedImageGalleryList>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 params: localVarQueryParameters.toHttpParams(),
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,
@@ -345,7 +344,7 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
     public portfolioImagesRetrieve(requestParameters: PortfolioImagesRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ImageGallery>;
     public portfolioImagesRetrieve(requestParameters: PortfolioImagesRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ImageGallery>>;
     public portfolioImagesRetrieve(requestParameters: PortfolioImagesRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ImageGallery>>;
-    public portfolioImagesRetrieve(requestParameters: PortfolioImagesRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public portfolioImagesRetrieve(requestParameters: PortfolioImagesRetrieveRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling portfolioImagesRetrieve.');
@@ -381,12 +380,12 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
             }
         }
 
-        let localVarPath = `/portfolio/images/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        const localVarPath = `/portfolio/images/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<ImageGallery>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,
@@ -406,7 +405,7 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
     public portfolioImagesWidthRetrieve(requestParameters: PortfolioImagesWidthRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<ImageGallery>;
     public portfolioImagesWidthRetrieve(requestParameters: PortfolioImagesWidthRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ImageGallery>>;
     public portfolioImagesWidthRetrieve(requestParameters: PortfolioImagesWidthRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ImageGallery>>;
-    public portfolioImagesWidthRetrieve(requestParameters: PortfolioImagesWidthRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public portfolioImagesWidthRetrieve(requestParameters: PortfolioImagesWidthRetrieveRequestParams, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'image/webp', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling portfolioImagesWidthRetrieve.');
@@ -446,12 +445,12 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
             }
         }
 
-        let localVarPath = `/portfolio/images/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/width/${this.configuration.encodeParam({name: "width", value: width, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        const localVarPath = `/portfolio/images/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/width/${this.configuration.encodeParam({name: "width", value: width, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<ImageGallery>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                responseType: <any>responseType_,
+                responseType: responseType_ as any,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
                 observe: observe,
