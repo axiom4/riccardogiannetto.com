@@ -1,16 +1,13 @@
-import {
-  AfterViewInit,
-  Directive,
-  ElementRef,
-  HostListener,
-  Renderer2,
-} from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, HostListener, Renderer2, inject } from '@angular/core';
 
 @Directive({
   selector: 'img[appImageLazyLoader]',
   standalone: true,
 })
 export class ImageLazyLoaderDirective implements AfterViewInit {
+  private renderer = inject(Renderer2);
+  private el = inject(ElementRef);
+
   // @HostBinding('attr.src') srcAttr: string | undefined;
   // @Input() src: string | undefined;
 
@@ -43,8 +40,6 @@ export class ImageLazyLoaderDirective implements AfterViewInit {
     this._error = true;
     this.renderer.addClass(this.el.nativeElement, 'error');
   }
-
-  constructor(private renderer: Renderer2, private el: ElementRef) {}
 
   ngAfterViewInit() {
     // this.canLazyLoad() ? this.lazyLoadImage() : this.loadImage();

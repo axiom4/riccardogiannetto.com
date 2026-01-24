@@ -1,10 +1,11 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 
 import { isPlatformBrowser } from '@angular/common';
 
 @Injectable()
 export class HighlightService {
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  private platformId = inject<Object>(PLATFORM_ID);
+
 
   async highlightAll() {
     if (isPlatformBrowser(this.platformId)) {

@@ -1,4 +1,4 @@
-import { Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
+import { Component, PLATFORM_ID, OnInit, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 @Component({
@@ -9,9 +9,9 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
   styleUrl: './cookie-banner.component.scss',
 })
 export class CookieBannerComponent implements OnInit {
-  accepted = true; // Default to true to avoid flash/SSR issues, enable on client check
+  private platformId = inject<Object>(PLATFORM_ID);
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  accepted = true;
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
