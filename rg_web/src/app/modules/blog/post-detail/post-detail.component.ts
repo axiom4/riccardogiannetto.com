@@ -33,7 +33,8 @@ export class PostDetailComponent implements OnInit {
         },
         error: (err: unknown) => {
           console.error('Error loading post:', err);
-          this.error = 'Impossibile caricare il post. Potrebbe non esistere o esserci un problema di rete.';
+          this.error =
+            'Impossibile caricare il post. Potrebbe non esistere o esserci un problema di rete.';
           this.loading = false;
         },
       });
