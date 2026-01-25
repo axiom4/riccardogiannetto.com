@@ -34,6 +34,4 @@ export class PostListComponent implements OnInit {
   getThumbnailUrl(url: string | undefined): string {
     return url ? `${url}/width/400` : '';
   }
-
 }
-

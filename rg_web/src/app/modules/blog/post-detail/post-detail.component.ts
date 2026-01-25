@@ -36,6 +36,4 @@ export class PostDetailComponent implements OnInit {
   getFeaturedImageUrl(url: string | undefined): string {
     return url ? `${url}/width/1200` : '';
   }
-
 }
-
