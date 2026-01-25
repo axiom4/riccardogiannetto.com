@@ -44,7 +44,7 @@ export class PostDetailComponent implements OnInit {
     }
   }
 
-  getFeaturedImageUrl(url: string | undefined): string {
-    return url || '';
+  getFeaturedImageUrl(post: Post): string {
+    return post.image ? `/api/blog/posts/${post.id}/width/1200` : '';
   }
 }

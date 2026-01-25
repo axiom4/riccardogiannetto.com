@@ -31,7 +31,7 @@ export class PostListComponent implements OnInit {
     });
   }
 
-  getThumbnailUrl(url: string | undefined): string {
-    return url || '';
+  getThumbnailUrl(post: PostPreview): string {
+    return post.image ? `/api/blog/posts/${post.id}/width/400` : '';
   }
 }

@@ -26,7 +26,7 @@
             <div class="post-thumbnail">
               <a [routerLink]="['/blog', post.id]">
                 <img
-                  [src]="getThumbnailUrl(post.image)"
+                  [src]="getThumbnailUrl(post)"
                   [alt]="post.title"
                   loading="lazy"
                 />
