@@ -25,10 +25,15 @@
           @if (post.image) {
             <div class="post-thumbnail">
               <a [routerLink]="['/blog', post.id]">
-                <img [src]="post.image" [alt]="post.title" />
+                <img
+                  [src]="getThumbnailUrl(post.image)"
+                  [alt]="post.title"
+                  loading="lazy"
+                />
               </a>
             </div>
           }
+
 
           <div class="entry-summary">
             <!-- Add a summary or excerpt here if available in PostPreview -->
