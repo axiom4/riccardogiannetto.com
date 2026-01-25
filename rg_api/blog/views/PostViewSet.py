@@ -117,7 +117,6 @@ class PostImageRenderer(renderers.BaseRenderer):
                     save_kwargs['icc_profile'] = original_icc_profile
 
                 pil_result.save(filename, 'WEBP', **save_kwargs)
-
                 with open(filename, "rb") as f:
                     return f.read()
 
