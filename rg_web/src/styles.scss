@@ -829,16 +829,6 @@ article th {
     padding: 20px;
     gap: var(--gallery-gap);
 
-    .gallery-img {
-      // 2x4 items (Portrait) fit in 2 columns (Span 2)
-      // No change needed for span, but verify height?
-      // 2x4 on 3-col grid is 2/3 width.
-      // 2x4 on 2-col grid is 2/2 width (Full width).
-      // Should we shrink it?
-      // If we leave it 2x4, it will be very tall regular portrait.
-      // Let's leave it as is, it overrides are automatic if grid-column span matches.
-    }
-
     .lightbox {
       /* Moved to component */
       display: none;
@@ -931,7 +921,7 @@ article th {
   }
 
   .main-navigation ul {
-    display: inline-block;
+    display: block;
     float: right;
     margin-right: 10px;
   }
