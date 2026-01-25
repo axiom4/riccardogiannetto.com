@@ -5,8 +5,7 @@ import numpy as np
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from gallery.models import ImageGallery
-from PIL import Image, ImageCms, ImageEnhance
-import io
+from PIL import Image, ImageCms
 import glob
 
 
