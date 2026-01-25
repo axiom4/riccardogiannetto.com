@@ -16,6 +16,8 @@ export class PostDetailComponent implements OnInit {
   private blogService = inject(BlogService);
   post: Post | null = null;
   parsedBody = '';
+  loading = true;
+  error: string | null = null;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -27,9 +29,17 @@ export class PostDetailComponent implements OnInit {
           if (this.post.body) {
             this.parsedBody = await marked.parse(this.post.body);
           }
+          this.loading = false;
         },
-        error: (err: unknown) => console.error('Error loading post:', err),
+        error: (err: unknown) => {
+          console.error('Error loading post:', err);
+          this.error = 'Impossibile caricare il post. Potrebbe non esistere o esserci un problema di rete.';
+          this.loading = false;
+        },
       });
+    } else {
+      this.error = 'ID del post non valido.';
+      this.loading = false;
     }
   }
 
