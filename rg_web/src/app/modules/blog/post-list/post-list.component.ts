@@ -13,14 +13,21 @@ import { BlogService, PostPreview } from '../../core/api/v1';
 export class PostListComponent implements OnInit {
   private blogService = inject(BlogService);
   posts: PostPreview[] = [];
+  isLoading = true;
+  error: string | null = null;
 
   ngOnInit(): void {
     // Chiama l'API per ottenere la lista dei post
     this.blogService.blogPostsList().subscribe({
       next: (response: { results: PostPreview[] }) => {
         this.posts = response.results;
+        this.isLoading = false;
       },
-      error: (error: unknown) => console.error('Error fetching posts:', error),
+      error: (error: unknown) => {
+        console.error('Error fetching posts:', error);
+        this.error = 'Impossibile caricare i post. Riprova più tardi.';
+        this.isLoading = false;
+      },
     });
   }
 }
