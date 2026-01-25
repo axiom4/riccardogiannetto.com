@@ -1,0 +1,33 @@
+<div class="site-content">
+  <div class="blog-list">
+    @for (post of posts; track post) {
+      <article class="post-entry">
+        <header class="entry-header">
+          <h2 class="entry-title">
+            <a [routerLink]="['/blog', post.id]">{{ post.title }}</a>
+          </h2>
+          <div class="entry-meta">
+            <span class="posted-on">{{
+              post.created_at | date: "longDate"
+            }}</span>
+          </div>
+        </header>
+
+        @if (post.image) {
+          <div class="post-thumbnail">
+            <a [routerLink]="['/blog', post.id]">
+              <img [src]="post.image" [alt]="post.title" />
+            </a>
+          </div>
+        }
+
+        <div class="entry-summary">
+          <p>{{ post.summary }}</p>
+          <a [routerLink]="['/blog', post.id]" class="more-link"
+            >Leggi tutto &rarr;</a
+          >
+        </div>
+      </article>
+    }
+  </div>
+</div>

@@ -1,0 +1,80 @@
+.post-detail {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.entry-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.entry-title {
+  font-family: "Libre Baskerville", serif;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
+.entry-meta {
+  color: #888;
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+}
+
+.post-featured-image {
+  margin-bottom: 3rem;
+  text-align: center;
+
+  img {
+    width: 100%;
+    height: auto;
+    max-height: 600px;
+    object-fit: contain;
+    background: #f9f9f9;
+  }
+}
+
+.entry-content {
+  line-height: 1.8;
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+
+  ::ng-deep {
+    p {
+      margin-bottom: 1.5em;
+      text-align: justify;
+    }
+    h2 {
+      margin-top: 2em;
+      font-family: "Libre Baskerville", serif;
+      font-style: italic;
+    }
+    h3 {
+      margin-top: 1.5em;
+      font-family: "Libre Baskerville", serif;
+      font-style: italic;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      margin: 1em auto;
+      display: block;
+    }
+    blockquote {
+      border-left: 3px solid #ccc;
+      padding-left: 1rem;
+      font-style: italic;
+      color: #666;
+    }
+  }
+}
+
+.back-link {
+  font-weight: bold;
+  text-decoration: none;
+  color: #171717;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

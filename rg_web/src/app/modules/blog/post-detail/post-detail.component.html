@@ -1,0 +1,30 @@
+<div class="site-content">
+  @if (post) {
+    <article class="post-detail">
+      <header class="entry-header">
+        <h1 class="entry-title">{{ post.title }}</h1>
+        <div class="entry-meta">
+          <span class="posted-on">{{
+            post.created_at | date: "longDate"
+          }}</span>
+          @if (post.author) {
+            <span class="byline"> by {{ post.author.username }}</span>
+          }
+        </div>
+      </header>
+
+      @if (post.image) {
+        <div class="post-featured-image">
+          <img [src]="post.image" [alt]="post.title" />
+        </div>
+      }
+
+      <!-- Il contenuto del body è reso come HTML sicuro -->
+      <div class="entry-content" [innerHTML]="post.body"></div>
+
+      <footer class="entry-footer">
+        <a routerLink="/blog" class="back-link">&larr; Torna al Blog</a>
+      </footer>
+    </article>
+  }
+</div>
