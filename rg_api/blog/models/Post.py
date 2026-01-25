@@ -12,7 +12,9 @@ import sys
 
 from django.utils.html import mark_safe
 
-from blog.classes import OverwriteStorage, resize_image, image_directory_path
+import cv2
+import numpy as np
+from blog.classes import OverwriteStorage, image_directory_path
 
 
 class Post(models.Model):
@@ -30,29 +32,86 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
-    def save(self):
-        self.image_save()
+    def save(self, *args, **kwargs):
+        if self.pk is None and self.image:
+            _img = self.image
+            self.image = None
+            super(Post, self).save(*args, **kwargs)
+            self.image = _img
+            self.image_save()
+            if 'force_insert' in kwargs:
+                kwargs.pop('force_insert')
+            super(Post, self).save(update_fields=['image'])
+        else:
+            if self.image:
+                self.image_save()
+            super(Post, self).save(*args, **kwargs)
 
-        super(Post, self).save()
+    def image_save(self, width=900):
+        if not self.image:
+            return
 
-    def image_save(self):
-       # Opening the uploaded image
-        image = Image.open(self.image)
+        # STRATEGY FOR MAX COLOR FIDELITY:
+        # 1. Preserve Original ICC Profile
+        # 2. Use OpenCV Lanczos4 for sharpening/resizing.
+        # 3. Embed the original ICC profile in the output WEBP.
+
+        with Image.open(self.image) as pil_img:
+            original_icc_profile = pil_img.info.get('icc_profile')
+
+            # Only preserve ICC profile if the image is already in RGB/RGBA mode.
+            # Mapping CMYK profile to RGB image would result in color distortion.
+            if pil_img.mode not in ('RGB', 'RGBA'):
+                original_icc_profile = None
+                pil_img = pil_img.convert('RGB')
+
+            img_array = np.array(pil_img)
+            if img_array.shape[2] == 4:
+                cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGBA2BGRA)
+            else:
+                cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
+
+        original_height, original_width = cv_img.shape[:2]
+
+        if original_width > width:
+            wpercent = (width / float(original_width))
+            hsize = int((float(original_height) * float(wpercent)))
+
+            # HIGH QUALITY RESIZING: Area (Better for compression)
+            resize = cv2.resize(cv_img, (width, hsize),
+                                interpolation=cv2.INTER_AREA)
+        else:
+            resize = cv_img
+
+        # Return to Pillow
+        if resize.shape[2] == 4:
+            result_rgb = cv2.cvtColor(resize, cv2.COLOR_BGRA2RGBA)
+        else:
+            result_rgb = cv2.cvtColor(resize, cv2.COLOR_BGR2RGB)
+
+        pil_result = Image.fromarray(result_rgb)
+
+        # Ensure RGB
+        if pil_result.mode == 'RGBA':
+            background = Image.new(
+                "RGB", pil_result.size, (255, 255, 255))
+            background.paste(pil_result, mask=pil_result.split()[3])
+            pil_result = background
+        elif pil_result.mode != 'RGB':
+            pil_result = pil_result.convert('RGB')
 
         output = BytesIO()
 
-        # Resize/modify the image
-        image = resize_image(image=image, width=900)
+        # Save as WEBP
+        save_kwargs = {
+            'quality': 75,
+            'method': 6
+        }
+        # Embed the original ICC profile in the output WEBP.
+        if original_icc_profile:
+            save_kwargs['icc_profile'] = original_icc_profile
 
-        # after modifications, save it to the output
-        image.save(
-            output,
-            format='webp',
-            optimize=True,
-            lossless=False,
-            quality=75,
-            method=5
-        )
+        pil_result.save(output, 'WEBP', **save_kwargs)
         output.seek(0)
 
         self.image = InMemoryUploadedFile(

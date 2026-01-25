@@ -32,21 +32,21 @@ class PostImageRenderer(renderers.BaseRenderer):
             if width <= 0:
                 return b""
         except (ValueError, TypeError):
-            return b""
+             return b""
 
         try:
             this_object = Post.objects.get(
                 pk=renderer_context['kwargs']['pk'])
         except Post.DoesNotExist:
             return b""
-
+        
         if not this_object.image:
-            return b""
+             return b""
 
         # Ensure directory exists
         preview_dir = f"{settings.MEDIA_ROOT}/blog/preview"
         os.makedirs(preview_dir, exist_ok=True)
-
+        
         filename = f"{preview_dir}/{this_object.pk}_{width}.webp"
 
         if os.path.exists(filename) == False:
