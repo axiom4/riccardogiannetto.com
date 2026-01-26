@@ -9,7 +9,8 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import sys
 
-from blog.classes import OverwriteStorage, resize_image, directory_path
+from blog.classes import OverwriteStorage, directory_path
+from utils.image_optimizer import ImageOptimizer
 
 
 class ImageUpload(models.Model):
@@ -35,35 +36,17 @@ class ImageUpload(models.Model):
     image_tag.short_description = 'Image Preview'
 
     def save(self):
-        # Opening the uploaded image
-        image = Image.open(self.image)
-
-        output = BytesIO()
-
-        # Resize/modify the image
-        image = resize_image(image=image, width=900)
-
-        # after modifications, save it to the output
-        image.save(
-            output,
-            format='webp',
-            optimize=True,
-            lossless=True,
-            quality=100,
-            method=6
-        )
-
-        output.seek(0)
-
-        # change the imagefield value to be the newley modifed image value
-        self.image = InMemoryUploadedFile(
-            output,
-            'ImageField',
-            "%s.webp" % self.image.name.split('.')[0],
-            'image/webp',
-            sys.getsizeof(output),
-            None
-        )
+        output = ImageOptimizer.compress_and_resize(self.image, width=900)
+        
+        if output:
+            self.image = InMemoryUploadedFile(
+                output,
+                'ImageField',
+                "%s.webp" % self.image.name.split('.')[0],
+                'image/webp',
+                sys.getsizeof(output),
+                None
+            )
 
         super(ImageUpload, self).save()
 

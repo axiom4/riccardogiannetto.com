@@ -1,11 +1,9 @@
 
 import os
-import cv2
-import numpy as np
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from gallery.models import ImageGallery
-from PIL import Image, ImageCms
+from utils.image_optimizer import ImageOptimizer
 import glob
 
 
@@ -64,79 +62,17 @@ class Command(BaseCommand):
                 continue
 
             try:
-                # STRATEGY FOR MAX COLOR FIDELITY:
-                # 1. Preserve Original ICC Profile (Do NOT convert to sRGB blindly)
-                #    This allows browsers to map Wide-Gamut (AdobeRGB/ProPhoto) images correctly.
-                # 2. Use OpenCV Lanczos4 for sharpening/resizing.
-                # 3. Embed the original ICC profile in the output WebP.
-
-                with Image.open(image_obj.image.path) as pil_img:
-                    # Capture the original ICC profile to embed later
-                    original_icc_profile = pil_img.info.get('icc_profile')
-
-                    # Ensure strict RGB mode
-                    if pil_img.mode not in ('RGB', 'RGBA'):
-                        pil_img = pil_img.convert('RGB')
-
-                    # Convert to Numpy/OpenCV (BGR)
-                    # We treat pixels as raw values, preserving their meaning in the original color space
-                    img_array = np.array(pil_img)
-                    if img_array.shape[2] == 4:
-                        cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGBA2BGRA)
-                    else:
-                        cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
-
-                if cv_img is None:
-                    continue
-
-                original_height, original_width = cv_img.shape[:2]
-
                 for width in widths:
                     filename = os.path.join(
                         preview_dir, f"{image_obj.pk}_{width}.webp")
 
-                    wpercent = (width / float(original_width))
-                    hsize = int((float(original_height) * float(wpercent)))
-
-                    # HIGH QUALITY RESIZING: Lanczos4
-                    resize = cv2.resize(
-                        cv_img, (width, hsize), interpolation=cv2.INTER_LANCZOS4)
-
-                    # Quality settings
-                    if width <= 800:
-                        quality = 65
-                    elif width <= 1200:
-                        quality = 75
-                    else:
-                        quality = 82
-
-                    # Return to Pillow
-                    if resize.shape[2] == 4:
-                        result_rgb = cv2.cvtColor(resize, cv2.COLOR_BGRA2RGBA)
-                    else:
-                        result_rgb = cv2.cvtColor(resize, cv2.COLOR_BGR2RGB)
-
-                    pil_result = Image.fromarray(result_rgb)
-
-                    # Ensure RGB for JPEG (Drop Alpha channel)
-                    if pil_result.mode == 'RGBA':
-                        background = Image.new(
-                            "RGB", pil_result.size, (255, 255, 255))
-                        background.paste(pil_result, mask=pil_result.split()[
-                                         3])  # 3 is the alpha channel
-                        pil_result = background
-                    elif pil_result.mode != 'RGB':
-                        pil_result = pil_result.convert('RGB')
-
-                    # KEY STEP: Re-embed the original ICC profile
-                    save_kwargs = {
-                        'quality': quality,
-                        'method': 6
-                    }
-                    if original_icc_profile:
-                        save_kwargs['icc_profile'] = original_icc_profile
-
-                    pil_result.save(filename, 'WEBP', **save_kwargs)
+                    ImageOptimizer.compress_and_resize(
+                        image_obj.image.path,
+                        output_path=filename,
+                        width=width
+                    )
+                    self.stdout.write(self.style.SUCCESS(
+                        f'Generated {width}px preview for {image_obj.pk}'))
 
                 if (index + 1) % 10 == 0:
                     self.stdout.write(

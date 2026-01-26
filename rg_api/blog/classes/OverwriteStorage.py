@@ -26,12 +26,4 @@ def image_directory_path(instance, filename):
     return 'posts/{0}/{1}'.format(instance.id, filename)
 
 
-def resize_image(image: Image.Image, width: int) -> Image.Image:
-    img_width, _ = image.size
 
-    if img_width <= width:
-        return image
-
-    height = image.height * width // image.width
-
-    return image.resize((width, height), resample=Image.LANCZOS)
