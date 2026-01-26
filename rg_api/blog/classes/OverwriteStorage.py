@@ -1,8 +1,5 @@
 
 from django.conf import settings
-
-from PIL import Image
-
 from django.core.files.storage import FileSystemStorage
 import os
 
