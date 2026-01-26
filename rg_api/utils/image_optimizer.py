@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 from PIL import Image
 from io import BytesIO
-from django.conf import settings
 
 
 class ImageOptimizer:
