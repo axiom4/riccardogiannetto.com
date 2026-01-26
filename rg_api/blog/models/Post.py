@@ -11,6 +11,7 @@ from django.utils.html import mark_safe
 from blog.classes import OverwriteStorage, image_directory_path
 from utils.image_optimizer import ImageOptimizer
 
+
 class Post(models.Model):
     title = models.CharField(max_length=50)
     body = models.TextField()
@@ -46,7 +47,7 @@ class Post(models.Model):
             return
 
         output = ImageOptimizer.compress_and_resize(self.image, width=width)
-        
+
         if output:
             self.image = InMemoryUploadedFile(
                 output,

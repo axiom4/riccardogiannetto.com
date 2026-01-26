@@ -5,22 +5,23 @@ from PIL import Image
 from io import BytesIO
 from django.conf import settings
 
+
 class ImageOptimizer:
     @staticmethod
     def compress_and_resize(image_path_or_file, output_path=None, width=None, format='WEBP'):
         """
         Compresses and resizes an image using OpenCV and PIL.
-        
+
         Args:
             image_path_or_file: Path to the image or a file-like object.
             output_path: Path where to save the result. If None, returns bytes.
             width: Target width. If None, uses original width.
             format: Output format (default 'WEBP').
-            
+
         Returns:
             bytes if output_path is None, else saves to file.
         """
-        
+
         try:
             # Handle input: path or file-like object
             if isinstance(image_path_or_file, str):
@@ -46,14 +47,15 @@ class ImageOptimizer:
                 return None
 
             original_height, original_width = cv_img.shape[:2]
-            
+
             # Determine target dimensions
             if width and width < original_width:
                 wpercent = (width / float(original_width))
                 hsize = int((float(original_height) * float(wpercent)))
-                
+
                 # HIGH QUALITY RESIZING: Area (Better for compression)
-                resize = cv2.resize(cv_img, (width, hsize), interpolation=cv2.INTER_AREA)
+                resize = cv2.resize(cv_img, (width, hsize),
+                                    interpolation=cv2.INTER_AREA)
             else:
                 width = original_width
                 resize = cv_img
@@ -87,7 +89,7 @@ class ImageOptimizer:
                 'quality': quality,
                 'method': 6
             }
-            
+
             if original_icc_profile:
                 save_kwargs['icc_profile'] = original_icc_profile
 

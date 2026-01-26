@@ -24,6 +24,3 @@ def directory_path(instance, filename=''):
 def image_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT / user_<id>/<filename>
     return 'posts/{0}/{1}'.format(instance.id, filename)
-
-
-

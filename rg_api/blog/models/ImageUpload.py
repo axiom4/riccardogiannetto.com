@@ -3,9 +3,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from blog.models import Post
 from django.utils.html import mark_safe
-
-from PIL import Image
-from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import sys
 
@@ -37,7 +34,7 @@ class ImageUpload(models.Model):
 
     def save(self):
         output = ImageOptimizer.compress_and_resize(self.image, width=900)
-        
+
         if output:
             self.image = InMemoryUploadedFile(
                 output,
