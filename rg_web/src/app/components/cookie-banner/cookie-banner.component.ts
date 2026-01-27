@@ -1,4 +1,10 @@
-import { Component, PLATFORM_ID, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  PLATFORM_ID,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 @Component({
