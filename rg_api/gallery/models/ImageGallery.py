@@ -87,7 +87,8 @@ class ImageGallery(models.Model):
                 if attribute:
                     if attribute == 'date':
                         try:
-                            self.date = datetime.strptime(val, '%Y:%m:%d %H:%M:%S')
+                            self.date = datetime.strptime(
+                                val, '%Y:%m:%d %H:%M:%S')
                         except (ValueError, TypeError):
                             pass
                     else:
