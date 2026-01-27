@@ -64,11 +64,11 @@ class ImageOptimizer:
 
             # Quality settings
             if width <= 800:
-                quality = 65
+                quality = 60
             elif width <= 1200:
-                quality = 75
+                quality = 70
             else:
-                quality = 82
+                quality = 75
 
             # Return to Pillow
             if resize.shape[2] == 4:
@@ -89,8 +89,15 @@ class ImageOptimizer:
             # Prepare save arguments
             save_kwargs = {
                 'quality': quality,
-                'method': 6
+                'optimize': True,
             }
+
+            if format.upper() == 'WEBP':
+                save_kwargs['method'] = 6
+            elif format.upper() == 'JPEG':
+                save_kwargs['progressive'] = True
+            elif format.upper() == 'PNG':
+                save_kwargs['compress_level'] = 9
 
             if original_icc_profile:
                 save_kwargs['icc_profile'] = original_icc_profile
