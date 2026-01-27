@@ -3,12 +3,8 @@ from blog.models import Category
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    posts = serializers.SerializerMethodField()
+    posts = serializers.IntegerField(source='posts_count', read_only=True)
 
     class Meta:
         model = Category
         fields = '__all__'
-
-    def get_posts(self, obj) -> int:
-        posts = obj.post_set.all().count()
-        return posts

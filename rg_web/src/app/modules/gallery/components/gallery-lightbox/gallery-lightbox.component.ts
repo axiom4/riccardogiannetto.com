@@ -10,6 +10,7 @@ import {
   viewChild,
   viewChildren,
   afterNextRender,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { IMAGE_LOADER, ImageLoaderConfig, NgClass } from '@angular/common';
 import {
@@ -45,6 +46,7 @@ export interface GalleryItem {
       useValue: galleryLoaderProvider,
     },
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GalleryLightboxComponent implements OnInit, OnDestroy {
   private portfolioService = inject(PortfolioService);

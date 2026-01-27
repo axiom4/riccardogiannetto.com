@@ -1,4 +1,4 @@
-import { Component, PLATFORM_ID, OnInit, inject } from '@angular/core';
+import { Component, PLATFORM_ID, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 @Component({
@@ -7,6 +7,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
   imports: [CommonModule],
   templateUrl: './cookie-banner.component.html',
   styleUrl: './cookie-banner.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CookieBannerComponent implements OnInit {
   private platformId = inject<object>(PLATFORM_ID);
