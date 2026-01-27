@@ -1,5 +1,7 @@
 
+import glob
 import os
+from PIL import ImageCms
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from gallery.models import ImageGallery

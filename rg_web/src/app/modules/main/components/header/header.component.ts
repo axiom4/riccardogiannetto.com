@@ -6,6 +6,7 @@ import {
   PLATFORM_ID,
   signal,
   viewChild,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
@@ -15,6 +16,7 @@ import { isPlatformBrowser } from '@angular/common';
   imports: [RouterLink],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent implements OnInit {
   menu = viewChild<ElementRef>('menu');
@@ -37,7 +39,6 @@ export class HeaderComponent implements OnInit {
   }
 
   toggleMenu() {
-    console.log('toggle menu');
     this.menu()?.nativeElement.classList.toggle('visible');
   }
 }

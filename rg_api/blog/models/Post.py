@@ -31,16 +31,16 @@ class Post(models.Model):
         if self.pk is None and self.image:
             _img = self.image
             self.image = None
-            super(Post, self).save(*args, **kwargs)
+            super().save(*args, **kwargs)
             self.image = _img
             self.image_save()
             if 'force_insert' in kwargs:
                 kwargs.pop('force_insert')
-            super(Post, self).save(update_fields=['image'])
+            super().save(update_fields=['image'])
         else:
             if self.image:
                 self.image_save()
-            super(Post, self).save(*args, **kwargs)
+            super().save(*args, **kwargs)
 
     def image_save(self, width=900):
         if not self.image:
@@ -52,13 +52,13 @@ class Post(models.Model):
             self.image = InMemoryUploadedFile(
                 output,
                 'ImageField',
-                "%s.webp" % self.image.name.split('.')[0],
+                f"{self.image.name.split('.')[0]}.webp",
                 'image/webp',
                 sys.getsizeof(output),
                 None
             )
 
     def image_tag(self):
-        return mark_safe('<img src="/%s/%s" width="150" />' % (settings.MEDIA_ROOT, self.image)) if self.image else ''
+        return mark_safe(f'<img src="/{settings.MEDIA_ROOT}/{self.image}" width="150" />') if self.image else ''
 
     image_tag.short_description = 'Image Preview'

@@ -49,24 +49,23 @@ class ImageGallery(models.Model):
         return self.title
 
     def image_tag(self):
-        return mark_safe('<img src="%s/%s/width/700" width="150" />' % (settings.IMAGE_GENERATOR_BASE_URL, self.id)) if self.image else ''
+        return mark_safe(f'<img src="{settings.IMAGE_GENERATOR_BASE_URL}/{self.id}/width/700" width="150" />') if self.image else ''
 
     image_tag.short_description = 'Image Preview'
 
     def save(self, *args, **kwargs):
-        img = Image.open(self.image)
-        width, height = img.size
+        if self.image:
+            with Image.open(self.image) as img:
+                width, height = img.size
+                exif_data = img._getexif()
 
-        exif_data = img._getexif()
+                if exif_data:
+                    self.extract_exif_data(exif_data)
 
-        if exif_data:
-            self.extract_exif_data(exif_data)
-
-        self.width = width
-        self.height = height
+                self.width = width
+                self.height = height
 
         super().save(*args, **kwargs)
-        img.close()
 
     def extract_exif_data(self, exif_data):
         exif_mapping = {
@@ -82,11 +81,15 @@ class ImageGallery(models.Model):
         }
 
         for key, val in exif_data.items():
-            if key in ExifTags.TAGS:
-                attribute = exif_mapping.get(ExifTags.TAGS[key])
+            tag_name = ExifTags.TAGS.get(key)
+            if tag_name:
+                attribute = exif_mapping.get(tag_name)
                 if attribute:
                     if attribute == 'date':
-                        self.date = datetime.strptime(val, '%Y:%m:%d %H:%M:%S')
+                        try:
+                            self.date = datetime.strptime(val, '%Y:%m:%d %H:%M:%S')
+                        except (ValueError, TypeError):
+                            pass
                     else:
                         setattr(self, attribute, val)
 
