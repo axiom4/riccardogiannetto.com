@@ -63,7 +63,8 @@ def get_gps_data(image_path):
 
                 if gps_latitude and gps_latitude_ref and gps_longitude and gps_longitude_ref:
                     try:
-                        lat = get_decimal_from_dms(gps_latitude, gps_latitude_ref)
+                        lat = get_decimal_from_dms(
+                            gps_latitude, gps_latitude_ref)
                         lon = get_decimal_from_dms(
                             gps_longitude, gps_longitude_ref)
                     except Exception as e:
