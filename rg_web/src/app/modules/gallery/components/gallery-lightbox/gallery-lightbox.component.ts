@@ -54,7 +54,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   isLoading = signal(false);
   galleryItems = signal<GalleryItem[]>([]);
   page = signal(1);
-  perPage = 4;
+  perPage = 24;
   innerWidth = 0;
   innerHeight = 0;
   imageWidth = signal(0);
