@@ -64,11 +64,11 @@ class ImageOptimizer:
 
             # Quality settings
             if width <= 800:
-                quality = 60
+                quality = 55
             elif width <= 1200:
-                quality = 70
+                quality = 65
             else:
-                quality = 75
+                quality = 70
 
             # Return to Pillow
             if resize.shape[2] == 4:
