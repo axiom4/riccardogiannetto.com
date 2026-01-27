@@ -102,9 +102,9 @@ def classify_image(image_path, top_k=5):
             words = caption.lower().replace('.', '').replace(',', '').split()
             tags = []
             for w in words:
-            if w not in stopwords and len(w) > 2:
-                # Basic singularization could happen here, but keeping it simple
-                tags.append(w)
+                if w not in stopwords and len(w) > 2:
+                    # Basic singularization could happen here, but keeping it simple
+                    tags.append(w)
 
         return list(set(tags))
 
