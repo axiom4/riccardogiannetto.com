@@ -10,7 +10,7 @@ from django.views.decorators.cache import cache_page
 @method_decorator(cache_page(60 * 60 * 2), name='list')
 @method_decorator(cache_page(60 * 60 * 24), name='retrieve')
 class PageViewSet(viewsets.ModelViewSet):
-    queryset = Page.objects.all()
+    queryset = Page.objects.select_related('author').all()
     serializer_class = PageSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     lookup_field = "tag"

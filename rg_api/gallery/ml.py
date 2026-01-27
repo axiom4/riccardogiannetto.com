@@ -1,6 +1,9 @@
 import torch
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
 from PIL import Image
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Global variables for model caching
 _processor = None
@@ -15,7 +18,7 @@ def get_model():
     """
     global _processor, _model
     if _model is None:
-        print("Loading BLIP-2 Model (OPT-2.7b)... this may take a moment.")
+        logger.info("Loading BLIP-2 Model (OPT-2.7b)... this may take a moment.")
 
         model_id = "Salesforce/blip2-opt-2.7b"
 
@@ -26,7 +29,7 @@ def get_model():
         elif torch.backends.mps.is_available():
             device = "mps"
 
-        print(f"Using device: {device}")
+        logger.info(f"Using device: {device}")
 
         # Explicitly set use_fast=True to suppress warning and future-proof
         _processor = Blip2Processor.from_pretrained(model_id, use_fast=True)
@@ -57,14 +60,14 @@ def get_model():
                     low_cpu_mem_usage=True
                 )
         except Exception as e1:
-            print(f"Primary load failed ({e1}), retrying on CPU/standard...")
+            logger.warning(f"Primary load failed ({e1}), retrying on CPU/standard...")
             # Fallback if acceleration fails
             _model = Blip2ForConditionalGeneration.from_pretrained(
                 model_id, low_cpu_mem_usage=True)
             _model.to("cpu")
 
         _model.eval()
-        print("BLIP-2 model loaded.")
+        logger.info("BLIP-2 model loaded.")
 
     return _processor, _model
 
@@ -77,27 +80,26 @@ def classify_image(image_path, top_k=5):
         processor, model = get_model()
         device = model.device
 
-        raw_image = Image.open(image_path).convert('RGB')
+        with Image.open(image_path) as raw_image:
+            # BLIP-2 allows asking questions! We can guide it to list objects.
+            # But a general caption is usually best for tagging "wild nature".
+            inputs = processor(images=raw_image.convert('RGB'), return_tensors="pt").to(
+                device, torch.float16 if device.type != 'cpu' else torch.float32)
 
-        # BLIP-2 allows asking questions! We can guide it to list objects.
-        # But a general caption is usually best for tagging "wild nature".
-        inputs = processor(images=raw_image, return_tensors="pt").to(
-            device, torch.float16 if device.type != 'cpu' else torch.float32)
+            with torch.no_grad():
+                generated_ids = model.generate(**inputs, max_new_tokens=50)
 
-        with torch.no_grad():
-            generated_ids = model.generate(**inputs, max_new_tokens=50)
+            caption = processor.batch_decode(
+                generated_ids, skip_special_tokens=True)[0].strip()
+            logger.info(f"BLIP-2 Caption: {caption}")
 
-        caption = processor.batch_decode(
-            generated_ids, skip_special_tokens=True)[0].strip()
-        print(f"BLIP-2 Caption: {caption}")
+            # Advanced keyword extraction from the rich caption
+            stopwords = {'a', 'an', 'the', 'in', 'on', 'at', 'with', 'and', 'of', 'is', 'are', 'sitting', 'standing', 'looking', 'walking', 'flying', 'background',
+                         'foreground', 'photo', 'picture', 'image', 'view', 'large', 'small', 'close', 'up', 'close-up', 'next', 'to', 'by', 'near', 'front', 'shot', 'full', 'frame'}
 
-        # Advanced keyword extraction from the rich caption
-        stopwords = {'a', 'an', 'the', 'in', 'on', 'at', 'with', 'and', 'of', 'is', 'are', 'sitting', 'standing', 'looking', 'walking', 'flying', 'background',
-                     'foreground', 'photo', 'picture', 'image', 'view', 'large', 'small', 'close', 'up', 'close-up', 'next', 'to', 'by', 'near', 'front', 'shot', 'full', 'frame'}
-
-        words = caption.lower().replace('.', '').replace(',', '').split()
-        tags = []
-        for w in words:
+            words = caption.lower().replace('.', '').replace(',', '').split()
+            tags = []
+            for w in words:
             if w not in stopwords and len(w) > 2:
                 # Basic singularization could happen here, but keeping it simple
                 tags.append(w)
