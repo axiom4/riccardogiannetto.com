@@ -131,11 +131,10 @@ export class LightboxComponent implements OnInit, OnDestroy {
 
   getLightboxRenderWidth(): number {
     if (typeof window !== 'undefined') {
-      const width = Math.min(
-        this.innerWidth * (window.devicePixelRatio || 1),
-        2500,
-      );
-      return Math.floor(width);
+      const target = this.innerWidth * (window.devicePixelRatio || 1);
+      const buckets = [400, 600, 800, 1000, 1200, 1600, 2000, 2500];
+      const match = buckets.find((b) => b >= target);
+      return match || 2500;
     }
     return 1200;
   }
