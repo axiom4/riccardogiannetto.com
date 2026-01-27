@@ -18,7 +18,8 @@ def get_model():
     """
     global _processor, _model
     if _model is None:
-        logger.info("Loading BLIP-2 Model (OPT-2.7b)... this may take a moment.")
+        logger.info(
+            "Loading BLIP-2 Model (OPT-2.7b)... this may take a moment.")
 
         model_id = "Salesforce/blip2-opt-2.7b"
 
@@ -60,7 +61,8 @@ def get_model():
                     low_cpu_mem_usage=True
                 )
         except Exception as e1:
-            logger.warning(f"Primary load failed ({e1}), retrying on CPU/standard...")
+            logger.warning(
+                f"Primary load failed ({e1}), retrying on CPU/standard...")
             # Fallback if acceleration fails
             _model = Blip2ForConditionalGeneration.from_pretrained(
                 model_id, low_cpu_mem_usage=True)
