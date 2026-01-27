@@ -14,10 +14,10 @@ class OverwriteStorage(FileSystemStorage):
 
 
 def directory_path(instance, filename=''):
-    # file will be uploaded to MEDIA_ROOT / user_<id>/<filename>
-    return 'posts/{0}/{1}'.format(instance.post.id, filename)
+    # file will be uploaded to MEDIA_ROOT/posts/<post_id>/<filename>
+    return f'posts/{instance.post.id}/{filename}'
 
 
 def image_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT / user_<id>/<filename>
-    return 'posts/{0}/{1}'.format(instance.id, filename)
+    # file will be uploaded to MEDIA_ROOT/posts/<id>/<filename>
+    return f'posts/{instance.id}/{filename}'

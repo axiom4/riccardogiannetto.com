@@ -9,10 +9,13 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 
 import os
+import logging
 from django.conf import settings
 from rest_framework import renderers
 from rest_framework.decorators import action
 from utils.image_optimizer import ImageOptimizer
+
+logger = logging.getLogger(__name__)
 
 
 class PostImageRenderer(renderers.BaseRenderer):
@@ -42,10 +45,10 @@ class PostImageRenderer(renderers.BaseRenderer):
             return b""
 
         # Ensure directory exists
-        preview_dir = f"{settings.MEDIA_ROOT}/blog/preview"
+        preview_dir = os.path.join(settings.MEDIA_ROOT, "blog", "preview")
         os.makedirs(preview_dir, exist_ok=True)
 
-        filename = f"{preview_dir}/{this_object.pk}_{width}.webp"
+        filename = os.path.join(preview_dir, f"{this_object.pk}_{width}.webp")
 
         if not os.path.exists(filename):
             try:
@@ -55,7 +58,7 @@ class PostImageRenderer(renderers.BaseRenderer):
                     width=width
                 )
             except Exception as e:
-                print(f"Error generating preview: {e}")
+                logger.error(f"Error generating preview: {e}")
                 return b""
 
         if os.path.exists(filename):

@@ -1,8 +1,11 @@
 import os
 import cv2
 import numpy as np
+import logging
 from PIL import Image
 from io import BytesIO
+
+logger = logging.getLogger(__name__)
 
 
 class ImageOptimizer:
@@ -105,5 +108,5 @@ class ImageOptimizer:
                 return output
 
         except Exception as e:
-            print(f"Error optimizing image: {e}")
+            logger.error(f"Error optimizing image: {e}")
             return None

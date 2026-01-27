@@ -9,6 +9,7 @@ import {
   input,
   signal,
   inject,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { NgClass, DOCUMENT } from '@angular/common';
 import { ImageGallery } from '../../../../modules/core/api/v1';
@@ -17,8 +18,9 @@ import { ImageGallery } from '../../../../modules/core/api/v1';
   selector: 'app-lightbox',
   templateUrl: './lightbox.component.html',
   styleUrls: ['./lightbox.component.scss'],
-  standalone: true, // If using standalone components
+  standalone: true,
   imports: [NgClass],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LightboxComponent implements OnInit, OnDestroy {
   private document = inject<Document>(DOCUMENT);
