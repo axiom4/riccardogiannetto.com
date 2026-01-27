@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Directive,
   ElementRef,
   HostListener,
@@ -11,12 +10,9 @@ import {
   selector: 'img[appImageLazyLoader]',
   standalone: true,
 })
-export class ImageLazyLoaderDirective implements AfterViewInit {
+export class ImageLazyLoaderDirective {
   private renderer = inject(Renderer2);
   private el = inject(ElementRef);
-
-  // @HostBinding('attr.src') srcAttr: string | undefined;
-  // @Input() src: string | undefined;
 
   private _loading = true;
   private _error = false;
@@ -47,24 +43,4 @@ export class ImageLazyLoaderDirective implements AfterViewInit {
     this._error = true;
     this.renderer.addClass(this.el.nativeElement, 'error');
   }
-
-  // private canLazyLoad() {
-  //   return window && 'IntersectionObserver' in window;
-  // }
-
-  // private lazyLoadImage() {
-  //   const obs = new IntersectionObserver((entries) => {
-  //     entries.forEach(({ isIntersecting }) => {
-  //       if (isIntersecting) {
-  //         this.loadImage();
-  //         obs.unobserve(this.el.nativeElement);
-  //       }
-  //     });
-  //   });
-  //   obs.observe(this.el.nativeElement);
-  // }
-
-  // private loadImage() {
-  //   this.srcAttr = this.src;
-  // }
 }

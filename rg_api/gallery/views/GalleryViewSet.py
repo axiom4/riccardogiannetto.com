@@ -21,7 +21,7 @@ class GalleryPagination(PageNumberPagination):
 @method_decorator(cache_page(60 * 60 * 2), name='list')
 @method_decorator(cache_page(60 * 60 * 24), name='retrieve')
 class GalleryViewSet(viewsets.ModelViewSet):
-    queryset = Gallery.objects.all()
+    queryset = Gallery.objects.select_related('author').all()
     serializer_class = GallerySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]

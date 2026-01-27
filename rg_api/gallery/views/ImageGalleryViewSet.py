@@ -1,6 +1,7 @@
 
 # Create your views here.
 import os
+import logging
 from django.conf import settings
 from rest_framework import viewsets
 from rest_framework import permissions
@@ -17,6 +18,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 
 from utils.image_optimizer import ImageOptimizer
+
+logger = logging.getLogger(__name__)
 
 
 class ImageGalleryPagination(PageNumberPagination):
@@ -35,7 +38,12 @@ class ImageRenderer(renderers.BaseRenderer):
         if renderer_context['response'].status_code != 200:
             return b""
 
-        width = int(renderer_context['kwargs']['width'])
+        try:
+            width = int(renderer_context['kwargs'].get('width', 0))
+            if width <= 0:
+                return b""
+        except (ValueError, TypeError, KeyError):
+            return b""
 
         try:
             this_object = ImageGallery.objects.get(
@@ -43,7 +51,11 @@ class ImageRenderer(renderers.BaseRenderer):
         except ImageGallery.DoesNotExist:
             return b""
 
-        filename = f"{settings.MEDIA_ROOT}/preview/{this_object.pk}_{width}.webp"
+        # Ensure directory exists
+        preview_dir = os.path.join(settings.MEDIA_ROOT, "preview")
+        os.makedirs(preview_dir, exist_ok=True)
+
+        filename = os.path.join(preview_dir, f"{this_object.pk}_{width}.webp")
 
         if not os.path.exists(filename):
             try:
@@ -53,7 +65,7 @@ class ImageRenderer(renderers.BaseRenderer):
                     width=width
                 )
             except Exception as e:
-                print(f"Error generating preview: {e}")
+                logger.error(f"Error generating preview: {e}")
                 return b""
 
         if os.path.exists(filename):
@@ -64,7 +76,7 @@ class ImageRenderer(renderers.BaseRenderer):
 
 class ImageGalleryViewSet(viewsets.ModelViewSet):
 
-    queryset = ImageGallery.objects.all()
+    queryset = ImageGallery.objects.select_related('author', 'gallery').prefetch_related('tags').all()
     serializer_class = ImageGallerySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
