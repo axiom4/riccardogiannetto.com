@@ -13,19 +13,19 @@ class RemoveNoStoreCacheHeaderMiddleware:
 
         if response.has_header('Cache-Control'):
             cache_control = response['Cache-Control'].lower()
-            
+
             # If no-store is present, we must remove it to allow BFCache
             if 'no-store' in cache_control:
                 # Split directives, remove no-store, and rebuild
                 directives = [d.strip() for d in cache_control.split(',')]
-                
+
                 # Filter out no-store
                 directives = [d for d in directives if d != 'no-store']
-                
+
                 # Ensure no-cache is present if we removed no-store (security/freshness)
                 if 'no-cache' not in directives:
                     directives.append('no-cache')
-                
+
                 response['Cache-Control'] = ', '.join(directives)
 
         return response
