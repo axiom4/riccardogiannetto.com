@@ -5,7 +5,7 @@
 
 .gallery-img {
   position: relative;
-  background-color: #f0f0f2;
+  background-color: #ffffff;
   border-radius: 4px;
   overflow: hidden;
 
@@ -43,7 +43,7 @@
 
 @media (prefers-color-scheme: dark) {
   .gallery-img {
-    background-color: #f0f0f2;
+    background-color: #ffffff;
 
     .loading-msg {
       background-color: #1a1a1a;
