@@ -143,7 +143,12 @@
   </div>
 
   @if (showInfo()) {
-    <div class="info-panel" (click)="$event.stopPropagation()">
+    <div
+      class="info-panel"
+      (click)="$event.stopPropagation()"
+      (keydown.enter)="$event.stopPropagation()"
+      tabindex="0"
+    >
       <h2>Image Info</h2>
       <dl>
         @if (currentLightboxImg()?.camera_model) {
@@ -194,21 +199,7 @@
 
       @if (currentLightboxImg()?.latitude && currentLightboxImg()?.longitude) {
         <div class="map-container">
-          <iframe
-            width="100%"
-            height="250"
-            frameborder="0"
-            scrolling="no"
-            marginheight="0"
-            marginwidth="0"
-            style="border: 0"
-            [src]="
-              getMapUrl(
-                currentLightboxImg()!.latitude!,
-                currentLightboxImg()!.longitude!
-              )
-            "
-          ></iframe>
+          <div #mapContainer style="height: 100%; width: 100%;"></div>
         </div>
       }
     </div>
