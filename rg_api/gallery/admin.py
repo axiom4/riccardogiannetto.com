@@ -91,7 +91,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
         ('latitude', 'longitude', 'altitude', 'location'),
     ]
     list_display = ('title', 'gallery', 'image_tag', 'author',
-                    'width', 'height', 'tag_list', 'created_at', 'updated_at')
+                    'width', 'height', 'camera_model', 'lens_model', 'iso_speed', 'aperture_f_number', 'shutter_speed', 'tag_list', 'created_at', 'updated_at')
 
     # Standard filters
     list_filter = ('gallery__title', 'created_at')
