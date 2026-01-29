@@ -97,7 +97,7 @@ export class LightboxComponent implements OnInit, OnDestroy {
           // Set the default image path globally to avoid 404s in other places
           L.Icon.Default.imagePath = '/assets/leaflet/';
 
-           const defaultIcon = L.icon({
+          const defaultIcon = L.icon({
             iconUrl: '/assets/leaflet/marker-icon.png',
             iconRetinaUrl: '/assets/leaflet/marker-icon-2x.png',
             shadowUrl: '/assets/leaflet/marker-shadow.png',
@@ -105,7 +105,7 @@ export class LightboxComponent implements OnInit, OnDestroy {
             iconAnchor: [12, 41],
             popupAnchor: [1, -34],
             tooltipAnchor: [16, -28],
-            shadowSize: [41, 41]
+            shadowSize: [41, 41],
           });
 
           // Cleanup existing map if specific logic needed, though we usually recreate
@@ -126,7 +126,9 @@ export class LightboxComponent implements OnInit, OnDestroy {
               '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
           }).addTo(map);
 
-          L.marker([img.latitude!, img.longitude!], { icon: defaultIcon }).addTo(map);
+          L.marker([img.latitude!, img.longitude!], {
+            icon: defaultIcon,
+          }).addTo(map);
 
           // Fix gray map issue by invalidating size after a tick
           setTimeout(() => {
