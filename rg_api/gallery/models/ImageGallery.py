@@ -88,7 +88,7 @@ class ImageGallery(models.Model):
                     return 0.0
                 # Handle Pillow IFDRational (has numerator/denominator attrs)
                 if hasattr(val, 'numerator') and hasattr(val, 'denominator'):
-                     return float(val)
+                    return float(val)
                 return float(val)
             except (ValueError, TypeError):
                 return None
@@ -116,9 +116,9 @@ class ImageGallery(models.Model):
                         except (ValueError, TypeError):
                             pass
                     elif attribute in ['aperture_f_number', 'focal_length']:
-                         f_val = get_float(val)
-                         if f_val is not None:
-                             setattr(self, attribute, f_val)
+                        f_val = get_float(val)
+                        if f_val is not None:
+                            setattr(self, attribute, f_val)
                     else:
                         setattr(self, attribute, val)
 

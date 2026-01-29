@@ -126,16 +126,22 @@
       border-radius: 4px;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.1);
-      
+
       iframe {
-          filter: grayscale(0.2) contrast(1.1);
+        filter: grayscale(0.2) contrast(1.1);
       }
     }
   }
 
   @keyframes slideIn {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
   }
 
   .btn-lightbox-carousel {
