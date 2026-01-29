@@ -2,6 +2,7 @@ import torch
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
 from PIL import Image
 import logging
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +18,10 @@ def get_model():
     and context-aware descriptions that far surpass standard classification or early captioning models.
     """
     global _processor, _model
+    if not settings.ENABLE_ML_MODELS:
+        logger.info("BLIP-2 Model loading is disabled.")
+        return None, None
+
     if _model is None:
         logger.info(
             "Loading BLIP-2 Model (OPT-2.7b)... this may take a moment.")

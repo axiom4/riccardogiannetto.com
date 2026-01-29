@@ -73,12 +73,36 @@ class ImageGallery(models.Model):
             'LensModel': 'lens_model',
             'ISOSpeedRatings': 'iso_speed',
             'FNumber': 'aperture_f_number',
-            'ShutterSpeedValue': 'shutter_speed',
             'FocalLength': 'focal_length',
             'Artist': 'artist',
             'DateTimeOriginal': 'date',
             'Copyright': 'copyright'
         }
+
+        def get_float(val):
+            try:
+                # Handle tuple/list (numerator, denominator)
+                if isinstance(val, (tuple, list)) and len(val) == 2:
+                    if float(val[1]) != 0:
+                        return float(val[0]) / float(val[1])
+                    return 0.0
+                # Handle Pillow IFDRational (has numerator/denominator attrs)
+                if hasattr(val, 'numerator') and hasattr(val, 'denominator'):
+                    return float(val)
+                return float(val)
+            except (ValueError, TypeError):
+                return None
+
+        # Handle Shutter Speed Priority: ExposureTime (33434) > ShutterSpeedValue (37377)
+        exp_time = exif_data.get(33434)
+        shutter_val = exif_data.get(37377)
+
+        if exp_time:
+            self.shutter_speed = get_float(exp_time)
+        elif shutter_val:
+            apex = get_float(shutter_val)
+            if apex is not None:
+                self.shutter_speed = 1 / (2 ** apex)
 
         for key, val in exif_data.items():
             tag_name = ExifTags.TAGS.get(key)
@@ -88,9 +112,13 @@ class ImageGallery(models.Model):
                     if attribute == 'date':
                         try:
                             self.date = datetime.strptime(
-                                val, '%Y:%m:%d %H:%M:%S')
+                                str(val), '%Y:%m:%d %H:%M:%S')
                         except (ValueError, TypeError):
                             pass
+                    elif attribute in ['aperture_f_number', 'focal_length']:
+                        f_val = get_float(val)
+                        if f_val is not None:
+                            setattr(self, attribute, f_val)
                     else:
                         setattr(self, attribute, val)
 
