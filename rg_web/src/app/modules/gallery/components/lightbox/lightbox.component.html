@@ -7,6 +7,14 @@
   @if (previewImage()) {
     <button
       type="button"
+      (click)="toggleInfo()"
+      class="info-btn"
+      title="Info"
+    >
+      <span class="icon-lightbox-carousel">Info</span>
+    </button>
+    <button
+      type="button"
       (click)="onclosePreview()"
       class="close-btn"
       title="Close"
@@ -138,4 +146,74 @@
       }
     </div>
   </div>
+
+  @if (showInfo()) {
+    <div class="info-panel" (click)="$event.stopPropagation()">
+      <h2>Image Info</h2>
+      <dl>
+        @if (currentLightboxImg()?.camera_model) {
+          <div class="info-row">
+            <dt>Camera</dt>
+            <dd>{{ currentLightboxImg()?.camera_model }}</dd>
+          </div>
+        }
+        @if (currentLightboxImg()?.lens_model) {
+          <div class="info-row">
+            <dt>Lens</dt>
+            <dd>{{ currentLightboxImg()?.lens_model }}</dd>
+          </div>
+        }
+        @if (currentLightboxImg()?.iso_speed) {
+          <div class="info-row">
+            <dt>ISO</dt>
+            <dd>{{ currentLightboxImg()?.iso_speed }}</dd>
+          </div>
+        }
+        @if (currentLightboxImg()?.aperture_f_number) {
+          <div class="info-row">
+            <dt>Aperture</dt>
+            <dd>f/{{ currentLightboxImg()?.aperture_f_number }}</dd>
+          </div>
+        }
+        @if (currentLightboxImg()?.shutter_speed) {
+          <div class="info-row">
+            <dt>Shutter Speed</dt>
+            <dd>{{ formatShutterSpeed(currentLightboxImg()?.shutter_speed) }}</dd>
+          </div>
+        }
+        @if (currentLightboxImg()?.focal_length) {
+          <div class="info-row">
+            <dt>Focal Length</dt>
+            <dd>{{ currentLightboxImg()?.focal_length }}mm</dd>
+          </div>
+        }
+        @if (currentLightboxImg()?.date) {
+          <div class="info-row">
+            <dt>Date</dt>
+            <dd>{{ currentLightboxImg()?.date | date : "medium" }}</dd>
+          </div>
+        }
+      </dl>
+  
+      @if (currentLightboxImg()?.latitude && currentLightboxImg()?.longitude) {
+      <div class="map-container">
+        <iframe
+          width="100%"
+          height="250"
+          frameborder="0"
+          scrolling="no"
+          marginheight="0"
+          marginwidth="0"
+          style="border: 0"
+          [src]="
+            getMapUrl(
+              currentLightboxImg()!.latitude!,
+              currentLightboxImg()!.longitude!
+            )
+          "
+        ></iframe>
+      </div>
+      }
+    </div>
+  }
 </div>

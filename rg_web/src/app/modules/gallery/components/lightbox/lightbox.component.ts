@@ -11,19 +11,21 @@ import {
   inject,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { NgClass, DOCUMENT } from '@angular/common';
+import { NgClass, DOCUMENT, DatePipe, DecimalPipe } from '@angular/common';
 import { ImageGallery } from '../../../../modules/core/api/v1';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-lightbox',
   templateUrl: './lightbox.component.html',
   styleUrls: ['./lightbox.component.scss'],
   standalone: true,
-  imports: [NgClass],
+  imports: [NgClass, DatePipe, DecimalPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LightboxComponent implements OnInit, OnDestroy {
   private document = inject<Document>(DOCUMENT);
+  private sanitizer = inject(DomSanitizer);
 
   readonly currentLightboxImg = input<ImageGallery>();
   readonly previousLightboxImg = signal<ImageGallery | undefined>(undefined);
@@ -34,6 +36,7 @@ export class LightboxComponent implements OnInit, OnDestroy {
   readonly previewImage = input<boolean>(false);
   readonly pageFlipDirection = input<'next' | 'prev'>('next');
   readonly isLoading = signal(true);
+  readonly showInfo = signal(false);
 
   @Output() closeLightbox = new EventEmitter<void>();
   @Output() prevAction = new EventEmitter<void>();
@@ -45,10 +48,31 @@ export class LightboxComponent implements OnInit, OnDestroy {
   innerWidth = 0;
   innerHeight = 0;
 
+  toggleInfo() {
+    this.showInfo.update((v) => !v);
+  }
+
+  getMapUrl(lat: number, lon: number): SafeResourceUrl {
+    const bboxDelta = 0.005;
+    const url = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - bboxDelta},${lat - bboxDelta},${lon + bboxDelta},${lat + bboxDelta}&layer=mapnik&marker=${lat},${lon}`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
+  formatShutterSpeed(val: number | null | undefined): string {
+    if (val === null || val === undefined || val === 0) return '';
+
+    if (val >= 1) {
+      return Math.round(val) + '"';
+    }
+    const denominator = Math.round(1 / val);
+    return '1/' + denominator;
+  }
+
   constructor() {
     effect(() => {
       this.imageNum();
       this.imageAnimA.update((value) => !value);
+      this.showInfo.set(false);
     });
 
     effect(
