@@ -94,7 +94,6 @@ export class LightboxComponent implements OnInit, OnDestroy {
       ) {
         // Dynamic import to avoid SSR issues
         import('leaflet').then((L) => {
-
           const defaultIcon = L.icon({
             iconUrl: '/assets/leaflet/marker-icon.png',
             iconRetinaUrl: '/assets/leaflet/marker-icon-2x.png',
