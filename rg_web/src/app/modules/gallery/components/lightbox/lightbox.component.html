@@ -155,49 +155,49 @@
     @if (hasInfo()) {
       <dl>
         @if (currentLightboxImg()?.camera_model) {
-        <div class="info-row">
-          <dt>Camera</dt>
-          <dd>{{ currentLightboxImg()?.camera_model }}</dd>
-        </div>
-      }
-      @if (currentLightboxImg()?.lens_model) {
-        <div class="info-row">
-          <dt>Lens</dt>
-          <dd>{{ currentLightboxImg()?.lens_model }}</dd>
-        </div>
-      }
-      @if (currentLightboxImg()?.iso_speed) {
-        <div class="info-row">
-          <dt>ISO</dt>
-          <dd>{{ currentLightboxImg()?.iso_speed }}</dd>
-        </div>
-      }
-      @if (currentLightboxImg()?.aperture_f_number) {
-        <div class="info-row">
-          <dt>Aperture</dt>
-          <dd>f/{{ currentLightboxImg()?.aperture_f_number }}</dd>
-        </div>
-      }
-      @if (currentLightboxImg()?.shutter_speed) {
-        <div class="info-row">
-          <dt>Shutter Speed</dt>
-          <dd>
-            {{ formatShutterSpeed(currentLightboxImg()?.shutter_speed) }}
-          </dd>
-        </div>
-      }
-      @if (currentLightboxImg()?.focal_length) {
-        <div class="info-row">
-          <dt>Focal Length</dt>
-          <dd>{{ currentLightboxImg()?.focal_length }}mm</dd>
-        </div>
-      }
-      @if (currentLightboxImg()?.date) {
-        <div class="info-row">
-          <dt>Date</dt>
-          <dd>{{ currentLightboxImg()?.date | date: "medium" }}</dd>
-        </div>
-      }
+          <div class="info-row">
+            <dt>Camera</dt>
+            <dd>{{ currentLightboxImg()?.camera_model }}</dd>
+          </div>
+        }
+        @if (currentLightboxImg()?.lens_model) {
+          <div class="info-row">
+            <dt>Lens</dt>
+            <dd>{{ currentLightboxImg()?.lens_model }}</dd>
+          </div>
+        }
+        @if (currentLightboxImg()?.iso_speed) {
+          <div class="info-row">
+            <dt>ISO</dt>
+            <dd>{{ currentLightboxImg()?.iso_speed }}</dd>
+          </div>
+        }
+        @if (currentLightboxImg()?.aperture_f_number) {
+          <div class="info-row">
+            <dt>Aperture</dt>
+            <dd>f/{{ currentLightboxImg()?.aperture_f_number }}</dd>
+          </div>
+        }
+        @if (currentLightboxImg()?.shutter_speed) {
+          <div class="info-row">
+            <dt>Shutter Speed</dt>
+            <dd>
+              {{ formatShutterSpeed(currentLightboxImg()?.shutter_speed) }}
+            </dd>
+          </div>
+        }
+        @if (currentLightboxImg()?.focal_length) {
+          <div class="info-row">
+            <dt>Focal Length</dt>
+            <dd>{{ currentLightboxImg()?.focal_length }}mm</dd>
+          </div>
+        }
+        @if (currentLightboxImg()?.date) {
+          <div class="info-row">
+            <dt>Date</dt>
+            <dd>{{ currentLightboxImg()?.date | date: "medium" }}</dd>
+          </div>
+        }
       </dl>
 
       @if (currentLightboxImg()?.latitude && currentLightboxImg()?.longitude) {
