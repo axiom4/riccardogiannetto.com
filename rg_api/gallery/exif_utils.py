@@ -88,8 +88,8 @@ def get_gps_data(image_path):
     try:
         with Image.open(image_path) as image:
             exif_data = {}
-            if hasattr(image, '_getexif'):
-                exif_info = image._getexif()
+            if hasattr(image, 'getexif'):
+                exif_info = image.getexif()
                 if exif_info:
                     for tag, value in exif_info.items():
                         decoded = ExifTags.TAGS.get(tag, tag)

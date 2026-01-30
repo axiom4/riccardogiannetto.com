@@ -1,8 +1,9 @@
-import torch
+""" Machine learning utilities for image classification using BLIP-2. """
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
-from PIL import Image
+import torch
 import logging
 from django.conf import settings
+from PIL import Image
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +50,6 @@ def get_model():
         # device_map="auto" is excellent for CUDA but can cause shape errors on MPS/Mac.
         # For MPS, it's safer to load manually and move to device.
         try:
-            ignore_mismatched_sizes = True  # Sometimes helps with shape variations
             if device == "cuda":
                 get_model.model = Blip2ForConditionalGeneration.from_pretrained(
                     model_id,
@@ -110,8 +110,14 @@ def classify_image(image_path):
             logger.info(f"BLIP-2 Caption: {caption}")
 
             # Advanced keyword extraction from the rich caption
-            stopwords = {'a', 'an', 'the', 'in', 'on', 'at', 'with', 'and', 'of', 'is', 'are', 'sitting', 'standing', 'looking', 'walking', 'flying', 'background',
-                         'foreground', 'photo', 'picture', 'image', 'view', 'large', 'small', 'close', 'up', 'close-up', 'next', 'to', 'by', 'near', 'front', 'shot', 'full', 'frame'}
+            stopwords = {
+                'a', 'an', 'the', 'in', 'on', 'at', 'with', 'and', 'of',
+                'is', 'are', 'sitting', 'standing', 'looking', 'walking',
+                'flying', 'background',
+                'foreground', 'photo', 'picture', 'image', 'view', 'large',
+                'small', 'close', 'up', 'close-up', 'next', 'to', 'by', 'near',
+                'front', 'shot', 'full', 'frame'
+            }
 
             words = caption.lower().replace('.', '').replace(',', '').split()
             tags = []
