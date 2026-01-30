@@ -13,11 +13,8 @@
   "private": true,
   "dependencies": {
     "@angular/common": "^21.1.2",
-    "@angular/compiler": "^21.1.2",
     "@angular/core": "^21.1.2",
-    "@angular/forms": "^21.1.2",
     "@angular/platform-browser": "^21.1.2",
-    "@angular/platform-browser-dynamic": "^21.1.2",
     "@angular/router": "^21.1.2",
     "@types/leaflet": "^1.9.21",
     "@types/prismjs": "^1.26.5",
