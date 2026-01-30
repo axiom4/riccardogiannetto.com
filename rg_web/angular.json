@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "allowedCommonJsDependencies": ["prismjs"],
+            "allowedCommonJsDependencies": ["prismjs", "leaflet"],
             "outputPath": "dist/rg_web",
             "index": "src/index.html",
             "browser": "src/main.ts",
