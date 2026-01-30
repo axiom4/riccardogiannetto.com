@@ -142,66 +142,67 @@
     </div>
   </div>
 
-  @if (showInfo()) {
-    <div
-      class="info-panel"
-      (click)="$event.stopPropagation()"
-      (keydown.enter)="$event.stopPropagation()"
-      tabindex="0"
-    >
-      <h2>Image Info</h2>
-      <dl>
-        @if (currentLightboxImg()?.camera_model) {
-          <div class="info-row">
-            <dt>Camera</dt>
-            <dd>{{ currentLightboxImg()?.camera_model }}</dd>
-          </div>
-        }
-        @if (currentLightboxImg()?.lens_model) {
-          <div class="info-row">
-            <dt>Lens</dt>
-            <dd>{{ currentLightboxImg()?.lens_model }}</dd>
-          </div>
-        }
-        @if (currentLightboxImg()?.iso_speed) {
-          <div class="info-row">
-            <dt>ISO</dt>
-            <dd>{{ currentLightboxImg()?.iso_speed }}</dd>
-          </div>
-        }
-        @if (currentLightboxImg()?.aperture_f_number) {
-          <div class="info-row">
-            <dt>Aperture</dt>
-            <dd>f/{{ currentLightboxImg()?.aperture_f_number }}</dd>
-          </div>
-        }
-        @if (currentLightboxImg()?.shutter_speed) {
-          <div class="info-row">
-            <dt>Shutter Speed</dt>
-            <dd>
-              {{ formatShutterSpeed(currentLightboxImg()?.shutter_speed) }}
-            </dd>
-          </div>
-        }
-        @if (currentLightboxImg()?.focal_length) {
-          <div class="info-row">
-            <dt>Focal Length</dt>
-            <dd>{{ currentLightboxImg()?.focal_length }}mm</dd>
-          </div>
-        }
-        @if (currentLightboxImg()?.date) {
-          <div class="info-row">
-            <dt>Date</dt>
-            <dd>{{ currentLightboxImg()?.date | date: "medium" }}</dd>
-          </div>
-        }
-      </dl>
-
-      @if (currentLightboxImg()?.latitude && currentLightboxImg()?.longitude) {
-        <div class="map-container">
-          <div #mapContainer style="height: 100%; width: 100%"></div>
+  <div
+    class="info-panel"
+    [class.visible]="showInfo()"
+    (click)="$event.stopPropagation()"
+    (keydown.enter)="$event.stopPropagation()"
+    (mouseleave)="showInfo.set(false)"
+    tabindex="0"
+  >
+    <h2>Image Info</h2>
+    <dl>
+      @if (currentLightboxImg()?.camera_model) {
+        <div class="info-row">
+          <dt>Camera</dt>
+          <dd>{{ currentLightboxImg()?.camera_model }}</dd>
         </div>
       }
-    </div>
-  }
+      @if (currentLightboxImg()?.lens_model) {
+        <div class="info-row">
+          <dt>Lens</dt>
+          <dd>{{ currentLightboxImg()?.lens_model }}</dd>
+        </div>
+      }
+      @if (currentLightboxImg()?.iso_speed) {
+        <div class="info-row">
+          <dt>ISO</dt>
+          <dd>{{ currentLightboxImg()?.iso_speed }}</dd>
+        </div>
+      }
+      @if (currentLightboxImg()?.aperture_f_number) {
+        <div class="info-row">
+          <dt>Aperture</dt>
+          <dd>f/{{ currentLightboxImg()?.aperture_f_number }}</dd>
+        </div>
+      }
+      @if (currentLightboxImg()?.shutter_speed) {
+        <div class="info-row">
+          <dt>Shutter Speed</dt>
+          <dd>
+            {{ formatShutterSpeed(currentLightboxImg()?.shutter_speed) }}
+          </dd>
+        </div>
+      }
+      @if (currentLightboxImg()?.focal_length) {
+        <div class="info-row">
+          <dt>Focal Length</dt>
+          <dd>{{ currentLightboxImg()?.focal_length }}mm</dd>
+        </div>
+      }
+      @if (currentLightboxImg()?.date) {
+        <div class="info-row">
+          <dt>Date</dt>
+          <dd>{{ currentLightboxImg()?.date | date: "medium" }}</dd>
+        </div>
+      }
+    </dl>
+
+    @if (currentLightboxImg()?.latitude && currentLightboxImg()?.longitude) {
+      <div class="map-container">
+        <div #mapContainer style="height: 100%; width: 100%"></div>
+      </div>
+    }
+  </div>
 </div>
+<!-- Closing if was removed -->

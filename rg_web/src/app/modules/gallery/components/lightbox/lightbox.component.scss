@@ -86,7 +86,20 @@
     overflow-y: auto;
     border-left: 1px solid rgba(255, 255, 255, 0.1);
     color: #eee;
-    animation: slideIn 0.3s ease;
+
+    // CSS Transition state (Hidden by default)
+    opacity: 0;
+    transform: translateX(20px);
+    pointer-events: none;
+    transition:
+      opacity 300ms ease-out,
+      transform 300ms ease-out;
+
+    &.visible {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
 
     h2 {
       font-size: 1.5rem;
