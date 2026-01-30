@@ -58,7 +58,8 @@ def get_model():
                     low_cpu_mem_usage=True
                 )
             elif device == "mps":
-                # MPS supports float16. low_cpu_mem_usage=True uses accelerate to load faster avoiding RAM spikes
+                # MPS supports float16. low_cpu_mem_usage=True uses
+                # accelerate to load faster avoiding RAM spikes
                 get_model.model = Blip2ForConditionalGeneration.from_pretrained(
                     model_id,
                     dtype=torch.float16,
@@ -74,7 +75,8 @@ def get_model():
         except Exception as e1:
 
             logger.warning(
-                f"Primary load failed ({e1}), retrying on CPU/standard...")
+                "Primary load failed (%s), retrying on CPU/standard...", e1)
+
             # Fallback if acceleration fails
             get_model.model = Blip2ForConditionalGeneration.from_pretrained(
                 model_id, low_cpu_mem_usage=True)

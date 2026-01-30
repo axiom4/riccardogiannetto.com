@@ -1,2 +1,3 @@
-from .Gallery import Gallery
-from .ImageGallery import ImageGallery
+""" Initialize gallery models package. """
+from .gallery import Gallery
+from .image_gallery import ImageGallery

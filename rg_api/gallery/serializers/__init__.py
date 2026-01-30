@@ -1,2 +1,3 @@
-from .GallerySerializer import GallerySerializer
-from .ImageGallerySerializer import ImageGallerySerializer
+""" Serializers for Gallery API endpoints. """
+from .gallery_serializer import GallerySerializer
+from .image_gallery_serializer import ImageGallerySerializer

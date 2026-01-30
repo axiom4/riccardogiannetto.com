@@ -1,3 +1,4 @@
+""" Utility functions for extracting and converting EXIF GPS data from images. """
 import logging
 from PIL import Image, ExifTags
 
@@ -5,6 +6,21 @@ logger = logging.getLogger(__name__)
 
 
 def to_float(value):
+    """
+    Converts a given value to a floating-point number.
+
+    This function handles various types of input commonly found in EXIF data processing:
+    - Objects with 'numerator' and 'denominator' attributes (e.g., rational numbers).
+    - Standard numeric types (int, float, string representation of numbers).
+    - Tuples or lists containing two elements representing (numerator, denominator).
+
+    Args:
+        value: The input value to convert. Can be a numeric type.
+
+    Returns:
+        float: The floating-point representation of the input. Returns 0.0 if the
+               conversion fails or if a denominator is zero.
+    """
     if hasattr(value, 'numerator') and hasattr(value, 'denominator'):
         if value.denominator == 0:
             return 0.0
@@ -24,6 +40,21 @@ def to_float(value):
 
 
 def get_decimal_from_dms(dms, ref):
+    """
+    converts DMS (Degrees, Minutes, Seconds) coordinates to decimal degrees.
+
+    Calculates the decimal value from the DMS components and adjusts the sign
+    based on the cardinal direction reference. South ('S') and West ('W')
+    coordinates result in negative decimal values.
+
+    Args:
+        dms (tuple or list): A sequence containing (degrees, minutes, seconds)
+            where each element can be converted to a float.
+        ref (str): The cardinal reference direction (e.g., 'N', 'S', 'E', 'W').
+
+    Returns:
+        float: The coordinate value in decimal degrees.
+    """
     degrees = to_float(dms[0])
     minutes = to_float(dms[1])
     seconds = to_float(dms[2])
@@ -37,6 +68,23 @@ def get_decimal_from_dms(dms, ref):
 
 
 def get_gps_data(image_path):
+    """
+    Extracts GPS latitude, longitude, and altitude from an image's EXIF data.
+
+    This function opens an image file, retrieves its EXIF metadata, and specifically parses
+    the 'GPSInfo' tag to calculate decimal coordinates and altitude.
+
+    Args:
+        image_path (str): The file path to the image.
+
+    Returns:
+        tuple: A tuple containing three values:
+            - latitude (float or None): The latitude in decimal degrees, 
+            or None if not found/error.
+            - longitude (float or None): The longitude in decimal degrees, 
+            or None if not found/error.
+            - altitude (float or None): The altitude in meters, or None if not found/error.
+    """
     try:
         with Image.open(image_path) as image:
             exif_data = {}
@@ -67,19 +115,19 @@ def get_gps_data(image_path):
                             gps_latitude, gps_latitude_ref)
                         lon = get_decimal_from_dms(
                             gps_longitude, gps_longitude_ref)
-                    except Exception as e:
-                        logger.error(f"Error converting DMS: {e}")
+                    except (ValueError, TypeError, IndexError) as e:
+                        logger.error("Error converting DMS: %s", e)
 
                 if gps_altitude:
                     try:
                         alt = to_float(gps_altitude)
-                    except Exception:
+                    except (ValueError, TypeError):
                         pass
 
                 return lat, lon, alt
 
-    except Exception as e:
-        logger.error(f"Error extracting EXIF data: {e}")
+    except (IOError, OSError, ValueError, TypeError, AttributeError, IndexError) as e:
+        logger.error("Error extracting EXIF data: %s", e)
         return None, None, None
 
     return None, None, None
