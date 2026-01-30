@@ -9,6 +9,7 @@ import {
   input,
   signal,
   inject,
+  computed,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import {
@@ -45,6 +46,21 @@ export class LightboxComponent implements OnInit, OnDestroy {
   readonly pageFlipDirection = input<'next' | 'prev'>('next');
   readonly isLoading = signal(true);
   readonly showInfo = signal(false);
+
+  readonly hasInfo = computed(() => {
+    const img = this.currentLightboxImg();
+    if (!img) return false;
+    return !!(
+      img.camera_model ||
+      img.lens_model ||
+      img.iso_speed ||
+      img.aperture_f_number ||
+      img.shutter_speed ||
+      img.focal_length ||
+      img.date ||
+      (img.latitude && img.longitude)
+    );
+  });
 
   // ViewChild for the map container
   readonly mapContainer = viewChild<ElementRef>('mapContainer');

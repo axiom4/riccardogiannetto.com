@@ -113,6 +113,13 @@
       margin: 0;
     }
 
+    .no-info {
+      color: #aaa;
+      font-style: italic;
+      text-align: center;
+      margin-top: 2rem;
+    }
+
     .info-row {
       display: flex;
       justify-content: space-between;

@@ -151,8 +151,10 @@
     tabindex="0"
   >
     <h2>Image Info</h2>
-    <dl>
-      @if (currentLightboxImg()?.camera_model) {
+
+    @if (hasInfo()) {
+      <dl>
+        @if (currentLightboxImg()?.camera_model) {
         <div class="info-row">
           <dt>Camera</dt>
           <dd>{{ currentLightboxImg()?.camera_model }}</dd>
@@ -196,11 +198,16 @@
           <dd>{{ currentLightboxImg()?.date | date: "medium" }}</dd>
         </div>
       }
-    </dl>
+      </dl>
 
-    @if (currentLightboxImg()?.latitude && currentLightboxImg()?.longitude) {
-      <div class="map-container">
-        <div #mapContainer style="height: 100%; width: 100%"></div>
+      @if (currentLightboxImg()?.latitude && currentLightboxImg()?.longitude) {
+        <div class="map-container">
+          <div #mapContainer style="height: 100%; width: 100%"></div>
+        </div>
+      }
+    } @else {
+      <div class="no-info">
+        <p>No EXIF data available for this photo.</p>
       </div>
     }
   </div>
