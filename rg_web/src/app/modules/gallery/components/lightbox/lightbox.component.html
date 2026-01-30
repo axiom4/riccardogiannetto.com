@@ -100,6 +100,8 @@
           [ngClass]="{
             'image-anim-a': imageAnimA(),
             'image-anim-b': !imageAnimA(),
+            'page-next': pageFlipDirection() === 'next',
+            'page-prev': pageFlipDirection() === 'prev',
           }"
           alt="{{ prevImg.title }}"
           src="{{ prevImg.url }}/width/{{ getLightboxRenderWidth() }}"

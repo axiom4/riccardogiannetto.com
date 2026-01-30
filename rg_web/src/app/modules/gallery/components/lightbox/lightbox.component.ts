@@ -158,7 +158,7 @@ export class LightboxComponent implements OnInit, OnDestroy {
         const lastImg = this.lastLightboxImg();
 
         if (nextImg && nextImg !== lastImg) {
-          this.previousLightboxImg.set(undefined);
+          this.previousLightboxImg.set(lastImg);
           this.lastLightboxImg.set(nextImg);
           this.isLoading.set(true);
         }

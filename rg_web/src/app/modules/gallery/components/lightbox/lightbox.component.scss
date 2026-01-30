@@ -324,71 +324,53 @@
 
   .lightbox-image.current.image-anim-a,
   .lightbox-image.current.image-anim-b {
-    animation-duration: 240ms;
-    animation-timing-function: ease-out;
+    animation-duration: 600ms;
+    animation-timing-function: ease-in-out;
     animation-fill-mode: both;
     will-change: opacity;
   }
 
   .lightbox-image.current.image-anim-a {
-    animation-name: lightboxFadeInA;
+    animation-name: fadeInA;
   }
-
   .lightbox-image.current.image-anim-b {
-    animation-name: lightboxFadeInB;
+    animation-name: fadeInB;
   }
 
   .lightbox-image.previous.image-anim-a,
   .lightbox-image.previous.image-anim-b {
-    animation-duration: 240ms;
-    animation-timing-function: ease-out;
+    animation-duration: 600ms;
+    animation-timing-function: ease-in-out;
     animation-fill-mode: both;
     will-change: opacity;
   }
 
   .lightbox-image.previous.image-anim-a {
-    animation-name: lightboxFadeOutA;
+    animation-name: fadeOutA;
   }
-
   .lightbox-image.previous.image-anim-b {
-    animation-name: lightboxFadeOutB;
+    animation-name: fadeOutB;
   }
 }
 
-@keyframes lightboxFadeInA {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+// Fade In
+@keyframes fadeInA {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeInB {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-@keyframes lightboxFadeInB {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+// Fade Out
+@keyframes fadeOutA {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
-
-@keyframes lightboxFadeOutA {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes lightboxFadeOutB {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+@keyframes fadeOutB {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 @media screen and (max-width: 1024px) {
