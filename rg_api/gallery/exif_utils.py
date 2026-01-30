@@ -86,10 +86,10 @@ def get_gps_data(image_path):
             - altitude (float or None): The altitude in meters, or None if not found/error.
     """
     try:
-        with Image.open(image_path) as image:
+        with Image.open(image_path) as img:
             exif_data = {}
-            if hasattr(image, 'getexif'):
-                exif_info = image.getexif()
+            if hasattr(img, 'getexif'):
+                exif_info = img.getexif()
                 if exif_info:
                     for tag, value in exif_info.items():
                         decoded = ExifTags.TAGS.get(tag, tag)
