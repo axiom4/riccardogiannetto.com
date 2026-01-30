@@ -6,23 +6,28 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-# Global variables for model caching
-_processor = None
-_model = None
+# Model caching using function attributes
 
 
 def get_model():
     """
-    Loads Salesforce BLIP-2 (Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models).
-    This model (opt-2.7b) uses a Q-Former to bridge visual features with a language model, creating extremely detailed 
-    and context-aware descriptions that far surpass standard classification or early captioning models.
+    Loads Salesforce BLIP-2 (Bootstrapping Language-Image Pre-training 
+    with Frozen Image Encoders and Large Language Models).
+    This model (opt-2.7b) uses a Q-Former to bridge visual features with 
+    a language model, creating extremely detailed 
+    and context-aware descriptions that far surpass standard classification 
+    or early captioning models.
     """
-    global _processor, _model
     if not settings.ENABLE_ML_MODELS:
         logger.info("BLIP-2 Model loading is disabled.")
         return None, None
 
-    if _model is None:
+    if not hasattr(get_model, "processor"):
+        get_model.processor = None
+    if not hasattr(get_model, "model"):
+        get_model.model = None
+
+    if get_model.model is None:
         logger.info(
             "Loading BLIP-2 Model (OPT-2.7b)... this may take a moment.")
 
@@ -38,14 +43,15 @@ def get_model():
         logger.info(f"Using device: {device}")
 
         # Explicitly set use_fast=True to suppress warning and future-proof
-        _processor = Blip2Processor.from_pretrained(model_id, use_fast=True)
+        get_model.processor = Blip2Processor.from_pretrained(
+            model_id, use_fast=True)
 
         # device_map="auto" is excellent for CUDA but can cause shape errors on MPS/Mac.
         # For MPS, it's safer to load manually and move to device.
         try:
             ignore_mismatched_sizes = True  # Sometimes helps with shape variations
             if device == "cuda":
-                _model = Blip2ForConditionalGeneration.from_pretrained(
+                get_model.model = Blip2ForConditionalGeneration.from_pretrained(
                     model_id,
                     device_map="auto",
                     dtype=torch.float16,
@@ -53,33 +59,34 @@ def get_model():
                 )
             elif device == "mps":
                 # MPS supports float16. low_cpu_mem_usage=True uses accelerate to load faster avoiding RAM spikes
-                _model = Blip2ForConditionalGeneration.from_pretrained(
+                get_model.model = Blip2ForConditionalGeneration.from_pretrained(
                     model_id,
                     dtype=torch.float16,
                     low_cpu_mem_usage=True
                 )
-                _model.to("mps")
+                get_model.model.to("mps")
             else:
-                _model = Blip2ForConditionalGeneration.from_pretrained(
+                get_model.model = Blip2ForConditionalGeneration.from_pretrained(
                     model_id,
                     dtype=torch.float32,
                     low_cpu_mem_usage=True
                 )
         except Exception as e1:
+
             logger.warning(
                 f"Primary load failed ({e1}), retrying on CPU/standard...")
             # Fallback if acceleration fails
-            _model = Blip2ForConditionalGeneration.from_pretrained(
+            get_model.model = Blip2ForConditionalGeneration.from_pretrained(
                 model_id, low_cpu_mem_usage=True)
-            _model.to("cpu")
+            get_model.model.to("cpu")
 
-        _model.eval()
+        get_model.model.eval()
         logger.info("BLIP-2 model loaded.")
 
-    return _processor, _model
+    return get_model.processor, get_model.model
 
 
-def classify_image(image_path, top_k=5):
+def classify_image(image_path):
     """
     Generates a sophisticated caption using BLIP-2 and extracts high-level tags.
     """
