@@ -21,10 +21,7 @@
             "outputPath": "dist/rg_web",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "src/zone-flags.ts",
-              "zone.js"
-            ],
+            "polyfills": ["src/zone-flags.ts", "zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
