@@ -48,7 +48,6 @@ class Command(BaseCommand):
 
         # Configure enhancements
         # 1. Saturation boost: +10% (Restores perception of depth for sRGB on wide gamut)
-        SATURATION_FACTOR = 1.10
 
         self.stdout.write(
             f'Found {total_images} images. Starting regeneration...')
