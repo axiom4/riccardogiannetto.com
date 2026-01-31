@@ -334,6 +334,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                 author=author,
                 image=upload,
             )
+            image.save()
 
             details = self._process_single_upload(image, title)
             image.save()

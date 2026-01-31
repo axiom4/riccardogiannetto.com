@@ -1,7 +1,7 @@
 """ Machine learning utilities for image classification using BLIP-2. """
+import logging
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
 import torch
-import logging
 from django.conf import settings
 from PIL import Image
 
@@ -41,7 +41,7 @@ def get_model():
         elif torch.backends.mps.is_available():
             device = "mps"
 
-        logger.info(f"Using device: {device}")
+        logger.info("Using device: %s", device)
 
         # Explicitly set use_fast=True to suppress warning and future-proof
         get_model.processor = Blip2Processor.from_pretrained(
@@ -107,7 +107,7 @@ def classify_image(image_path):
 
             caption = processor.batch_decode(
                 generated_ids, skip_special_tokens=True)[0].strip()
-            logger.info(f"BLIP-2 Caption: {caption}")
+            logger.info("BLIP-2 Caption: %s", caption)
 
             # Advanced keyword extraction from the rich caption
             stopwords = {
@@ -128,6 +128,6 @@ def classify_image(image_path):
 
         return list(set(tags))
 
-    except Exception as e:
-        print(f"Error classifying image {image_path}: {e}")
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        logger.error("Error classifying image %s: %s", image_path, e)
         return []
