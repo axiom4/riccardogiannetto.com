@@ -49,8 +49,6 @@ class Command(BaseCommand):
         # Configure enhancements
         # 1. Saturation boost: +10% (Restores perception of depth for sRGB on wide gamut)
         SATURATION_FACTOR = 1.10
-        # 2. Sharpness boost: +20% (Compensates for Lanczos smoothing on extreme downscale)
-        SHARPNESS_FACTOR = 1.20
 
         self.stdout.write(
             f'Found {total_images} images. Starting regeneration...')
