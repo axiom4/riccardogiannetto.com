@@ -1,14 +1,14 @@
 """ ImageGallery model for storing images and their metadata in galleries. """
+import logging
 from datetime import datetime
 from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils.html import mark_safe
 
 from gallery.models import Gallery
+from gallery.exif_utils import get_gps_data
 from PIL import Image, ExifTags
 from taggit.managers import TaggableManager
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ class ImageGallery(models.Model):
     height = models.IntegerField()
 
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE)
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -100,15 +100,32 @@ class ImageGallery(models.Model):
 
     def save(self, *args, **kwargs):
         if self.image:
-            with Image.open(self.image) as img:
-                width, height = img.size
-                exif_data = img.getexif()
+            try:
+                with Image.open(self.image) as img:
+                    width, height = img.size
+                    self.width = width
+                    self.height = height
 
-                if exif_data:
-                    self.extract_exif_data(exif_data)
+                    exif_data = img.getexif()
+                    if exif_data:
+                        self.extract_exif_data(exif_data)
 
-                self.width = width
-                self.height = height
+                    # Extract GPS data
+                    # Passed 'img' directly since get_gps_data now supports it
+                    try:
+                        lat, lon, alt = get_gps_data(img)
+                        if lat is not None:
+                            self.latitude = lat
+                        if lon is not None:
+                            self.longitude = lon
+                        if alt is not None:
+                            self.altitude = alt
+                    except (ValueError, TypeError, AttributeError, KeyError) as e:
+                        logger.error(
+                            "Error extracting GPS data for image %s: %s", self.title, e)
+
+            except (OSError, ValueError, TypeError, AttributeError) as e:
+                logger.error("Error processing image %s: %s", self.title, e)
 
         super().save(*args, **kwargs)
 
@@ -132,6 +149,19 @@ class ImageGallery(models.Model):
             - focal_length, artist, date, copyright, shutter_speed
             Invalid or missing EXIF data is silently ignored.
         """
+        # Create a dictionary from the top-level EXIF data
+        combined_exif = dict(exif_data)
+
+        # Merge specific IFDs if available (Exif Private IFD)
+        # 0x8769 = 34665 (Exif Offset)
+        if hasattr(exif_data, 'get_ifd'):
+            exif_ifd = exif_data.get_ifd(0x8769)
+            if exif_ifd:
+                combined_exif.update(exif_ifd)
+
+        # Update exif_data reference to use the combined dictionary
+        exif_data = combined_exif
+
         exif_mapping = {
             'Model': 'camera_model',
             'LensModel': 'lens_model',
@@ -178,7 +208,8 @@ class ImageGallery(models.Model):
                             self.date = datetime.strptime(
                                 str(val), '%Y:%m:%d %H:%M:%S')
                         except (ValueError, TypeError):
-                            # Invalid or unexpected EXIF date format; ignore and leave self.date unset
+                            # Invalid or unexpected EXIF date format;
+                            # ignore and leave self.date unset
                             logger.debug(
                                 "Unable to parse EXIF DateTimeOriginal value %r for image %s",
                                 val,

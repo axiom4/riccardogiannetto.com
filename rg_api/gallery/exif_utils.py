@@ -1,6 +1,6 @@
 """ Utility functions for extracting and converting EXIF GPS data from images. """
 import logging
-from PIL import Image, ExifTags
+from PIL import Image
 
 logger = logging.getLogger(__name__)
 
@@ -67,67 +67,65 @@ def get_decimal_from_dms(dms, ref):
     return decimal
 
 
-def get_gps_data(image_path):
+def get_gps_data(image_input):
     """
     Extracts GPS latitude, longitude, and altitude from an image's EXIF data.
 
-    This function opens an image file, retrieves its EXIF metadata, and specifically parses
-    the 'GPSInfo' tag to calculate decimal coordinates and altitude.
-
     Args:
-        image_path (str): The file path to the image.
+        image_input: The file path to the image, or a PIL Image object.
 
     Returns:
-        tuple: A tuple containing three values:
-            - latitude (float or None): The latitude in decimal degrees, 
-            or None if not found/error.
-            - longitude (float or None): The longitude in decimal degrees, 
-            or None if not found/error.
-            - altitude (float or None): The altitude in meters, or None if not found/error.
+        tuple: (latitude, longitude, altitude)
     """
+    img = None
+    should_close = False
+
     try:
-        with Image.open(image_path) as img:
-            exif_data = {}
-            if hasattr(img, 'getexif'):
-                exif_info = img.getexif()
-                if exif_info:
-                    for tag, value in exif_info.items():
-                        decoded = ExifTags.TAGS.get(tag, tag)
-                        exif_data[decoded] = value
+        if isinstance(image_input, Image.Image):
+            img = image_input
+        else:
+            img = Image.open(image_input)
+            should_close = True
 
-            if 'GPSInfo' in exif_data:
-                gps_info = exif_data['GPSInfo']
+        gps_info = {}
+        if hasattr(img, 'getexif'):
+            exif = img.getexif()
+            if exif:
+                # Retrieve the GPS IFD (tag 0x8825 / 34853)
+                gps_info = exif.get_ifd(0x8825)
 
-                # GPS tags are often keys in a dictionary inside GPSInfo
-                gps_latitude = gps_info.get(2)  # GPSLatitude
-                gps_latitude_ref = gps_info.get(1)  # GPSLatitudeRef
-                gps_longitude = gps_info.get(4)  # GPSLongitude
-                gps_longitude_ref = gps_info.get(3)  # GPSLongitudeRef
-                gps_altitude = gps_info.get(6)  # GPSAltitude
+        # Check if we got valid GPS data
+        if gps_info:
+            gps_latitude = gps_info.get(2)
+            gps_latitude_ref = gps_info.get(1)
+            gps_longitude = gps_info.get(4)
+            gps_longitude_ref = gps_info.get(3)
+            gps_altitude = gps_info.get(6)
 
-                lat = None
-                lon = None
-                alt = None
+            lat = None
+            lon = None
+            alt = None
 
-                if gps_latitude and gps_latitude_ref and gps_longitude and gps_longitude_ref:
-                    try:
-                        lat = get_decimal_from_dms(
-                            gps_latitude, gps_latitude_ref)
-                        lon = get_decimal_from_dms(
-                            gps_longitude, gps_longitude_ref)
-                    except (ValueError, TypeError, IndexError) as e:
-                        logger.error("Error converting DMS: %s", e)
+            if gps_latitude and gps_latitude_ref and gps_longitude and gps_longitude_ref:
+                try:
+                    lat = get_decimal_from_dms(gps_latitude, gps_latitude_ref)
+                    lon = get_decimal_from_dms(
+                        gps_longitude, gps_longitude_ref)
+                except (ValueError, TypeError, IndexError) as e:
+                    logger.error("Error converting DMS: %s", e)
 
-                if gps_altitude:
-                    try:
-                        alt = to_float(gps_altitude)
-                    except (ValueError, TypeError) as e:
-                        logger.error("Error converting altitude: %s", e)
+            if gps_altitude:
+                try:
+                    alt = to_float(gps_altitude)
+                except (ValueError, TypeError) as e:
+                    logger.error("Error converting altitude: %s", e)
 
-                return lat, lon, alt
+            return lat, lon, alt
 
     except (IOError, OSError, ValueError, TypeError, AttributeError, IndexError) as e:
         logger.error("Error extracting EXIF data: %s", e)
-        return None, None, None
+    finally:
+        if should_close and img:
+            img.close()
 
     return None, None, None
