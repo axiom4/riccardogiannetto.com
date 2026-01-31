@@ -24,9 +24,9 @@ class Command(BaseCommand):
 
         # Pre-load sRGB profile
         try:
-            srgb_profile = ImageCms.createProfile('sRGB')
+            _unused_srgb_profile = ImageCms.createProfile('sRGB')
         except ImportError:
-            srgb_profile = None
+            _unused_srgb_profile = None
 
         if options['clean']:
             self.stdout.write('Cleaning existing previews...')
