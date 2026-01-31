@@ -1,5 +1,4 @@
 from .models import UserActivity, UserSession
-import threading
 import logging
 import ipaddress
 import hashlib
