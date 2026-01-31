@@ -143,7 +143,14 @@
 
         // Update Activity
         progressText.textContent = `Processing ${currentNum} of ${totalFiles}`;
-        currentName.innerHTML = `<strong>${file.name}</strong> <span style='color:#666'>(Uploading, analyzing GPS & Auto-tagging...)</span>`;
+        currentName.textContent = "";
+        const currentNameStrong = document.createElement("strong");
+        currentNameStrong.textContent = file.name;
+        currentName.appendChild(currentNameStrong);
+        const currentNameSpan = document.createElement("span");
+        currentNameSpan.style.color = "#666";
+        currentNameSpan.textContent = " (Uploading, analyzing GPS & Auto-tagging...)";
+        currentName.appendChild(currentNameSpan);
 
         const formData = new FormData();
         formData.append("csrfmiddlewaretoken", csrfToken);
@@ -167,23 +174,46 @@
             if (data.status === "success") {
               if (data.created > 0) {
                 successCount++;
-                let msg = `<span style="color:green">✔ ${file.name}</span>`;
+                lastResult.textContent = "";
+                const successSpan = document.createElement("span");
+                successSpan.style.color = "green";
+                successSpan.textContent = "✔ " + file.name;
+                lastResult.appendChild(successSpan);
                 if (data.details) {
-                  msg += ` <span style="color:#666">(${data.details})</span>`;
+                  const detailsSpan = document.createElement("span");
+                  detailsSpan.style.color = "#666";
+                  detailsSpan.textContent = " (" + data.details + ")";
+                  lastResult.appendChild(document.createTextNode(" "));
+                  lastResult.appendChild(detailsSpan);
                 }
-                lastResult.innerHTML = msg;
               } else {
-                lastResult.innerHTML = `<span style="color:orange">⚠ ${file.name} (Skipped/Duplicate)</span>`;
+                lastResult.textContent = "";
+                const warnSpan = document.createElement("span");
+                warnSpan.style.color = "orange";
+                warnSpan.textContent = "⚠ " + file.name + " (Skipped/Duplicate)";
+                lastResult.appendChild(warnSpan);
               }
             } else {
-              lastResult.innerHTML = `<span style="color:red">✖ ${file.name}: ${data.message || "Error"}</span>`;
+              lastResult.textContent = "";
+              const errorSpan = document.createElement("span");
+              errorSpan.style.color = "red";
+              errorSpan.textContent = "✖ " + file.name + ": " + (data.message || "Error");
+              lastResult.appendChild(errorSpan);
             }
           } else {
-            lastResult.innerHTML = `<span style="color:red">✖ ${file.name}: HTTP ${response.status}</span>`;
+            lastResult.textContent = "";
+            const httpErrorSpan = document.createElement("span");
+            httpErrorSpan.style.color = "red";
+            httpErrorSpan.textContent = "✖ " + file.name + ": HTTP " + response.status;
+            lastResult.appendChild(httpErrorSpan);
           }
         } catch (err) {
           console.error(err);
-          lastResult.innerHTML = `<span style="color:red">✖ ${file.name}: Network Error</span>`;
+          lastResult.textContent = "";
+          const networkErrorSpan = document.createElement("span");
+          networkErrorSpan.style.color = "red";
+          networkErrorSpan.textContent = "✖ " + file.name + ": Network Error";
+          lastResult.appendChild(networkErrorSpan);
         }
 
         // Update Progress
