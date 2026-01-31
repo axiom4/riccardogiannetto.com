@@ -2,7 +2,6 @@ from utils.image_optimizer import ImageOptimizer
 import os
 import sys
 # import django
-from PIL import Image
 
 # Setup Django if needed for imports, but we just need utils
 sys.path.append(os.path.join(os.getcwd(), 'rg_api'))
