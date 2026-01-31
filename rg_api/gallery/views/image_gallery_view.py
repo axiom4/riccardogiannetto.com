@@ -126,6 +126,7 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
     """
     queryset = ImageGallery.objects.select_related(
         'author', 'gallery').prefetch_related('tags').all()
+
     serializer_class = ImageGallerySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
