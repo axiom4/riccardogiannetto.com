@@ -258,4 +258,4 @@ class AnalyticsMiddleware:
             )
         except Exception as e:
             logger.error(f"Analytics tracking failed: {e}")
-            pass
+
