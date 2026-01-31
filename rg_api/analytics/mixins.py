@@ -48,6 +48,5 @@ class AnalyticsTrackingMixin:
             except Exception as e:
                 # Logging failure should not break the response
                 logger.error(f"Error tracking analytics: {e}")
-                pass
 
         return returned_response
