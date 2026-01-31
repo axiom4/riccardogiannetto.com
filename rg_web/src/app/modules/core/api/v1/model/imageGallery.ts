@@ -9,6 +9,9 @@
  */
 
 
+/**
+ * Serializer for the ImageGallery model.  This serializer handles the serialization of ImageGallery instances, converting them to JSON format and vice-versa. It includes a hyperlinked identity field for the detail view and a string representation of the author.  Attributes:     url (HyperlinkedIdentityField): URL to the detail view of the image.     author (StringRelatedField): String representation of the author.
+ */
 export interface ImageGallery { 
     readonly url: string;
     readonly author: string;

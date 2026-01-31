@@ -56,7 +56,7 @@ export interface PortfolioServiceInterface {
 
     /**
      * 
-     * 
+     * A ViewSet for viewing Gallery instances.  This ViewSet provides &#x60;list&#x60; and &#x60;retrieve&#x60; actions for Gallery objects, supporting filtering, searching, and ordering.  Attributes:     queryset (QuerySet): The base queryset for retrieving galleries,         optimized with &#x60;select_related&#x60; and &#x60;prefetch_related&#x60;.     serializer_class (Serializer): The serializer class used for         validating and deserializing input, and for serializing output.     permission_classes (list): The list of permission classes that         determine access rights (Authenticated or ReadOnly).     filter_backends (list): The backends used for filtering the queryset.     http_method_names (list): The allowed HTTP method names (\&#39;get\&#39; only).     pagination_class (Pagination): The pagination class used for         paginating results.     ordering_fields (str or list): The fields allowed for ordering.     filterset_fields (list): The fields used for exact match filtering.     search_fields (list): The fields used for full-text search.
      * @endpoint get /portfolio/galleries
 * @param requestParameters
      */
@@ -64,7 +64,7 @@ export interface PortfolioServiceInterface {
 
     /**
      * 
-     * 
+     * A ViewSet for viewing Gallery instances.  This ViewSet provides &#x60;list&#x60; and &#x60;retrieve&#x60; actions for Gallery objects, supporting filtering, searching, and ordering.  Attributes:     queryset (QuerySet): The base queryset for retrieving galleries,         optimized with &#x60;select_related&#x60; and &#x60;prefetch_related&#x60;.     serializer_class (Serializer): The serializer class used for         validating and deserializing input, and for serializing output.     permission_classes (list): The list of permission classes that         determine access rights (Authenticated or ReadOnly).     filter_backends (list): The backends used for filtering the queryset.     http_method_names (list): The allowed HTTP method names (\&#39;get\&#39; only).     pagination_class (Pagination): The pagination class used for         paginating results.     ordering_fields (str or list): The fields allowed for ordering.     filterset_fields (list): The fields used for exact match filtering.     search_fields (list): The fields used for full-text search.
      * @endpoint get /portfolio/galleries/{id}
 * @param requestParameters
      */
@@ -72,7 +72,7 @@ export interface PortfolioServiceInterface {
 
     /**
      * 
-     * 
+     * Docstring for ImageGalleryViewSet  :var Args: Description :var request: Description :vartype request: The :var Returns: Description :var Response: Description :vartype Response: The A viewset for viewing image galleries.  This viewset provides &#x60;list&#x60; and &#x60;retrieve&#x60; actions for ImageGallery objects. It supports filtering by gallery, searching by title, and ordering by various fields. It also includes a custom action to retrieve images in specific widths.  Attributes:     queryset(QuerySet): The base queryset for the viewset, optimizing database access         by using &#x60;select_related&#x60; for author and gallery, and &#x60;prefetch_related&#x60; for tags.     serializer_class(Serializer): The serializer class used for validating and         deserializing input, and for serializing output.     permission_classes(list): The list of permission classes that determine access rights.         Defaults to allowing authenticated users to edit, and read-only access for others.     filter_backends(list): The backends used for filtering,         searching, and ordering the queryset.     http_method_names(list): The allowed HTTP methods(currently restricted to \&#39;get\&#39;).     pagination_class(Pagination): The pagination class used to paginate the results.     renderer_classes(list): The renderers used to render the response.     ordering_fields(list): The fields that can be used for ordering the results.     filterset_fields(list): The fields that can be used for precise filtering.     search_fields(list): The fields that can be searched using the search filter.
      * @endpoint get /portfolio/images
 * @param requestParameters
      */
@@ -80,7 +80,7 @@ export interface PortfolioServiceInterface {
 
     /**
      * 
-     * 
+     * Docstring for ImageGalleryViewSet  :var Args: Description :var request: Description :vartype request: The :var Returns: Description :var Response: Description :vartype Response: The A viewset for viewing image galleries.  This viewset provides &#x60;list&#x60; and &#x60;retrieve&#x60; actions for ImageGallery objects. It supports filtering by gallery, searching by title, and ordering by various fields. It also includes a custom action to retrieve images in specific widths.  Attributes:     queryset(QuerySet): The base queryset for the viewset, optimizing database access         by using &#x60;select_related&#x60; for author and gallery, and &#x60;prefetch_related&#x60; for tags.     serializer_class(Serializer): The serializer class used for validating and         deserializing input, and for serializing output.     permission_classes(list): The list of permission classes that determine access rights.         Defaults to allowing authenticated users to edit, and read-only access for others.     filter_backends(list): The backends used for filtering,         searching, and ordering the queryset.     http_method_names(list): The allowed HTTP methods(currently restricted to \&#39;get\&#39;).     pagination_class(Pagination): The pagination class used to paginate the results.     renderer_classes(list): The renderers used to render the response.     ordering_fields(list): The fields that can be used for ordering the results.     filterset_fields(list): The fields that can be used for precise filtering.     search_fields(list): The fields that can be searched using the search filter.
      * @endpoint get /portfolio/images/{id}
 * @param requestParameters
      */
@@ -88,7 +88,7 @@ export interface PortfolioServiceInterface {
 
     /**
      * 
-     * 
+     * Retrieve and return image gallery data in JPEG format.  Args:     request: The HTTP request object.     *args: Variable length argument list.     **kwargs: Arbitrary keyword arguments.  Returns:     Response: The serialized image gallery data.
      * @endpoint get /portfolio/images/{id}/width/{width}
 * @param requestParameters
      */

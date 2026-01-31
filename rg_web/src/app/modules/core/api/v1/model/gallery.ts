@@ -9,11 +9,14 @@
  */
 
 
+/**
+ * Serializer for the Gallery model.  This serializer provides a complete representation of a Gallery instance, including its ID, URL, author string representation, and hyperlinks to associated images. It handles serialization for the API\'s gallery endpoints.
+ */
 export interface Gallery { 
     readonly url: string;
     id: number;
     readonly author: string;
-    images: string[];
+    images: Array<string>;
     title: string;
     description: string;
     tag: string;

@@ -52,6 +52,11 @@ export interface BlogPostsRetrieveRequestParams {
     id: number;
 }
 
+export interface BlogPostsWidthRetrieveRequestParams {
+    id: number;
+    width: string;
+}
+
 
 export interface BlogServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -104,5 +109,13 @@ export interface BlogServiceInterface {
 * @param requestParameters
      */
     blogPostsRetrieve(requestParameters: BlogPostsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Post>;
+
+    /**
+     * 
+     * 
+     * @endpoint get /blog/posts/{id}/width/{width}
+* @param requestParameters
+     */
+    blogPostsWidthRetrieve(requestParameters: BlogPostsWidthRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Post>;
 
 }

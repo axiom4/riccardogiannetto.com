@@ -24,7 +24,7 @@ interface ParamEntry {
 }
 
 export class OpenApiHttpParams {
-    private params = new Map<string, ParamEntry>();
+    private params: Map<string, ParamEntry> = new Map();
     private defaults: Required<ParamOptions>;
     private encoder: HttpParameterCodec;
 
@@ -100,8 +100,8 @@ export class OpenApiHttpParams {
      * - If a parameter has exactly one value, returns that value directly.
      * - If a parameter has multiple values, returns a readonly array of values.
      */
-    toRecord(): Record<string, string | number | boolean | readonly (string | number | boolean)[]> {
-        const parts: Record<string, string | number | boolean | readonly (string | number | boolean)[]> = {};
+    toRecord(): Record<string, string | number | boolean | ReadonlyArray<string | number | boolean>> {
+        const parts: Record<string, string | number | boolean | ReadonlyArray<string | number | boolean>> = {};
 
         for (const [key, entry] of this.params.entries()) {
             const encodedKey = this.encoder.encodeKey(key);
@@ -125,14 +125,16 @@ export class OpenApiHttpParams {
     toHttpParams(): HttpParams {
         const records = this.toRecord();
 
-        const httpParams = new HttpParams({encoder: new IdentityHttpParameterCodec()});
+        let httpParams = new HttpParams({encoder: new IdentityHttpParameterCodec()});
 
         return httpParams.appendAll(records);
     }
 }
 
-export function concatHttpParamsObject(httpParams: OpenApiHttpParams, key: string, item: Record<string, any>, delimiter: Delimiter): OpenApiHttpParams {
-    const keyAndValues: string[] = [];
+export function concatHttpParamsObject(httpParams: OpenApiHttpParams, key: string, item: {
+    [index: string]: any
+}, delimiter: Delimiter): OpenApiHttpParams {
+    let keyAndValues: string[] = [];
 
     for (const k in item) {
         keyAndValues.push(k);
