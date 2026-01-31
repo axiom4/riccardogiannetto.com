@@ -72,7 +72,7 @@ def get_model():
                     dtype=torch.float32,
                     low_cpu_mem_usage=True
                 )
-        except Exception as e1:
+        except (RecursionError, OSError, RuntimeError, ValueError) as e1:
 
             logger.warning(
                 "Primary load failed (%s), retrying on CPU/standard...", e1)
