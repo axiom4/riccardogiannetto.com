@@ -26,7 +26,9 @@ User = get_user_model()
 
 # Constants
 ALLOWED_IMAGE_EXTENSIONS = {'.jpg', '.jpeg',
-                            '.png', '.webp', '.tif', '.tiff', '.heic'}
+                            '.png', '.webp',
+                            '.tif', '.tiff',
+                            '.heic'}
 
 
 class MultiFileInput(forms.FileInput):
