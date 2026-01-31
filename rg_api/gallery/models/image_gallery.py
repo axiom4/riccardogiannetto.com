@@ -8,6 +8,9 @@ from django.utils.html import mark_safe
 from gallery.models import Gallery
 from PIL import Image, ExifTags
 from taggit.managers import TaggableManager
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ImageGallery(models.Model):
@@ -175,7 +178,12 @@ class ImageGallery(models.Model):
                             self.date = datetime.strptime(
                                 str(val), '%Y:%m:%d %H:%M:%S')
                         except (ValueError, TypeError):
-                            pass
+                            # Invalid or unexpected EXIF date format; ignore and leave self.date unset
+                            logger.debug(
+                                "Unable to parse EXIF DateTimeOriginal value %r for image %s",
+                                val,
+                                getattr(self, "id", None),
+                            )
                     elif attribute in ['aperture_f_number', 'focal_length']:
                         f_val = get_float(val)
                         if f_val is not None:
