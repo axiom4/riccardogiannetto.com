@@ -121,8 +121,8 @@ def get_gps_data(image_path):
                 if gps_altitude:
                     try:
                         alt = to_float(gps_altitude)
-                    except (ValueError, TypeError):
-                        pass
+                    except (ValueError, TypeError) as e:
+                        logger.error("Error converting altitude: %s", e)
 
                 return lat, lon, alt
 
