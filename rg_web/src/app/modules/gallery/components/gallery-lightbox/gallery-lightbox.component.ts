@@ -132,7 +132,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
       },
       {
         root: null,
-        rootMargin: '200px',
+        rootMargin: '1000px',
         threshold: 0.1,
       },
     );
@@ -565,8 +565,8 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   setColumns(width: number): void {
     const oldCols = this.columns;
 
-    // Use 4 items per page as requested
-    this.perPage = 4;
+    // Load more items per page to improve scrolling performance and reduce requests
+    this.perPage = 24;
 
     if (width < 650) {
       this.columns = 1;
