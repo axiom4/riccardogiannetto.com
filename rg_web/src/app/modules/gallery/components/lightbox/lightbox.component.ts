@@ -163,7 +163,6 @@ export class LightboxComponent implements OnInit, OnDestroy {
           this.isLoading.set(true);
         }
       },
-      { allowSignalWrites: true },
     );
   }
 
