@@ -10,6 +10,7 @@ from django.views.decorators.cache import cache_page
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework import renderers
+from rest_framework.response import Response
 
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
@@ -18,7 +19,7 @@ from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 
 from gallery.models import ImageGallery
-from gallery.serializers import ImageGallerySerializer
+from gallery.serializers import ImageGallerySerializer, ImageLocationSerializer
 
 
 from utils.image_optimizer import ImageOptimizer
@@ -141,6 +142,19 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
     search_fields = [
         '$title'
     ]
+
+    @action(detail=False, methods=['get'])
+    def locations(self, request):
+        """
+        Returns a list of images with valid GPS coordinates.
+        """
+        images = ImageGallery.objects.filter(
+            latitude__isnull=False, 
+            longitude__isnull=False
+        ).exclude(latitude=0, longitude=0)
+        
+        serializer = ImageLocationSerializer(images, many=True)
+        return Response(serializer.data)
 
     @method_decorator(cache_page(60 * 60 * 24 * 365))
     @action(

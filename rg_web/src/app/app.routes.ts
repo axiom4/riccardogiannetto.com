@@ -27,6 +27,13 @@ export const routes: Routes = [
       import('./modules/blog/blog.routes').then((m) => m.BLOG_ROUTES),
   },
   {
+    path: 'map',
+    loadComponent: () =>
+      import('./modules/gallery/components/map/map.component').then(
+        (m) => m.MapComponent,
+      ),
+  },
+  {
     path: '**',
     pathMatch: 'full',
     redirectTo: '/',

@@ -1,0 +1,47 @@
+app-gallery-map {
+  display: block;
+  width: 100%;
+}
+
+.map-container {
+  width: 100%;
+  height: 60vh;
+  min-height: 400px;
+  /* z-index: 1;  Removed z-index as it might overlap other elements */
+}
+
+// Leaflet popup styling
+.leaflet-popup-content-wrapper {
+  border-radius: 4px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  width: 200px !important;
+  
+  .popup-content {
+    display: flex;
+    flex-direction: column;
+    
+    img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      display: block;
+    }
+    
+    .info {
+      padding: 10px;
+      
+      h3 {
+        margin: 0;
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}

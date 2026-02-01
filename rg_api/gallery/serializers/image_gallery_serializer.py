@@ -30,3 +30,20 @@ class ImageGallerySerializer(serializers.HyperlinkedModelSerializer):
         """
         fields = '__all__'
         model = ImageGallery
+
+
+class ImageLocationSerializer(serializers.ModelSerializer):
+    """
+    Serializer for ImageGallery location data.
+    """
+    thumbnail = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = ImageGallery
+        fields = ['id', 'title', 'latitude', 'longitude', 'thumbnail']
+
+    def get_thumbnail(self, obj):
+        # Construct the thumbnail URL manually or use the image_tag logic equivalent
+        # Assuming we can use the same generic view pattern
+        from django.conf import settings
+        return f"{settings.IMAGE_GENERATOR_BASE_URL}/{obj.pk}/width/300"

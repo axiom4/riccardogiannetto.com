@@ -610,7 +610,7 @@ h1.page-title {
 
 .main {
   max-width: 1200px;
-  min-height: 900px;
+  min-height: 50vh;
   margin: auto;
   padding: 0 10px 30px;
 }
@@ -819,7 +819,7 @@ article th {
 @media screen and (max-width: 991px) {
   .main {
     max-width: 800px;
-    min-height: 900px;
+    min-height: 50vh;
     margin: auto;
     padding: 0 10px 30px;
   }
