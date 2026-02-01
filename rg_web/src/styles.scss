@@ -608,9 +608,18 @@ h1.page-title {
   text-decoration: none;
 }
 
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Ensure the main content area grows to fill available space */
 .main {
+  flex: 1;
+  width: 100%;
   max-width: 1200px;
-  /* min-height removed in favor of flex layout in app.component.scss */
+  /* min-height removed */
   margin: auto;
   padding: 0 10px 30px;
 }
