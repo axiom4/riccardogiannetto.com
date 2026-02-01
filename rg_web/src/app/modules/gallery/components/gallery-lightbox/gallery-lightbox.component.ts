@@ -2,7 +2,6 @@ import {
   Component,
   effect,
   ElementRef,
-  HostListener,
   inject,
   OnDestroy,
   OnInit,
