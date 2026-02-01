@@ -97,8 +97,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         const locations = response;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const markers = (L as any).markerClusterGroup
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ? (L as any).markerClusterGroup()
+          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (L as any).markerClusterGroup()
           : L.featureGroup();
 
         locations.forEach((loc) => {
