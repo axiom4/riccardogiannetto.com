@@ -622,6 +622,8 @@ app-root {
   /* min-height removed */
   margin: auto;
   padding: 0 10px 30px;
+  display: flex;
+  flex-direction: column;
 }
 
 article,

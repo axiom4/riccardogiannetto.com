@@ -5,14 +5,11 @@ import {
   PLATFORM_ID,
   OnDestroy,
   ViewEncapsulation,
-  signal,
   ViewChild,
   ElementRef,
   AfterViewInit,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-// import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../../environments/environment';
 import { PortfolioService } from '../../../core/api/v1';
 
 interface ImageLocation {
