@@ -37,7 +37,7 @@ class ImageLocationSerializer(serializers.ModelSerializer):
     Serializer for ImageGallery location data.
     """
     thumbnail = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = ImageGallery
         fields = ['id', 'title', 'latitude', 'longitude', 'thumbnail']

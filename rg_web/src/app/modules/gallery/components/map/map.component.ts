@@ -28,22 +28,22 @@ interface ImageLocation {
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
   standalone: true,
-  encapsulation: ViewEncapsulation.None, 
+  encapsulation: ViewEncapsulation.None,
 })
 export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('map') mapContainer!: ElementRef;
   private map: any; // Leaflet map
-  
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    private portfolioService: PortfolioService
+    private portfolioService: PortfolioService,
   ) {}
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-       // We use ngAfterViewInit pattern technically, but dynamic import helps delay.
-       // However, to be safe, we should load map after view init.
-       // Since import is async, it might likely happen after view init, but let's be safe.
+      // We use ngAfterViewInit pattern technically, but dynamic import helps delay.
+      // However, to be safe, we should load map after view init.
+      // Since import is async, it might likely happen after view init, but let's be safe.
     }
   }
 
@@ -99,10 +99,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.portfolioService.portfolioImagesLocationsRetrieve().subscribe({
       next: (response: any) => {
         const locations = response as ImageLocation[];
-        const markers = L.markerClusterGroup ? L.markerClusterGroup() : L.featureGroup();
-        
+        const markers = L.markerClusterGroup
+          ? L.markerClusterGroup()
+          : L.featureGroup();
+
         locations.forEach((loc) => {
-            const popupContent = `
+          const popupContent = `
             <div class="popup-content">
                 <img src="${loc.thumbnail}" alt="${loc.title}" loading="lazy" />
                 <div class="info">
@@ -110,23 +112,24 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
                 </div>
             </div>
             `;
-            
-            const marker = L.marker([loc.latitude, loc.longitude])
-                .bindPopup(popupContent);
-            
-            markers.addLayer(marker);
+
+          const marker = L.marker([loc.latitude, loc.longitude]).bindPopup(
+            popupContent,
+          );
+
+          markers.addLayer(marker);
         });
 
         this.map.addLayer(markers);
-        
+
         // Fit bounds if we have markers
         if (locations.length > 0) {
-            this.map.fitBounds(markers.getBounds(), { padding: [50, 50] });
+          this.map.fitBounds(markers.getBounds(), { padding: [50, 50] });
         }
       },
       error: (err) => {
         console.error('Failed to load photo locations', err);
-      }
+      },
     });
   }
 }

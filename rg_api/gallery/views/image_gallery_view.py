@@ -149,10 +149,10 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
         Returns a list of images with valid GPS coordinates.
         """
         images = ImageGallery.objects.filter(
-            latitude__isnull=False, 
+            latitude__isnull=False,
             longitude__isnull=False
         ).exclude(latitude=0, longitude=0)
-        
+
         serializer = ImageLocationSerializer(images, many=True)
         return Response(serializer.data)
 
