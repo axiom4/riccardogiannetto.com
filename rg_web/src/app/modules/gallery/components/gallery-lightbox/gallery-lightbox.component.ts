@@ -121,7 +121,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
       },
       {
         root: null,
-        rootMargin: '200%',
+        rootMargin: '200px',
         threshold: 0.1,
       },
     );
