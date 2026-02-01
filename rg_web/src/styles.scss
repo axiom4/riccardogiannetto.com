@@ -710,6 +710,7 @@ article th {
   gap: var(--gallery-gap);
   z-index: 100;
   width: 100%;
+  min-height: 100vh; /* Force min-height to push footer off-screen initially */
 
   &.lightbox-open {
     z-index: 100000 !important;
