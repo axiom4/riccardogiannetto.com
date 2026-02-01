@@ -31,7 +31,7 @@ def optimize_static_assets():
             optimized_bytes = ImageOptimizer.compress_and_resize(
                 file_obj,
                 width=None,
-                img_format=fmt
+                format=fmt
             )
 
             if optimized_bytes:
