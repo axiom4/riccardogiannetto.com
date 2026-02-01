@@ -85,14 +85,24 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   private observer: IntersectionObserver | undefined;
   private isSentinelIntersecting = false;
 
+  private resizeObserver: ResizeObserver | undefined;
+
   constructor() {
     afterNextRender(() => {
-      this.innerWidth = window.innerWidth;
-      this.innerHeight = window.innerHeight;
-      this.setColumns(this.innerWidth);
-      if (this.galleryItems().length > 0) {
-        this.recalculateLayout();
-      }
+      // Use ResizeObserver to avoid forced synchronous layout calculations
+      this.resizeObserver = new ResizeObserver(() => {
+        // Safe to read window dimensions here as ResizeObserver fires after layout
+        const width = window.innerWidth;
+        if (this.innerWidth !== width) {
+          this.innerWidth = width;
+          this.innerHeight = window.innerHeight;
+          this.setColumns(width);
+          if (this.galleryItems().length > 0) {
+            this.recalculateLayout();
+          }
+        }
+      });
+      this.resizeObserver.observe(document.body);
     });
 
     effect(() => {
@@ -105,6 +115,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.observer?.disconnect();
+    this.resizeObserver?.disconnect();
   }
 
   setupObserver(target: Element) {
@@ -127,15 +138,6 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     );
 
     this.observer.observe(target);
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    if (this.innerWidth !== window?.innerWidth) {
-      this.innerWidth = window.innerWidth;
-      this.setColumns(this.innerWidth);
-      this.recalculateLayout();
-    }
   }
 
   ngOnInit(): void {
