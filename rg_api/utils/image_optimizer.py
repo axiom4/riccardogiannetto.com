@@ -1,16 +1,25 @@
+""" Image optimization utilities using OpenCV and Pillow. """
+import logging
+from io import BytesIO
 import os
 import cv2
 import numpy as np
-import logging
 from PIL import Image
-from io import BytesIO
 
 logger = logging.getLogger(__name__)
 
 
 class ImageOptimizer:
+    """
+    A utility class for optimizing and resizing images using OpenCV and Pillow (PIL).
+
+    This class provides methods to handle image compression, resizing, and format conversion
+    while attempting to preserve quality and metadata like ICC profiles where appropriate.
+    It is designed to work with both file paths and file-like objects.
+    """
+
     @staticmethod
-    def compress_and_resize(image_path_or_file, output_path=None, width=None, format='WEBP'):
+    def compress_and_resize(image_path_or_file, output_path=None, width=None, output_format='WEBP'):
         """
         Compresses and resizes an image using OpenCV and PIL.
 
@@ -18,7 +27,7 @@ class ImageOptimizer:
             image_path_or_file: Path to the image or a file-like object.
             output_path: Path where to save the result. If None, returns bytes.
             width: Target width. If None, uses original width.
-            format: Output format (default 'WEBP').
+            output_format: Output format (default 'WEBP').
 
         Returns:
             bytes if output_path is None, else saves to file.
@@ -41,9 +50,11 @@ class ImageOptimizer:
 
                 img_array = np.array(pil_img)
                 if img_array.shape[2] == 4:
-                    cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGBA2BGRA)
+                    # Convert RGBA to BGRA using numpy slicing
+                    cv_img = img_array[..., [2, 1, 0, 3]]
                 else:
-                    cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
+                    # Convert RGB to BGR using numpy slicing
+                    cv_img = img_array[..., ::-1]
 
             if cv_img is None:
                 return None
@@ -52,7 +63,7 @@ class ImageOptimizer:
 
             # Determine target dimensions
             if width and width < original_width:
-                wpercent = (width / float(original_width))
+                wpercent = width / float(original_width)
                 hsize = int((float(original_height) * float(wpercent)))
 
                 # HIGH QUALITY RESIZING: Area (Better for compression)
@@ -72,9 +83,11 @@ class ImageOptimizer:
 
             # Return to Pillow
             if resize.shape[2] == 4:
-                result_rgb = cv2.cvtColor(resize, cv2.COLOR_BGRA2RGBA)
+                # Convert BGRA to RGBA using numpy slicing
+                result_rgb = resize[..., [2, 1, 0, 3]]
             else:
-                result_rgb = cv2.cvtColor(resize, cv2.COLOR_BGR2RGB)
+                # Convert BGR to RGB using numpy slicing
+                result_rgb = resize[..., ::-1]
 
             pil_result = Image.fromarray(result_rgb)
 
@@ -92,11 +105,11 @@ class ImageOptimizer:
                 'optimize': True,
             }
 
-            if format.upper() == 'WEBP':
+            if output_format.upper() == 'WEBP':
                 save_kwargs['method'] = 6
-            elif format.upper() == 'JPEG':
+            elif output_format.upper() == 'JPEG':
                 save_kwargs['progressive'] = True
-            elif format.upper() == 'PNG':
+            elif output_format.upper() == 'PNG':
                 save_kwargs['compress_level'] = 9
 
             if original_icc_profile:
@@ -106,14 +119,14 @@ class ImageOptimizer:
             if output_path:
                 # Ensure directory exists
                 os.makedirs(os.path.dirname(output_path), exist_ok=True)
-                pil_result.save(output_path, format, **save_kwargs)
+                pil_result.save(output_path, output_format, **save_kwargs)
                 return True
             else:
                 output = BytesIO()
-                pil_result.save(output, format, **save_kwargs)
+                pil_result.save(output, output_format, **save_kwargs)
                 output.seek(0)
                 return output
 
-        except Exception as e:
-            logger.error(f"Error optimizing image: {e}")
+        except (OSError, ValueError, cv2.error) as e:  # pylint: disable=catching-non-exception
+            logger.error("Error optimizing image: %s", e)
             return None

@@ -1,22 +1,24 @@
 import {
   Component,
-  OnInit,
   PLATFORM_ID,
   OnDestroy,
   ViewEncapsulation,
   ViewChild,
   ElementRef,
-  AfterViewInit,
   inject,
+  AfterViewInit,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { PortfolioService } from '../../../core/api/v1';
 
+// Import Leaflet types ensuring no runtime import (SSR safe)
+import * as LeafletTypes from 'leaflet';
+
 interface ImageLocation {
   id: number;
   title: string;
-  latitude: number;
-  longitude: number;
+  latitude?: number | null;
+  longitude?: number | null;
   thumbnail: string;
 }
 
@@ -27,20 +29,12 @@ interface ImageLocation {
   standalone: true,
   encapsulation: ViewEncapsulation.None,
 })
-export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MapComponent implements OnDestroy, AfterViewInit {
   @ViewChild('map') mapContainer!: ElementRef;
-  private map: any; // Leaflet map
+  private map: LeafletTypes.Map | undefined;
 
   private platformId = inject(PLATFORM_ID);
   private portfolioService = inject(PortfolioService);
-
-  ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      // We use ngAfterViewInit pattern technically, but dynamic import helps delay.
-      // However, to be safe, we should load map after view init.
-      // Since import is async, it might likely happen after view init, but let's be safe.
-    }
-  }
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -56,7 +50,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadMap(): void {
     // Dynamic import of Leaflet to support SSR (if used) and avoid build issues
-    import('leaflet').then((module: typeof import('leaflet')) => {
+    import('leaflet').then((module) => {
       const L = module.default || module;
       if (!this.mapContainer) return;
 
@@ -83,7 +77,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // Force a resize check to ensuring tiles render correctly
       setTimeout(() => {
-        this.map.invalidateSize();
+        this.map?.invalidateSize();
       }, 100);
 
       // Fetch Locations and add markers
@@ -91,17 +85,23 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private fetchLocations(L: typeof import('leaflet')): void {
-    this.portfolioService.portfolioImagesLocationsRetrieve().subscribe({
+  private fetchLocations(L: typeof LeafletTypes): void {
+    this.portfolioService.portfolioImagesLocationsList().subscribe({
       next: (response: ImageLocation[]) => {
-        const locations = response;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const markers = (L as any).markerClusterGroup
-          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (L as any).markerClusterGroup()
+        const locations = response as ImageLocation[];
+
+        // Use featureGroup as basic cluster fallback if markerCluster is missing
+        const leafletWithCluster = L as typeof LeafletTypes & {
+          markerClusterGroup?: () => LeafletTypes.FeatureGroup;
+        };
+
+        const markers = leafletWithCluster.markerClusterGroup
+          ? leafletWithCluster.markerClusterGroup()
           : L.featureGroup();
 
         locations.forEach((loc) => {
+          if (loc.latitude == null || loc.longitude == null) return;
+
           const popupContent = `
             <div class="popup-content">
                 <img src="${loc.thumbnail}" alt="${loc.title}" loading="lazy" />
@@ -118,11 +118,14 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
           markers.addLayer(marker);
         });
 
-        this.map.addLayer(markers);
+        this.map?.addLayer(markers);
 
         // Fit bounds if we have markers
         if (locations.length > 0) {
-          this.map.fitBounds(markers.getBounds(), { padding: [50, 50] });
+          const bounds = markers.getBounds();
+          if (bounds.isValid()) {
+            this.map?.fitBounds(bounds, { padding: [50, 50] });
+          }
         }
       },
       error: (err) => {

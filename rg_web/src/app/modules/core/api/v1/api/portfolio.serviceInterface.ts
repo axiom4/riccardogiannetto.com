@@ -13,6 +13,7 @@ import { Observable }                                        from 'rxjs';
 
 import { Gallery } from '../model/models';
 import { ImageGallery } from '../model/models';
+import { ImageLocation } from '../model/models';
 import { PaginatedGalleryList } from '../model/models';
 import { PaginatedImageGalleryList } from '../model/models';
 
@@ -38,6 +39,10 @@ export interface PortfolioImagesListRequestParams {
     page?: number;
     pageSize?: number;
     search?: string;
+}
+
+export interface PortfolioImagesLocationsRetrieveRequestParams {
+    id: number;
 }
 
 export interface PortfolioImagesRetrieveRequestParams {
@@ -80,10 +85,18 @@ export interface PortfolioServiceInterface {
 
     /**
      * 
-     * Returns a list of images with valid GPS coordinates.
+     * ViewSet for retrieving image locations.
      * @endpoint get /portfolio/images/locations
 */
-    portfolioImagesLocationsRetrieve(extraHttpRequestParams?: any): Observable<ImageGallery>;
+    portfolioImagesLocationsList(extraHttpRequestParams?: any): Observable<Array<ImageLocation>>;
+
+    /**
+     * 
+     * ViewSet for retrieving image locations.
+     * @endpoint get /portfolio/images/locations/{id}
+* @param requestParameters
+     */
+    portfolioImagesLocationsRetrieve(requestParameters: PortfolioImagesLocationsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<ImageLocation>;
 
     /**
      * 

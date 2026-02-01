@@ -21,6 +21,8 @@ import { Gallery } from '../model/gallery';
 // @ts-ignore
 import { ImageGallery } from '../model/imageGallery';
 // @ts-ignore
+import { ImageLocation } from '../model/imageLocation';
+// @ts-ignore
 import { PaginatedGalleryList } from '../model/paginatedGalleryList';
 // @ts-ignore
 import { PaginatedImageGalleryList } from '../model/paginatedImageGalleryList';
@@ -34,6 +36,7 @@ import {
     PortfolioGalleriesListRequestParams,
     PortfolioGalleriesRetrieveRequestParams,
     PortfolioImagesListRequestParams,
+    PortfolioImagesLocationsRetrieveRequestParams,
     PortfolioImagesRetrieveRequestParams,
     PortfolioImagesWidthRetrieveRequestParams
 } from './portfolio.serviceInterface';
@@ -334,16 +337,16 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
     }
 
     /**
-     * Returns a list of images with valid GPS coordinates.
+     * ViewSet for retrieving image locations.
      * @endpoint get /portfolio/images/locations
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public portfolioImagesLocationsRetrieve(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ImageGallery>;
-    public portfolioImagesLocationsRetrieve(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ImageGallery>>;
-    public portfolioImagesLocationsRetrieve(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ImageGallery>>;
-    public portfolioImagesLocationsRetrieve(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public portfolioImagesLocationsList(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ImageLocation>>;
+    public portfolioImagesLocationsList(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ImageLocation>>>;
+    public portfolioImagesLocationsList(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ImageLocation>>>;
+    public portfolioImagesLocationsList(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -377,7 +380,69 @@ export class PortfolioService extends BaseService implements PortfolioServiceInt
 
         let localVarPath = `/portfolio/images/locations`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<ImageGallery>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<Array<ImageLocation>>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * ViewSet for retrieving image locations.
+     * @endpoint get /portfolio/images/locations/{id}
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public portfolioImagesLocationsRetrieve(requestParameters: PortfolioImagesLocationsRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ImageLocation>;
+    public portfolioImagesLocationsRetrieve(requestParameters: PortfolioImagesLocationsRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ImageLocation>>;
+    public portfolioImagesLocationsRetrieve(requestParameters: PortfolioImagesLocationsRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ImageLocation>>;
+    public portfolioImagesLocationsRetrieve(requestParameters: PortfolioImagesLocationsRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling portfolioImagesLocationsRetrieve.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (basicAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('basicAuth', 'Authorization', localVarHeaders, 'Basic ');
+
+        // authentication (cookieAuth) required
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/portfolio/images/locations/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<ImageLocation>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
