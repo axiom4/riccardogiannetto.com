@@ -61,7 +61,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadMap(): void {
     // Dynamic import of Leaflet to support SSR (if used) and avoid build issues
-    import('leaflet').then((L) => {
+    import('leaflet').then((module: any) => {
+      const L = module.default || module;
       if (!this.mapContainer) return;
 
       // Fix for default marker icons
