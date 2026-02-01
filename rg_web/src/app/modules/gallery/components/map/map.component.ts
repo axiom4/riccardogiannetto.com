@@ -1,13 +1,13 @@
 import {
   Component,
   OnInit,
-  Inject,
   PLATFORM_ID,
   OnDestroy,
   ViewEncapsulation,
   ViewChild,
   ElementRef,
   AfterViewInit,
+  inject,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { PortfolioService } from '../../../core/api/v1';
@@ -31,10 +31,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('map') mapContainer!: ElementRef;
   private map: any; // Leaflet map
 
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: Object,
-    private portfolioService: PortfolioService,
-  ) {}
+  private platformId = inject(PLATFORM_ID);
+  private portfolioService = inject(PortfolioService);
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -58,7 +56,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadMap(): void {
     // Dynamic import of Leaflet to support SSR (if used) and avoid build issues
-    import('leaflet').then((module: any) => {
+    import('leaflet').then((module: typeof import('leaflet')) => {
       const L = module.default || module;
       if (!this.mapContainer) return;
 
@@ -93,12 +91,14 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private fetchLocations(L: any): void {
+  private fetchLocations(L: typeof import('leaflet')): void {
     this.portfolioService.portfolioImagesLocationsRetrieve().subscribe({
-      next: (response: any) => {
-        const locations = response as ImageLocation[];
-        const markers = L.markerClusterGroup
-          ? L.markerClusterGroup()
+      next: (response: ImageLocation[]) => {
+        const locations = response;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const markers = (L as any).markerClusterGroup
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ? (L as any).markerClusterGroup()
           : L.featureGroup();
 
         locations.forEach((loc) => {
