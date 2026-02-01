@@ -610,7 +610,7 @@ h1.page-title {
 
 .main {
   max-width: 1200px;
-  min-height: 50vh;
+  /* min-height removed in favor of flex layout in app.component.scss */
   margin: auto;
   padding: 0 10px 30px;
 }
@@ -819,7 +819,7 @@ article th {
 @media screen and (max-width: 991px) {
   .main {
     max-width: 800px;
-    min-height: 50vh;
+    /* min-height removed */
     margin: auto;
     padding: 0 10px 30px;
   }
