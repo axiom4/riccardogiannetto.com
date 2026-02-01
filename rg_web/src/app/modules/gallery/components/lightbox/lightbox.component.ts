@@ -152,18 +152,16 @@ export class LightboxComponent implements OnInit, OnDestroy {
       }
     });
 
-    effect(
-      () => {
-        const nextImg = this.currentLightboxImg();
-        const lastImg = this.lastLightboxImg();
+    effect(() => {
+      const nextImg = this.currentLightboxImg();
+      const lastImg = this.lastLightboxImg();
 
-        if (nextImg && nextImg !== lastImg) {
-          this.previousLightboxImg.set(lastImg);
-          this.lastLightboxImg.set(nextImg);
-          this.isLoading.set(true);
-        }
-      },
-    );
+      if (nextImg && nextImg !== lastImg) {
+        this.previousLightboxImg.set(lastImg);
+        this.lastLightboxImg.set(nextImg);
+        this.isLoading.set(true);
+      }
+    });
   }
 
   ngOnInit(): void {
