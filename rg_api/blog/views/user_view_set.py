@@ -6,7 +6,7 @@ from rest_framework import viewsets, permissions
 from blog.serializers import UserSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):  # pylint: disable=too-many-ancestors
+class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """

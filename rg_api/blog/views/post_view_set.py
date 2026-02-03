@@ -18,7 +18,7 @@ from utils.image_optimizer import ImageOptimizer
 logger = logging.getLogger(__name__)
 
 
-class PostImageRenderer(renderers.BaseRenderer):  # pylint: disable=too-few-public-methods
+class PostImageRenderer(renderers.BaseRenderer):
     """
     Renderer for post images in WebP format.
     """
@@ -53,7 +53,7 @@ class PostImageRenderer(renderers.BaseRenderer):  # pylint: disable=too-few-publ
         """Retrieve post from renderer context."""
         try:
             return Post.objects.get(pk=renderer_context['kwargs']['pk'])
-        except Post.DoesNotExist:  # pylint: disable=no-member
+        except Post.DoesNotExist:
             return None
 
     def _get_or_create_preview(self, post, width):
@@ -71,7 +71,7 @@ class PostImageRenderer(renderers.BaseRenderer):  # pylint: disable=too-few-publ
                     output_path=filename,
                     width=width
                 )
-            except Exception as e:  # pylint: disable=broad-exception-caught
+            except (OSError, ValueError, RuntimeError) as e:
                 logger.error("Error generating preview: %s", e)
                 return b""
 
@@ -92,7 +92,7 @@ class PostPagination(PageNumberPagination):
 
 @method_decorator(cache_page(60 * 60 * 2), name='list')
 @method_decorator(cache_page(60 * 60 * 24), name='retrieve')
-class PostViewSet(viewsets.ModelViewSet):  # pylint: disable=too-many-ancestors
+class PostViewSet(viewsets.ModelViewSet):
     """
     View set for posts.
     """

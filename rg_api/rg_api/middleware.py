@@ -3,7 +3,7 @@ Custom Middleware for the API.
 """
 
 
-class RemoveNoStoreCacheHeaderMiddleware:  # pylint: disable=too-few-public-methods
+class RemoveNoStoreCacheHeaderMiddleware:
     """
     Middleware to replace 'no-store' in Cache-Control header with 'no-cache'.
     'no-store' prevents the browser's Back-Forward Cache (bfcache) from working.

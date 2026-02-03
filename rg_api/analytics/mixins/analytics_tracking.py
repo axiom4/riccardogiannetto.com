@@ -7,7 +7,7 @@ from ..models import UserActivity
 logger = logging.getLogger(__name__)
 
 
-class AnalyticsTrackingMixin:  # pylint: disable=too-few-public-methods
+class AnalyticsTrackingMixin:
     """
     Mixin to track user activities automatically in ViewSets.
     """
@@ -24,10 +24,9 @@ class AnalyticsTrackingMixin:  # pylint: disable=too-few-public-methods
         if 200 <= response.status_code < 300:
             try:
                 self._log_activity(request)
-            except Exception:  # pylint: disable=broad-exception-caught
+            except (ValueError, TypeError, AttributeError) as e:
                 # Logging failure should not break the response
-
-                logger.exception("Error tracking analytics")
+                logger.exception("Error tracking analytics: %s", e)
 
         return returned_response
 

@@ -13,14 +13,14 @@ logger = logging.getLogger(__name__)
 
 
 @receiver(post_delete, sender=ImageGallery)
-def delete_image_on_delete(instance, **kwargs):  # pylint: disable=unused-argument
+def delete_image_on_delete(instance, **_kwargs):
     """
     Deletes file from filesystem when corresponding `ImageGallery` object is deleted.
     Also deletes generated previews.
     
     Args:
         instance: The ImageGallery instance being deleted.
-        kwargs: Additional keyword arguments from the signal.
+        _kwargs: Additional keyword arguments from the signal (unused).
     """
     # 1. Delete the original image file
     if instance.image:

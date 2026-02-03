@@ -39,7 +39,7 @@ class ImageGalleryPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class ImageRenderer(renderers.BaseRenderer):  # pylint: disable=too-few-public-methods
+class ImageRenderer(renderers.BaseRenderer):
     """
     Custom DRF renderer for serving resized and optimized WebP images.
 
@@ -98,7 +98,7 @@ class ImageRenderer(renderers.BaseRenderer):  # pylint: disable=too-few-public-m
         return b""
 
 
-class ImageGalleryViewSet(viewsets.ModelViewSet):  # pylint: disable=too-many-ancestors
+class ImageGalleryViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing image galleries.
 

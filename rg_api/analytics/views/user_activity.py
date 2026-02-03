@@ -6,7 +6,7 @@ from ..models import UserActivity
 from ..serializers import UserActivitySerializer
 
 
-class UserActivityViewSet(mixins.CreateModelMixin,  # pylint: disable=too-many-ancestors
+class UserActivityViewSet(mixins.CreateModelMixin,
                           mixins.RetrieveModelMixin,
                           mixins.ListModelMixin,
                           viewsets.GenericViewSet):

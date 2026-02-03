@@ -74,7 +74,7 @@ class Command(BaseCommand):
 
                 processed_count += 1
 
-            except Exception as e:  # pylint: disable=broad-exception-caught
+            except (OSError, ValueError, RuntimeError) as e:
                 self.stdout.write(self.style.ERROR(
                     f"Error processing ID {image_obj.id}: {e}"))
 

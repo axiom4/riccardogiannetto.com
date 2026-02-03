@@ -82,7 +82,7 @@ class Command(BaseCommand):
                     self.stdout.write(
                         f'Processed {index + 1}/{total_images} images...')
 
-            except Exception as e:  # pylint: disable=broad-exception-caught
+            except (OSError, ValueError, RuntimeError) as e:
                 self.stdout.write(self.style.ERROR(
                     f'Error generating preview for {image_obj.pk}: {e}'))
 

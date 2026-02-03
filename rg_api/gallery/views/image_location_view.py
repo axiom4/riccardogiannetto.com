@@ -6,7 +6,7 @@ from gallery.models import ImageGallery
 from gallery.serializers import ImageLocationSerializer
 
 
-class ImageLocationViewSet(viewsets.ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
+class ImageLocationViewSet(viewsets.ReadOnlyModelViewSet):
     """
     ViewSet for retrieving image locations.
     """

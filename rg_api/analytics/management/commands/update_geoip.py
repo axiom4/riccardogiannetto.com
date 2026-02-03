@@ -65,7 +65,7 @@ class Command(BaseCommand):
                 self.stdout.write(getattr(self.style, 'ERROR')(
                     f'File operation failed: {exc}'))
 
-        except Exception as exc:  # pylint: disable=broad-exception-caught
+        except (urllib.error.URLError, OSError) as exc:
             # Fallback catch-all for unexpected errors
             self.stdout.write(getattr(self.style, 'ERROR')(
                 f'An unexpected error occurred: {exc}'))

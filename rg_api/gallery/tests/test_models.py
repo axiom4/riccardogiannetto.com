@@ -63,11 +63,9 @@ class ImageGalleryModelTest(TestCase):
     def create_dummy_image(self):
         """Create a temp dummy image file and return its path."""
         image = Image.new('RGB', (100, 100), color='red')
-        # pylint: disable=consider-using-with
-        tmp_file = tempfile.NamedTemporaryFile(suffix='.jpg', delete=False)
-        image.save(tmp_file, format='JPEG')
-        tmp_file.close()
-        return tmp_file.name
+        with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as tmp_file:
+            image.save(tmp_file, format='JPEG')
+            return tmp_file.name
 
     @patch('gallery.models.image_gallery.get_gps_data')
     @patch('PIL.Image.open')

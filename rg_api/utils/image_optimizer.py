@@ -2,14 +2,14 @@
 import logging
 from io import BytesIO
 import os
-import cv2  # pylint: disable=no-member
+import cv2
 import numpy as np
 from PIL import Image
 
 logger = logging.getLogger(__name__)
 
 
-class ImageOptimizer:  # pylint: disable=too-few-public-methods
+class ImageOptimizer:
     """
     A utility class for optimizing and resizing images using OpenCV and Pillow (PIL).
 
@@ -58,7 +58,7 @@ class ImageOptimizer:  # pylint: disable=too-few-public-methods
             hsize = int((float(original_height) * float(wpercent)))
 
             # HIGH QUALITY RESIZING: Area (Better for compression)
-            # pylint: disable=no-member
+          
             return cv2.resize(cv_img, (width, hsize),
                               interpolation=cv2.INTER_AREA)
 
@@ -160,7 +160,7 @@ class ImageOptimizer:  # pylint: disable=too-few-public-methods
 
             return cls._save_image(pil_result, output_path, output_format, save_kwargs)
 
-        # pylint: disable=no-member, catching-non-exception
+      
         except (OSError, ValueError, cv2.error) as e:
             logger.error("Error optimizing image: %s", e)
             return None

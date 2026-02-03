@@ -30,7 +30,7 @@ class GalleryPagination(PageNumberPagination):
 
 @method_decorator(cache_page(60 * 60 * 2), name='list')
 @method_decorator(cache_page(60 * 60 * 24), name='retrieve')
-class GalleryViewSet(viewsets.ModelViewSet):  # pylint: disable=too-many-ancestors
+class GalleryViewSet(viewsets.ModelViewSet):
     """
     A ViewSet for viewing Gallery instances.
 
