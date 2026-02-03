@@ -17,7 +17,7 @@ def delete_image_on_delete(instance, **_kwargs):
     """
     Deletes file from filesystem when corresponding `ImageGallery` object is deleted.
     Also deletes generated previews.
-    
+
     Args:
         instance: The ImageGallery instance being deleted.
         _kwargs: Additional keyword arguments from the signal (unused).
