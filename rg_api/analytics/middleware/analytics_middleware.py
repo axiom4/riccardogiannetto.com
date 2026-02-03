@@ -1,4 +1,4 @@
-from .models import UserActivity, UserSession
+from ..models import UserActivity, UserSession
 import logging
 import ipaddress
 import hashlib
@@ -257,4 +257,3 @@ class AnalyticsMiddleware:
             )
         except Exception as e:
             logger.error(f"Analytics tracking failed: {e}")
-

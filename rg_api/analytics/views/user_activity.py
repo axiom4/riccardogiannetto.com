@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions
-from .models import UserActivity
-from .serializers import UserActivitySerializer
+from ..models import UserActivity
+from ..serializers import UserActivitySerializer
 
 
 class UserActivityViewSet(viewsets.ModelViewSet):

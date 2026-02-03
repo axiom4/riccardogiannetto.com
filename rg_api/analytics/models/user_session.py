@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
 
-
 class UserSession(models.Model):
     session_key = models.CharField(max_length=40, unique=True)
     user = models.ForeignKey(
@@ -49,40 +48,3 @@ class UserSession(models.Model):
     @property
     def duration(self):
         return self.last_seen_at - self.started_at
-
-
-class UserActivity(models.Model):
-    session = models.ForeignKey(
-        UserSession,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='activities'
-    )
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='activities'
-    )
-    action = models.CharField(max_length=255, db_index=True)
-    path = models.CharField(max_length=1024, blank=True)
-    method = models.CharField(max_length=10, blank=True)
-    ip_address = models.GenericIPAddressField(
-        null=True, blank=True, db_index=True)
-    city = models.CharField(max_length=100, blank=True, null=True)
-    country = models.CharField(max_length=100, blank=True, null=True)
-    latitude = models.FloatField(blank=True, null=True)
-    longitude = models.FloatField(blank=True, null=True)
-    user_agent = models.TextField(blank=True, null=True)
-    payload = models.JSONField(default=dict, blank=True)
-    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
-
-    class Meta:
-        verbose_name = 'User Activity'
-        verbose_name_plural = 'User Activities'
-        ordering = ['-timestamp']
-
-    def __str__(self):
-        return f"{self.user or 'Anonymous'} - {self.action} - {self.timestamp}"

@@ -1,4 +1,4 @@
-from .models import UserActivity
+from ..models import UserActivity
 import logging
 
 logger = logging.getLogger(__name__)

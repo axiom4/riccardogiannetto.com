@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import UserActivity
+from ..models import UserActivity
 
 
 class UserActivitySerializer(serializers.ModelSerializer):
