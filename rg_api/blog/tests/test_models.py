@@ -9,7 +9,6 @@ from blog.models import Category, Post
 
 
 @override_settings(
-    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
     CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}
 )
 class CategoryModelTest(TestCase):
@@ -22,7 +21,6 @@ class CategoryModelTest(TestCase):
 
 @override_settings(
     MEDIA_ROOT=tempfile.gettempdir(),
-    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
     CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}
 )
 class PostModelTest(TestCase):

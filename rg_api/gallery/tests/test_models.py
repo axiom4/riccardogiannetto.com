@@ -11,7 +11,6 @@ from gallery.models import Gallery, ImageGallery
 
 @override_settings(
     MEDIA_ROOT=tempfile.gettempdir(),
-    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
     CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}
 )
 class GalleryModelTest(TestCase):
@@ -36,7 +35,6 @@ class GalleryModelTest(TestCase):
 
 @override_settings(
     MEDIA_ROOT=tempfile.gettempdir(),
-    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
     CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}
 )
 class ImageGalleryModelTest(TestCase):

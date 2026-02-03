@@ -7,6 +7,7 @@ from .models import UserSession, UserActivity
 
 User = get_user_model()
 
+
 class UserSessionModelTest(TestCase):
     def setUp(self):
         self.session = UserSession.objects.create(
@@ -35,7 +36,8 @@ class UserSessionModelTest(TestCase):
 
 class UserActivityModelTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='testuser', password='password')
+        self.user = User.objects.create_user(
+            username='testuser', password='password')
         self.activity = UserActivity.objects.create(
             user=self.user,
             action="PAGE_VIEW",
@@ -60,7 +62,8 @@ class UserActivityModelTest(TestCase):
 class UserActivityAPITest(APITestCase):
     def setUp(self):
         self.list_url = reverse('useractivity-list')
-        self.user = User.objects.create_user(username='apiuser', password='password')
+        self.user = User.objects.create_user(
+            username='apiuser', password='password')
 
     def test_create_activity_anonymous(self):
         """Test creating an activity as an anonymous user."""
@@ -79,10 +82,10 @@ class UserActivityAPITest(APITestCase):
             REMOTE_ADDR="192.168.1.50",
             HTTP_USER_AGENT="AnonymousAgent/1.0"
         )
-        
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(UserActivity.objects.count(), 1)
-        
+
         activity = UserActivity.objects.first()
         self.assertEqual(activity.ip_address, "192.168.1.50")
         self.assertEqual(activity.user_agent, "AnonymousAgent/1.0")
@@ -97,7 +100,7 @@ class UserActivityAPITest(APITestCase):
             "method": "POST"
         }
         response = self.client.post(self.list_url, data, format='json')
-        
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         activity = UserActivity.objects.latest('timestamp')
         self.assertEqual(activity.user, self.user)
@@ -116,7 +119,7 @@ class UserActivityAPITest(APITestCase):
             format='json',
             HTTP_X_FORWARDED_FOR="10.0.0.1, 192.168.1.1"
         )
-        
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         activity = UserActivity.objects.latest('timestamp')
         self.assertEqual(activity.ip_address, "10.0.0.1")

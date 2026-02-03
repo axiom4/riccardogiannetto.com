@@ -36,3 +36,4 @@ class Gallery(models.Model):
         Meta options for the Gallery model.
         """
         verbose_name_plural = 'galleries'
+        ordering = ['-created_at']
