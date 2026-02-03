@@ -34,7 +34,7 @@ class PostModelTest(TestCase):
         # Mock optimizer to return the same file buffer or similar
         mock_optimize.side_effect = lambda img, width: img
 
-        image_content = b'\x00\x00\x00' # Dummy content
+        image_content = b'\x00\x00\x00'  # Dummy content
         uploaded = SimpleUploadedFile(
             'test.jpg', image_content, content_type='image/jpeg')
 
@@ -48,4 +48,5 @@ class PostModelTest(TestCase):
 
         self.assertEqual(post.title, 'My Post')
         self.assertEqual(post.categories.count(), 1)
-        self.assertTrue(post.image.name.endswith('.webp')) # The logic converts to webp
+        # The logic converts to webp
+        self.assertTrue(post.image.name.endswith('.webp'))

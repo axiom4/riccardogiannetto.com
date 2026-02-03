@@ -25,7 +25,7 @@ class BlogAPITest(APITestCase):
         url = '/blog/posts'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
+
         # Check pagination
         data = response.data.get('results', response.data)
         self.assertEqual(len(data), 1)
@@ -35,13 +35,13 @@ class BlogAPITest(APITestCase):
         url = '/blog/categories'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
+
         # Categories might not be paginated or paginated depending on viewset
         # Checking if 'results' key exists to handle both cases
         if 'results' in response.data:
             data = response.data['results']
         else:
             data = response.data
-        
+
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['name'], 'API Category')

@@ -58,7 +58,8 @@ class ImageGalleryModelTest(TestCase):
     @patch('PIL.Image.open')
     def test_image_save_metadata(self, mock_image_open, mock_get_gps):
         # Setup mocks
-        mock_get_gps.return_value = (41.9028, 12.4964, 50.0)  # Rome coordinates
+        mock_get_gps.return_value = (
+            41.9028, 12.4964, 50.0)  # Rome coordinates
 
         # Create a dummy image file
         img_file = self.create_dummy_image()
@@ -73,9 +74,10 @@ class ImageGalleryModelTest(TestCase):
         mock_img_instance.size = (800, 600)
         mock_img_instance.getexif.return_value = {
             # Standard EXIF tags (keys are integers)
-            271: 'TestCamera',      # Make (mapped to nothing in our code currently)
+            # Make (mapped to nothing in our code currently)
+            271: 'TestCamera',
             272: 'TestModel',       # Model -> camera_model
-            306: '2023:01:01 12:00:00', # DateTime
+            306: '2023:01:01 12:00:00',  # DateTime
             33434: 0.01,            # ExposureTime -> shutter_speed
             37386: 50.0,            # FocalLength
         }
