@@ -1,8 +1,17 @@
+"""
+Admin configuration for UserSession model.
+"""
+import json
 from django.contrib import admin
+from django.core.serializers.json import DjangoJSONEncoder
 from ..models import UserSession
+
 
 @admin.register(UserSession)
 class UserSessionAdmin(admin.ModelAdmin):
+    """
+    Admin interface for UserSession.
+    """
     list_display = ('ip_address', 'started_at', 'last_seen_at',
                     'duration', 'page_count', 'city', 'country', 'device_fingerprint')
     readonly_fields = ('started_at', 'last_seen_at',
@@ -12,13 +21,14 @@ class UserSessionAdmin(admin.ModelAdmin):
     list_filter = ('country', 'started_at')
 
     def duration(self, obj):
+        """Format duration as readable string."""
         total_seconds = int(obj.duration.total_seconds())
         hours = total_seconds // 3600
         minutes = (total_seconds % 3600) // 60
         seconds = total_seconds % 60
         if hours > 0:
             return f"{hours}h {minutes}m {seconds}s"
-        elif minutes > 0:
+        if minutes > 0:
             return f"{minutes}m {seconds}s"
         return f"{seconds}s"
     duration.short_description = 'Duration'
@@ -27,9 +37,7 @@ class UserSessionAdmin(admin.ModelAdmin):
     change_list_template = 'admin/analytics/usersession/change_list.html'
 
     def changelist_view(self, request, extra_context=None):
-        from django.core.serializers.json import DjangoJSONEncoder
-        import json
-
+        """Override changelist view to add map locations."""
         response = super().changelist_view(request, extra_context=extra_context)
 
         try:
@@ -38,8 +46,15 @@ class UserSessionAdmin(admin.ModelAdmin):
             return response
 
         # Aggregate geo data
-        sessions = qs.exclude(latitude__isnull=True).exclude(longitude__isnull=True).exclude(
-            latitude=0).exclude(longitude=0).values('latitude', 'longitude', 'city', 'country', 'ip_address')
+        sessions = qs.exclude(
+            latitude__isnull=True
+        ).exclude(
+            longitude__isnull=True
+        ).exclude(
+            latitude=0
+        ).exclude(
+            longitude=0
+        ).values('latitude', 'longitude', 'city', 'country', 'ip_address')
 
         response.context_data['map_locations'] = json.dumps(
             list(sessions), cls=DjangoJSONEncoder)
@@ -47,7 +62,9 @@ class UserSessionAdmin(admin.ModelAdmin):
         return response
 
     class Media:
+        """Media assets for map display."""
         css = {
             'all': ('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',)
         }
         js = ('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',)
+

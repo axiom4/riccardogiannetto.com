@@ -1,4 +1,7 @@
-from .PageViewSet import PageViewSet
-from .PostViewSet import PostViewSet
-from .UserViewSet import UserViewSet
-from .CategoryViewSet import CategoryViewSet
+"""
+Blog views.
+"""
+from .page_view_set import PageViewSet
+from .post_view_set import PostViewSet
+from .user_view_set import UserViewSet
+from .category_view_set import CategoryViewSet

@@ -1,18 +1,20 @@
-from django.conf import settings
+"""
+Post model.
+"""
 from django.db import models
 from django.contrib.auth.models import User
-from . import Category
-
-from django.core.files.uploadedfile import InMemoryUploadedFile
-
-import sys
-from django.utils.html import mark_safe
 
 from blog.classes import OverwriteStorage, image_directory_path
-from utils.image_optimizer import ImageOptimizer
+from utils.mixins import ImageOptimizationMixin
+from .category import Category
 
 
-class Post(models.Model):
+class Post(ImageOptimizationMixin, models.Model):
+    """
+    Blog Post model.
+    """
+    objects = models.Manager()
+
     title = models.CharField(max_length=50)
     body = models.TextField()
     summary = models.CharField(max_length=250, blank=True)
@@ -25,12 +27,14 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        """Meta options for Post."""
         ordering = ['-created_at']
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
     def save(self, *args, **kwargs):
+        """Save method to handle image optimization."""
         if self.pk is None and self.image:
             _img = self.image
             self.image = None
@@ -44,24 +48,3 @@ class Post(models.Model):
             if self.image:
                 self.image_save()
             super().save(*args, **kwargs)
-
-    def image_save(self, width=900):
-        if not self.image:
-            return
-
-        output = ImageOptimizer.compress_and_resize(self.image, width=width)
-
-        if output:
-            self.image = InMemoryUploadedFile(
-                output,
-                'ImageField',
-                f"{self.image.name.split('.')[0]}.webp",
-                'image/webp',
-                sys.getsizeof(output),
-                None
-            )
-
-    def image_tag(self):
-        return mark_safe(f'<img src="/{settings.MEDIA_ROOT}/{self.image}" width="150" />') if self.image else ''
-
-    image_tag.short_description = 'Image Preview'

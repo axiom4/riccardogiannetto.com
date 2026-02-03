@@ -1,3 +1,6 @@
+"""
+Management command to download GeoIP database.
+"""
 import os
 import requests
 from django.core.management.base import BaseCommand
@@ -5,12 +8,13 @@ from django.conf import settings
 
 
 class Command(BaseCommand):
+    """Command to download GeoLite2-City database."""
     help = 'Downloads a free GeoIP database (GeoLite2-City.mmdb) and configures it.'
 
     def handle(self, *args, **options):
         # Database URL (using a reliable mirror or direct link to a free simplified DB)
         # Using the same source that worked previously: P3TERX/GeoLite.mmdb mirror
-        DB_URL = "https://raw.githubusercontent.com/P3TERX/GeoLite.mmdb/download/GeoLite2-City.mmdb"
+        db_url = "https://raw.githubusercontent.com/P3TERX/GeoLite.mmdb/download/GeoLite2-City.mmdb"
 
         # Determine destination path
         if hasattr(settings, 'GEOIP_PATH'):
@@ -28,7 +32,7 @@ class Command(BaseCommand):
         # Ensure directory exists
         if not os.path.exists(dest_dir):
             os.makedirs(dest_dir)
-            self.stdout.write(self.style.SUCCESS(
+            self.stdout.write(getattr(self.style, 'SUCCESS')(
                 f"Created directory: {dest_dir}"))
 
         self.stdout.write(
@@ -36,15 +40,19 @@ class Command(BaseCommand):
 
         try:
             # Stream download to handle large file size
-            with requests.get(DB_URL, stream=True) as r:
-                r.raise_for_status()
-                with open(dest_path, 'wb') as f:
-                    for chunk in r.iter_content(chunk_size=8192):
-                        f.write(chunk)
+            with requests.get(db_url, stream=True, timeout=120) as req:
+                req.raise_for_status()
+                with open(dest_path, 'wb') as file_obj:
+                    for chunk in req.iter_content(chunk_size=8192):
+                        file_obj.write(chunk)
 
-            self.stdout.write(self.style.SUCCESS(
+            self.stdout.write(getattr(self.style, 'SUCCESS')(
                 f"Successfully downloaded GeoIP database to {dest_path}"))
 
-        except Exception as e:
-            self.stderr.write(self.style.ERROR(
-                f"Failed to download database: {e}"))
+        except requests.RequestException as exc:
+            self.stderr.write(getattr(self.style, 'ERROR')(
+                f"Failed to download database: {exc}"))
+        except OSError as exc:
+            self.stderr.write(getattr(self.style, 'ERROR')(
+                f"File system error: {exc}"))
+

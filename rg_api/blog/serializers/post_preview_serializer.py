@@ -1,9 +1,15 @@
+"""
+Post preview serializer.
+"""
 from rest_framework import serializers
 from blog.models import Post
-from blog.serializers import UserSerializer
+from .user_serializer import UserSerializer
 
 
 class PostPreviewSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    Serializer for the Post model (preview).
+    """
     url = serializers.HyperlinkedIdentityField(
         read_only=True, view_name='post-detail')
 
@@ -12,6 +18,9 @@ class PostPreviewSerializer(serializers.HyperlinkedModelSerializer):
         many=True, read_only=True, slug_field='name')
 
     class Meta:
+        """
+        Meta options.
+        """
         fields = (
             "id",
             "url",

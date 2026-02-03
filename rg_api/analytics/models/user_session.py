@@ -1,7 +1,17 @@
+"""
+User session tracking models.
+"""
 from django.db import models
 from django.conf import settings
+from .base import GeoLocationMixin
 
-class UserSession(models.Model):
+
+class UserSession(GeoLocationMixin, models.Model):
+    """
+    Model for tracking user sessions and device info.
+    """
+    objects = models.Manager()
+
     session_key = models.CharField(max_length=40, unique=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -9,13 +19,6 @@ class UserSession(models.Model):
         null=True,
         blank=True
     )
-    ip_address = models.GenericIPAddressField(
-        null=True, blank=True, db_index=True)
-    city = models.CharField(max_length=100, blank=True, null=True)
-    country = models.CharField(max_length=100, blank=True, null=True)
-    latitude = models.FloatField(blank=True, null=True)
-    longitude = models.FloatField(blank=True, null=True)
-    user_agent = models.TextField(blank=True, null=True)
 
     # Advanced Tracking
     tracking_id = models.CharField(
@@ -38,13 +41,17 @@ class UserSession(models.Model):
     page_count = models.PositiveIntegerField(default=1)
 
     class Meta:
+        """Meta options for UserSession."""
         verbose_name = 'User Session'
         verbose_name_plural = 'User Sessions'
         ordering = ['-last_seen_at']
 
     def __str__(self):
+        """String representation of the session."""
         return f"{self.ip_address} ({self.session_key}) - Pages: {self.page_count}"
 
     @property
     def duration(self):
+        """Calculates the duration of the session."""
         return self.last_seen_at - self.started_at
+

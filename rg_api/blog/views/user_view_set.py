@@ -1,10 +1,12 @@
-from rest_framework import viewsets
+"""
+User view set.
+"""
 from django.contrib.auth.models import User
-from rest_framework import permissions
+from rest_framework import viewsets, permissions
 from blog.serializers import UserSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ModelViewSet): # pylint: disable=too-many-ancestors
     """
     API endpoint that allows users to be viewed or edited.
     """

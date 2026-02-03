@@ -1,3 +1,6 @@
+"""
+Page admin.
+"""
 from django.contrib import admin
 from django import forms
 from django.db import models
@@ -6,15 +9,27 @@ from ..models import Page
 
 
 class PageModelForm(forms.ModelForm):
+    """
+    Page model form.
+    """
     title = forms.CharField()
-    title.widget.attrs.update({'style': 'width: 600px'})
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['title'].widget.attrs.update({'style': 'width: 600px'})
 
     class Meta:
+        """
+        Meta options.
+        """
         model = Page
         fields = ['title', 'author', 'tag', 'body']
 
 
 class PageAdmin(admin.ModelAdmin):
+    """
+    Page admin.
+    """
     fields = [
         ('title'),
         ('author', 'tag'),
@@ -29,7 +44,7 @@ class PageAdmin(admin.ModelAdmin):
 
     form = PageModelForm
 
-    def get_form(self, request, obj=None, **kwargs):
-        form = super(PageAdmin, self).get_form(request, obj, **kwargs)
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super().get_form(request, obj, change, **kwargs)
         form.base_fields['author'].initial = request.user
         return form

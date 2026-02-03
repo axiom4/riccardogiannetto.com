@@ -1,24 +1,27 @@
-from rest_framework import viewsets
-from blog.models import Post
-from rest_framework import permissions
-from blog.serializers import PostSerializer, PostPreviewSerializer
-from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.pagination import PageNumberPagination
-from django_filters.rest_framework import DjangoFilterBackend
+"""
+Post view set.
+"""
+import logging
+import os
+from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-
-import os
-import logging
-from django.conf import settings
-from rest_framework import renderers
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, permissions, renderers
 from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.pagination import PageNumberPagination
+from blog.models import Post
+from blog.serializers import PostSerializer, PostPreviewSerializer
 from utils.image_optimizer import ImageOptimizer
 
 logger = logging.getLogger(__name__)
 
 
 class PostImageRenderer(renderers.BaseRenderer):
+    """
+    Renderer for post images in WebP format.
+    """
     media_type = 'image/webp'
     format = 'webp'
     charset = None
@@ -38,7 +41,7 @@ class PostImageRenderer(renderers.BaseRenderer):
         try:
             this_object = Post.objects.get(
                 pk=renderer_context['kwargs']['pk'])
-        except Post.DoesNotExist:
+        except Post.DoesNotExist: # pylint: disable=no-member
             return b""
 
         if not this_object.image:
@@ -57,8 +60,8 @@ class PostImageRenderer(renderers.BaseRenderer):
                     output_path=filename,
                     width=width
                 )
-            except Exception as e:
-                logger.error(f"Error generating preview: {e}")
+            except Exception as e: # pylint: disable=broad-exception-caught
+                logger.error("Error generating preview: %s", e)
                 return b""
 
         if os.path.exists(filename):
@@ -68,6 +71,9 @@ class PostImageRenderer(renderers.BaseRenderer):
 
 
 class PostPagination(PageNumberPagination):
+    """
+    Pagination for posts.
+    """
     page_size = 5
     page_size_query_param = 'page_size'
     max_page_size = 12
@@ -76,6 +82,9 @@ class PostPagination(PageNumberPagination):
 @method_decorator(cache_page(60 * 60 * 2), name='list')
 @method_decorator(cache_page(60 * 60 * 24), name='retrieve')
 class PostViewSet(viewsets.ModelViewSet):
+    """
+    View set for posts.
+    """
     queryset = Post.objects.select_related(
         'author').prefetch_related('categories').all()
     serializer_class = PostSerializer
@@ -96,11 +105,19 @@ class PostViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'list':
             return PostPreviewSerializer
-        else:
-            return self.serializer_class
+        return self.serializer_class
 
     @method_decorator(cache_page(60 * 60 * 24 * 365))
-    @action(methods=['get'], detail=True, url_path='width/(?P<width>[0-9]+)', url_name='size', renderer_classes=[PostImageRenderer])
+    @action(
+        methods=['get'],
+        detail=True,
+        url_path='width/(?P<width>[0-9]+)',
+        url_name='size',
+        renderer_classes=[PostImageRenderer]
+    )
     def image(self, request, *args, **kwargs):
+        """
+        Serve the image in multiple sizes.
+        """
         data = self.retrieve(request, *args, **kwargs)
         return data

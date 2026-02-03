@@ -1,7 +1,7 @@
 """Management command to update the GeoLite2-City.mmdb file from a free alternative source."""
-import os
 import shutil
 import urllib.request
+import urllib.error
 from pathlib import Path
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -32,9 +32,9 @@ class Command(BaseCommand):
         if not geoip_path.exists():
             try:
                 geoip_path.mkdir(parents=True, exist_ok=True)
-            except OSError as e:
-                self.stdout.write(self.style.ERROR(
-                    f'Failed to create directory {geoip_path}: {e}'))
+            except OSError as exc:
+                self.stdout.write(getattr(self.style, 'ERROR')(
+                    f'Failed to create directory {geoip_path}: {exc}'))
                 return
 
         target_file = geoip_path / 'GeoLite2-City.mmdb'
@@ -54,15 +54,17 @@ class Command(BaseCommand):
                 # If download successful, move/rename to target
                 shutil.move(temp_file, target_file)
 
-                self.stdout.write(self.style.SUCCESS(
+                self.stdout.write(getattr(self.style, 'SUCCESS')(
                     f'Successfully updated {target_file}'))
 
-            except urllib.error.URLError as e:
-                self.stdout.write(self.style.ERROR(
-                    f'Failed to download file: {e}'))
-                if temp_file.exists():
-                    os.remove(temp_file)
-                return
+            except urllib.error.URLError as exc:
+                self.stdout.write(getattr(self.style, 'ERROR')(
+                    f'Download failed: {exc}'))
+            except OSError as exc:
+                self.stdout.write(getattr(self.style, 'ERROR')(
+                    f'File operation failed: {exc}'))
 
-        except OSError as e:
-            self.stdout.write(self.style.ERROR(f'An error occurred: {e}'))
+        except Exception as exc:
+            # Fallback catch-all for unexpected errors
+            self.stdout.write(getattr(self.style, 'ERROR')(
+                f'An unexpected error occurred: {exc}'))
