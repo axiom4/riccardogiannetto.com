@@ -3,35 +3,9 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
-from .models import UserSession, UserActivity
+from ..models import UserActivity
 
 User = get_user_model()
-
-
-class UserSessionModelTest(TestCase):
-    def setUp(self):
-        self.session = UserSession.objects.create(
-            session_key="test_session_key_123",
-            ip_address="127.0.0.1",
-            user_agent="TestAgent/1.0"
-        )
-
-    def test_session_creation(self):
-        """Test that a UserSession instance is correctly created."""
-        self.assertEqual(self.session.session_key, "test_session_key_123")
-        self.assertEqual(self.session.ip_address, "127.0.0.1")
-        self.assertEqual(self.session.page_count, 1)
-
-    def test_session_str(self):
-        """Test the string representation of UserSession."""
-        expected_str = f"{self.session.ip_address} ({self.session.session_key}) - Pages: {self.session.page_count}"
-        self.assertEqual(str(self.session), expected_str)
-
-    def test_session_duration(self):
-        """Test that duration property returns a timedelta."""
-        # Since started_at and last_seen_at are auto fields, they might be virtually identical
-        # just checking type or that it doesn't crash
-        self.assertIsNotNone(self.session.duration)
 
 
 class UserActivityModelTest(TestCase):
@@ -54,7 +28,6 @@ class UserActivityModelTest(TestCase):
 
     def test_activity_str(self):
         """Test the string representation of UserActivity."""
-        # Check that str contains user and action
         self.assertIn("testuser", str(self.activity))
         self.assertIn("PAGE_VIEW", str(self.activity))
 
@@ -73,7 +46,6 @@ class UserActivityAPITest(APITestCase):
             "method": "POST",
             "payload": {"button": "submit"}
         }
-        # Simulate generic IP and User Agent
         client = APIClient(enforce_csrf_checks=False)
         response = client.post(
             self.list_url,
@@ -112,7 +84,6 @@ class UserActivityAPITest(APITestCase):
             "path": "/",
             "method": "GET"
         }
-        # X-Forwarded-For: client, proxy1, proxy2
         response = self.client.post(
             self.list_url,
             data,
