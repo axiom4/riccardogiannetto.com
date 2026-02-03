@@ -1,5 +1,8 @@
 """
-Tests for UserSession model.
+Test cases for the UserSession model.
+
+This module contains comprehensive tests for the UserSession model,
+including instance creation, string representation, and duration calculation.
 """
 from django.test import TestCase
 from ..models import UserSession
@@ -7,11 +10,14 @@ from ..models import UserSession
 
 class UserSessionModelTest(TestCase):
     """
-    Test suite for UserSession model.
+    Test suite for the UserSession model.
+
+    This test class verifies the core functionality of the UserSession model,
+    including instance creation, string representation, and duration calculation.
     """
 
     def setUp(self):
-        """Set up test environment."""
+        """Set up test environment with a sample UserSession instance."""
         self.session = UserSession.objects.create(
             session_key="test_session_key_123",
             ip_address="127.0.0.1",
@@ -34,4 +40,6 @@ class UserSessionModelTest(TestCase):
 
     def test_session_duration(self):
         """Test that duration property returns a timedelta."""
+        # Since started_at and last_seen_at are auto fields,
+        # they might be virtually identical - just checking type or that it doesn't crash
         self.assertIsNotNone(self.session.duration)

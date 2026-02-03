@@ -1,6 +1,4 @@
-"""
-Post model.
-"""
+""" Blog Post model definition. """
 from django.conf import settings
 from django.db import models
 

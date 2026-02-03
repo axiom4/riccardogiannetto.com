@@ -1,5 +1,9 @@
 """
-Tests for UserActivity model and API.
+Test cases for the UserActivity model and API endpoints.
+
+This module provides comprehensive testing for the UserActivity model
+and its associated REST API endpoints, including authentication scenarios
+and IP address handling.
 """
 from django.test import TestCase
 from django.contrib.auth import get_user_model
@@ -13,11 +17,16 @@ User = get_user_model()
 
 class UserActivityModelTest(TestCase):
     """
-    Test suite for UserActivity model.
+    Test suite for the UserActivity model.
+
+    This test case verifies the functionality of the UserActivity model, including:
+    - Correct creation of user activity records
+    - Proper storage of activity attributes (action, path, method, IP address)
+    - String representation of UserActivity instances
     """
 
     def setUp(self):
-        """Set up test environment."""
+        """Set up test environment with a user and activity instance."""
         self.user = User.objects.create_user(
             username='testuser', password='password')
         self.activity = UserActivity.objects.create(
@@ -36,17 +45,24 @@ class UserActivityModelTest(TestCase):
 
     def test_activity_str(self):
         """Test the string representation of UserActivity."""
+        # Check that str contains user and action
         self.assertIn("testuser", str(self.activity))
         self.assertIn("PAGE_VIEW", str(self.activity))
 
 
 class UserActivityAPITest(APITestCase):
     """
-    Test suite for UserActivity API.
+    Test suite for the UserActivity API endpoints.
+
+    This test class validates the behavior of the UserActivity API, including:
+    - Creating activity records for anonymous users
+    - Creating activity records for authenticated users
+    - Handling IP address extraction from X-Forwarded-For headers
+    - Capturing user agent and request metadata
     """
 
     def setUp(self):
-        """Set up test environment."""
+        """Set up test environment with API URL and test user."""
         self.list_url = reverse('useractivity-list')
         self.user = User.objects.create_user(
             username='apiuser', password='password')
