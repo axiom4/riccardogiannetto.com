@@ -67,4 +67,3 @@ class UserSessionAdmin(admin.ModelAdmin):
             'all': ('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',)
         }
         js = ('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',)
-

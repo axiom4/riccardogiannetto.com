@@ -41,7 +41,7 @@ class PostImageRenderer(renderers.BaseRenderer):
         try:
             this_object = Post.objects.get(
                 pk=renderer_context['kwargs']['pk'])
-        except Post.DoesNotExist: # pylint: disable=no-member
+        except Post.DoesNotExist:  # pylint: disable=no-member
             return b""
 
         if not this_object.image:
@@ -60,7 +60,7 @@ class PostImageRenderer(renderers.BaseRenderer):
                     output_path=filename,
                     width=width
                 )
-            except Exception as e: # pylint: disable=broad-exception-caught
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 logger.error("Error generating preview: %s", e)
                 return b""
 

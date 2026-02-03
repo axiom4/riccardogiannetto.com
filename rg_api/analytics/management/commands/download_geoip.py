@@ -55,4 +55,3 @@ class Command(BaseCommand):
         except OSError as exc:
             self.stderr.write(getattr(self.style, 'ERROR')(
                 f"File system error: {exc}"))
-

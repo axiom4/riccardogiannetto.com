@@ -11,4 +11,3 @@ router.register(r'activities', UserActivityViewSet)
 urlpatterns = [
     path('', include(router.urls)),
 ]
-

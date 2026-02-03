@@ -46,4 +46,3 @@ class UserActivity(GeoLocationMixin, models.Model):
     def short_description(self):
         """Returns a short description of the activity."""
         return f"{self.action} at {self.path}"
-

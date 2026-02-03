@@ -52,4 +52,3 @@ class UserActivityAdmin(admin.ModelAdmin):
             return format_html('<a href="{}">{}</a>', url, obj.session)
         return "-"
     session_link.short_description = 'Session'
-

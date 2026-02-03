@@ -20,7 +20,8 @@ class PostModelForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'style': 'width: 600px'})
-        self.fields['summary'].widget.attrs.update({'style': 'width: 600px; resize: none'})
+        self.fields['summary'].widget.attrs.update(
+            {'style': 'width: 600px; resize: none'})
 
     class Meta:
         """

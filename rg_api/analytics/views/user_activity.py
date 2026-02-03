@@ -32,4 +32,3 @@ class UserActivityViewSet(mixins.CreateModelMixin,
             user=user,
             user_agent=self.request.META.get('HTTP_USER_AGENT', '')
         )
-

@@ -54,4 +54,3 @@ class UserSession(GeoLocationMixin, models.Model):
     def duration(self):
         """Calculates the duration of the session."""
         return self.last_seen_at - self.started_at
-

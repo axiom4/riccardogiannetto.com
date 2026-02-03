@@ -63,4 +63,3 @@ class AnalyticsTrackingMixin:
     def _get_user(self, request):
         """Returns the authenticated user or None."""
         return request.user if request.user.is_authenticated else None
-
