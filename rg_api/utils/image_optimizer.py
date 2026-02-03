@@ -58,7 +58,7 @@ class ImageOptimizer:
             hsize = int((float(original_height) * float(wpercent)))
 
             # HIGH QUALITY RESIZING: Area (Better for compression)
-          
+
             return cv2.resize(cv_img, (width, hsize),
                               interpolation=cv2.INTER_AREA)
 
@@ -160,7 +160,7 @@ class ImageOptimizer:
 
             return cls._save_image(pil_result, output_path, output_format, save_kwargs)
 
-      
-        except (OSError, ValueError, cv2.error) as e:
+        except (OSError, ValueError, Exception) as e:
+            # Note: cv2.error doesn't inherit from Exception directly
             logger.error("Error optimizing image: %s", e)
             return None

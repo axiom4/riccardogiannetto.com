@@ -1,35 +1,15 @@
 """"" Views for Gallery model. """
-from rest_framework import viewsets
-from rest_framework import permissions
+from rest_framework import viewsets, permissions
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
 
+from utils.pagination import StandardPagination
+from utils.viewset_decorators import cached_viewset
 from gallery.models import Gallery
 from gallery.serializers import GallerySerializer
 
 
-class GalleryPagination(PageNumberPagination):
-    """
-    Custom pagination class for Gallery views.
-
-    Inherits from PageNumberPagination to provide page-based pagination.
-
-    Attributes:
-        page_size (int): The default number of items to include on a page (5).
-        page_size_query_param (str): The name of the query parameter to allow clients
-                                     to set the page size ('page_size').
-        max_page_size (int): The maximum number of items allowed per page (12).
-    """
-    page_size = 5
-    page_size_query_param = 'page_size'
-    max_page_size = 12
-
-
-@method_decorator(cache_page(60 * 60 * 2), name='list')
-@method_decorator(cache_page(60 * 60 * 24), name='retrieve')
+@cached_viewset()
 class GalleryViewSet(viewsets.ModelViewSet):
     """
     A ViewSet for viewing Gallery instances.
@@ -58,7 +38,7 @@ class GalleryViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     http_method_names = ['get']
-    pagination_class = GalleryPagination
+    pagination_class = StandardPagination
 
     ordering_fields = '__all__'
 

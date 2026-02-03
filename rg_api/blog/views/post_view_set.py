@@ -7,47 +7,32 @@ from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, permissions, renderers
+from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.pagination import PageNumberPagination
+
 from blog.models import Post
 from blog.serializers import PostSerializer, PostPreviewSerializer
 from utils.image_optimizer import ImageOptimizer
+from utils.pagination import StandardPagination
+from utils.renderers import WebPImageRenderer
+from utils.viewset_decorators import cached_viewset
 
 logger = logging.getLogger(__name__)
 
 
-class PostImageRenderer(renderers.BaseRenderer):
+class PostImageRenderer(WebPImageRenderer):
     """
     Renderer for post images in WebP format.
     """
-    media_type = 'image/webp'
-    format = 'webp'
-    charset = None
-    render_style = 'binary'
 
-    def render(self, data, accepted_media_type=None, renderer_context=None):
+    def _render_image(self, renderer_context, width):
         """Render post image as WebP."""
-        if renderer_context['response'].status_code != 200:
-            return b""
-
-        width = self._get_width(renderer_context)
-        if width <= 0:
-            return b""
-
         post = self._get_post(renderer_context)
         if not post or not post.image:
             return b""
 
         return self._get_or_create_preview(post, width)
-
-    def _get_width(self, renderer_context):
-        """Extract and validate width from renderer context."""
-        try:
-            return int(renderer_context['kwargs'].get('width', 0))
-        except (ValueError, TypeError):
-            return 0
 
     def _get_post(self, renderer_context):
         """Retrieve post from renderer context."""
@@ -81,17 +66,7 @@ class PostImageRenderer(renderers.BaseRenderer):
         return b""
 
 
-class PostPagination(PageNumberPagination):
-    """
-    Pagination for posts.
-    """
-    page_size = 5
-    page_size_query_param = 'page_size'
-    max_page_size = 12
-
-
-@method_decorator(cache_page(60 * 60 * 2), name='list')
-@method_decorator(cache_page(60 * 60 * 24), name='retrieve')
+@cached_viewset()
 class PostViewSet(viewsets.ModelViewSet):
     """
     View set for posts.
@@ -102,7 +77,7 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     http_method_names = ['get']
-    pagination_class = PostPagination
+    pagination_class = StandardPagination
 
     ordering_fields = '__all__'
 

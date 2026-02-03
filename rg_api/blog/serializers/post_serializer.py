@@ -4,6 +4,7 @@ Post serializer.
 from rest_framework import serializers
 from blog.models import Post
 from .user_serializer import UserSerializer
+from .fields import POST_BASE_FIELDS
 
 
 class PostSerializer(serializers.HyperlinkedModelSerializer):
@@ -20,16 +21,5 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
         """
         Meta options.
         """
-        fields = (
-            "id",
-            "url",
-            "author",
-            "title",
-            "body",
-            "created_at",
-            'image',
-            'categories',
-            'summary'
-        )
-
+        fields = POST_BASE_FIELDS + ("body",)
         model = Post

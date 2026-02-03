@@ -3,72 +3,51 @@ import os
 import logging
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-
-from rest_framework import viewsets
-from rest_framework import permissions
-from rest_framework import renderers
-
+from rest_framework import viewsets, permissions, renderers
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import action
-
 from django_filters.rest_framework import DjangoFilterBackend
 
 from gallery.models import ImageGallery
 from gallery.serializers import ImageGallerySerializer
-
-
+from utils.renderers import WebPImageRenderer
+from utils.pagination import StandardPagination
+from utils.viewset_decorators import cached_viewset
 from utils.image_optimizer import ImageOptimizer
 
 logger = logging.getLogger(__name__)
 
 
-class ImageGalleryPagination(PageNumberPagination):
+class ImageGalleryPagination(StandardPagination):
     """
-    Custom pagination class for Image Gallery.
+    Pagination configuration for Image Gallery with smaller page size.
 
-    This pagination configuration sets a default page size of 4 items, allows the client
-    to override the page size via the 'page_size' query parameter, and caps the maximum
-    page size at 100.
+    Overrides StandardPagination to use 4 items per page instead of 5,
+    and allows a higher max_page_size of 100.
     """
     page_size = 4
-    page_size_query_param = 'page_size'
     max_page_size = 100
 
 
-class ImageRenderer(renderers.BaseRenderer):
+class ImageRenderer(WebPImageRenderer):
     """
     Custom DRF renderer for serving resized and optimized WebP images.
 
     This renderer handles the dynamic generation, caching, and serving of image
-    previews based on the requested width. It extends BaseRenderer to serve
-    binary image data directly rather than JSON or HTML.
+    previews based on the requested width.
     """
-    media_type = 'image/webp'
-    format = 'webp'
-    charset = None
-    render_style = 'binary'
 
-    def render(self, data, accepted_media_type=None, renderer_context=None):
+    def _render_image(self, renderer_context, width):
         """
         Renders the resized image based on the provided width.
 
         Args:
-            data: The data to render (unused for image rendering).
-            accepted_media_type: The accepted media type.
             renderer_context: Context containing request details and kwargs.
+            width: The width for the rendered image.
         """
-        if renderer_context['response'].status_code != 200:
-            return b""
-
         try:
-            width = int(renderer_context['kwargs'].get('width', 0))
-            if width <= 0:
-                raise ValueError("Invalid width")
-
             this_object = ImageGallery.objects.get(
                 pk=renderer_context['kwargs']['pk'])
 
@@ -90,7 +69,7 @@ class ImageRenderer(renderers.BaseRenderer):
                 with open(filename, "rb") as f:
                     return f.read()
 
-        except (ValueError, TypeError, KeyError, ObjectDoesNotExist):
+        except (KeyError, ObjectDoesNotExist):
             pass
         except OSError as e:
             logger.error("Error generating preview: %s", e)
@@ -98,6 +77,7 @@ class ImageRenderer(renderers.BaseRenderer):
         return b""
 
 
+@cached_viewset(list_timeout=60 * 60 * 24, retrieve_timeout=60 * 60 * 24)
 class ImageGalleryViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing image galleries.

@@ -1,14 +1,14 @@
 """ ImageGallery model for storing images and their metadata in galleries. """
 import logging
 from datetime import datetime
+from PIL import Image, ExifTags
+from taggit.managers import TaggableManager
 from django.conf import settings
 from django.db import models
 from django.utils.html import mark_safe
 
 from gallery.models import Gallery
 from gallery.exif_utils import get_gps_data
-from PIL import Image, ExifTags
-from taggit.managers import TaggableManager
 
 logger = logging.getLogger(__name__)
 
