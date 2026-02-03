@@ -1,0 +1,16 @@
+[MASTER]
+ignore=migrations,ml.py
+
+[MESSAGES CONTROL]
+# E1101: Instance/class has no member (Django ORM false positives)
+# R0801: Similar lines in different files (acceptable code patterns)
+# R0903: Too few public methods (Django Meta classes, mixins, etc.)
+# R0901: Too many ancestors (Django REST Framework ViewSets)
+# W0212: Protected member access (Django _meta is part of public API)
+# W0718: Broad exception (necessary for robust error handling)
+# C0415: Import outside toplevel (Django pattern in manage.py)
+disable=E1101,R0801,R0903,R0901,W0212,W0718,C0415
+
+[DESIGN]
+# Allow slightly more branches in complex methods
+max-branches=15
