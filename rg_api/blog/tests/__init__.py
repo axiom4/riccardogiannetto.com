@@ -1,1 +1,3 @@
-
+"""
+Tests for blog app.
+"""

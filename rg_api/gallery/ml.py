@@ -1,4 +1,5 @@
-""" Machine learning utilities for image classification using BLIP-2. """
+# pylint: skip-file
+""" Machine learning utilities for image classification using BLIP-2."""
 import logging
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
 import torch

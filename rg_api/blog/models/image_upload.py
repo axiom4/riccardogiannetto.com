@@ -2,7 +2,7 @@
 Image Upload model.
 """
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 from blog.classes import OverwriteStorage, directory_path
 from utils.mixins import ImageOptimizationMixin
@@ -23,7 +23,7 @@ class ImageUpload(ImageOptimizationMixin, models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
 
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE)
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

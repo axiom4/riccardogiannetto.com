@@ -18,7 +18,7 @@ from utils.image_optimizer import ImageOptimizer
 logger = logging.getLogger(__name__)
 
 
-class PostImageRenderer(renderers.BaseRenderer):
+class PostImageRenderer(renderers.BaseRenderer):  # pylint: disable=too-few-public-methods
     """
     Renderer for post images in WebP format.
     """
@@ -27,36 +27,43 @@ class PostImageRenderer(renderers.BaseRenderer):
     charset = None
     render_style = 'binary'
 
-    def render(self, data, media_type=None, renderer_context=None):
+    def render(self, data, accepted_media_type=None, renderer_context=None):  # pylint: disable=unused-argument
         if renderer_context['response'].status_code != 200:
             return b""
 
+        width = self._get_width(renderer_context)
+        if width <= 0:
+            return b""
+
+        post = self._get_post(renderer_context)
+        if not post or not post.image:
+            return b""
+
+        return self._get_or_create_preview(post, width)
+
+    def _get_width(self, renderer_context):
         try:
-            width = int(renderer_context['kwargs'].get('width', 0))
-            if width <= 0:
-                return b""
+            return int(renderer_context['kwargs'].get('width', 0))
         except (ValueError, TypeError):
-            return b""
+            return 0
 
+    def _get_post(self, renderer_context):
         try:
-            this_object = Post.objects.get(
-                pk=renderer_context['kwargs']['pk'])
+            return Post.objects.get(pk=renderer_context['kwargs']['pk'])
         except Post.DoesNotExist:  # pylint: disable=no-member
-            return b""
+            return None
 
-        if not this_object.image:
-            return b""
-
+    def _get_or_create_preview(self, post, width):
         # Ensure directory exists
         preview_dir = os.path.join(settings.MEDIA_ROOT, "blog", "preview")
         os.makedirs(preview_dir, exist_ok=True)
 
-        filename = os.path.join(preview_dir, f"{this_object.pk}_{width}.webp")
+        filename = os.path.join(preview_dir, f"{post.pk}_{width}.webp")
 
         if not os.path.exists(filename):
             try:
                 ImageOptimizer.compress_and_resize(
-                    this_object.image.path,
+                    post.image.path,
                     output_path=filename,
                     width=width
                 )
@@ -81,7 +88,7 @@ class PostPagination(PageNumberPagination):
 
 @method_decorator(cache_page(60 * 60 * 2), name='list')
 @method_decorator(cache_page(60 * 60 * 24), name='retrieve')
-class PostViewSet(viewsets.ModelViewSet):
+class PostViewSet(viewsets.ModelViewSet):  # pylint: disable=too-many-ancestors
     """
     View set for posts.
     """

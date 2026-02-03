@@ -129,7 +129,7 @@ class ImageGallery(models.Model):
 
         super().save(*args, **kwargs)
 
-    def extract_exif_data(self, exif_data):
+    def extract_exif_data(self, exif_data):  # pylint: disable=too-many-branches
         """
         Extract EXIF metadata from image data and populate instance attributes.
 

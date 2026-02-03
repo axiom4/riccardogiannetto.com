@@ -1,10 +1,16 @@
+"""
+Management command to auto-tag images using ML.
+"""
+import os
 from django.core.management.base import BaseCommand
 from gallery.models import ImageGallery
 from gallery.ml import classify_image
-import os
 
 
 class Command(BaseCommand):
+    """
+    Management command to auto-tag images using ML.
+    """
     help = 'Automatically tags images in the gallery using the configured ML model'
 
     def add_arguments(self, parser):
@@ -27,10 +33,6 @@ class Command(BaseCommand):
 
         # If not forcing, only take images with no tags
         if not force:
-            # taggit uses 'tags', so filtered by tags__isnull=True usually works
-            # but for TaggableManager it's slightly different depending on version.
-            # safe bet is to iterate or check annotations.
-            # TaggableManager usually allows 'tags__isnull=True' to find objects with no tags.
             queryset = queryset.filter(tags__isnull=True)
 
         total = queryset.count()
@@ -66,11 +68,11 @@ class Command(BaseCommand):
                         f"  + Added tags: {', '.join(tags)}"))
                 else:
                     self.stdout.write(self.style.WARNING(
-                        "  - No tags generated"))
+                        "  - No generated tags"))
 
                 processed_count += 1
 
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 self.stdout.write(self.style.ERROR(
                     f"Error processing ID {image_obj.id}: {e}"))
 

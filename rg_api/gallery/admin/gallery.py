@@ -1,3 +1,6 @@
+"""
+Gallery Admin Configuration.
+"""
 from django.contrib import admin
 from ..models import ImageGallery
 

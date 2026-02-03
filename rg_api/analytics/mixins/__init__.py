@@ -1,1 +1,3 @@
-from .analytics_tracking import AnalyticsTrackingMixin
+"""
+Analytics Mixins.
+"""

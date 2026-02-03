@@ -1,3 +1,6 @@
+"""
+Gallery Admin Module.
+"""
 from django.contrib import admin
 from ..models import Gallery, ImageGallery
 from .gallery import GalleryAdmin

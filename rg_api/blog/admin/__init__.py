@@ -1,3 +1,6 @@
+"""
+Admin configuration for blog app.
+"""
 from django.contrib import admin
 from ..models import Page, Post, Category, ImageUpload, Comment
 from .page import PageAdmin

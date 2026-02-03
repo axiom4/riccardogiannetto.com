@@ -1,8 +1,11 @@
+"""
+Tests for blog models.
+"""
 import tempfile
 from unittest.mock import patch
 
 from django.test import TestCase, override_settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from blog.models import Category, Post
@@ -12,10 +15,17 @@ from blog.models import Category, Post
     CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}
 )
 class CategoryModelTest(TestCase):
+    """
+    Test suite for Category model.
+    """
+
     def setUp(self):
         self.category = Category.objects.create(name='Test Category')
 
     def test_category_creation(self):
+        """
+        Test that string representation of category is correct.
+        """
         self.assertEqual(str(self.category), 'Test Category')
 
 
@@ -24,13 +34,21 @@ class CategoryModelTest(TestCase):
     CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}
 )
 class PostModelTest(TestCase):
+    """
+    Test suite for Post model.
+    """
+
     def setUp(self):
-        self.user = User.objects.create_user(
+        user_model = get_user_model()
+        self.user = user_model.objects.create_user(
             username='authortest', password='password')
         self.category = Category.objects.create(name='Tech')
 
     @patch('utils.image_optimizer.ImageOptimizer.compress_and_resize')
     def test_post_creation(self, mock_optimize):
+        """
+        Test creating a post with an image and verification of image saving.
+        """
         # Mock optimizer to return the same file buffer or similar
         mock_optimize.side_effect = lambda img, width: img
 

@@ -39,7 +39,7 @@ class ImageGalleryPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class ImageRenderer(renderers.BaseRenderer):
+class ImageRenderer(renderers.BaseRenderer):  # pylint: disable=too-few-public-methods
     """
     Custom DRF renderer for serving resized and optimized WebP images.
 
@@ -52,56 +52,49 @@ class ImageRenderer(renderers.BaseRenderer):
     charset = None
     render_style = 'binary'
 
-    def render(self, data, accepted_media_type=None, renderer_context=None):
+    def render(self, data, accepted_media_type=None, renderer_context=None):  # pylint: disable=unused-argument
+        """
+        Renders the resized image based on the provided width.
+        """
         if renderer_context['response'].status_code != 200:
             return b""
 
         try:
             width = int(renderer_context['kwargs'].get('width', 0))
             if width <= 0:
-                return b""
-        except (ValueError, TypeError, KeyError):
-            return b""
+                raise ValueError("Invalid width")
 
-        try:
             this_object = ImageGallery.objects.get(
                 pk=renderer_context['kwargs']['pk'])
-        except ObjectDoesNotExist:
-            return b""
 
-        # Ensure directory exists
-        preview_dir = os.path.join(settings.MEDIA_ROOT, "preview")
-        os.makedirs(preview_dir, exist_ok=True)
+            # Ensure directory exists
+            preview_dir = os.path.join(settings.MEDIA_ROOT, "preview")
+            os.makedirs(preview_dir, exist_ok=True)
 
-        filename = os.path.join(preview_dir, f"{this_object.pk}_{width}.webp")
+            filename = os.path.join(
+                preview_dir, f"{this_object.pk}_{width}.webp")
 
-        if not os.path.exists(filename):
-            try:
+            if not os.path.exists(filename):
                 ImageOptimizer.compress_and_resize(
                     this_object.image.path,
                     output_path=filename,
                     width=width
                 )
-            except (OSError, ValueError) as e:
-                logger.error("Error generating preview: %s", e)
-                return b""
 
-        if os.path.exists(filename):
-            with open(filename, "rb") as f:
-                return f.read()
+            if os.path.exists(filename):
+                with open(filename, "rb") as f:
+                    return f.read()
+
+        except (ValueError, TypeError, KeyError, ObjectDoesNotExist):
+            pass
+        except OSError as e:
+            logger.error("Error generating preview: %s", e)
+
         return b""
 
 
-class ImageGalleryViewSet(viewsets.ModelViewSet):
+class ImageGalleryViewSet(viewsets.ModelViewSet):  # pylint: disable=too-many-ancestors
     """
-    Docstring for ImageGalleryViewSet
-
-    :var Args: Description
-    :var request: Description
-    :vartype request: The
-    :var Returns: Description
-    :var Response: Description
-    :vartype Response: The
     A viewset for viewing image galleries.
 
     This viewset provides `list` and `retrieve` actions for ImageGallery objects.
@@ -109,20 +102,20 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
     It also includes a custom action to retrieve images in specific widths.
 
     Attributes:
-        queryset(QuerySet): The base queryset for the viewset, optimizing database access
+        queryset (QuerySet): The base queryset for the viewset, optimizing database access
             by using `select_related` for author and gallery, and `prefetch_related` for tags.
-        serializer_class(Serializer): The serializer class used for validating and
+        serializer_class (Serializer): The serializer class used for validating and
             deserializing input, and for serializing output.
-        permission_classes(list): The list of permission classes that determine access rights.
+        permission_classes (list): The list of permission classes that determine access rights.
             Defaults to allowing authenticated users to edit, and read-only access for others.
-        filter_backends(list): The backends used for filtering, 
+        filter_backends (list): The backends used for filtering,
             searching, and ordering the queryset.
-        http_method_names(list): The allowed HTTP methods(currently restricted to 'get').
-        pagination_class(Pagination): The pagination class used to paginate the results.
-        renderer_classes(list): The renderers used to render the response.
-        ordering_fields(list): The fields that can be used for ordering the results.
-        filterset_fields(list): The fields that can be used for precise filtering.
-        search_fields(list): The fields that can be searched using the search filter.
+        http_method_names (list): The allowed HTTP methods (currently restricted to 'get').
+        pagination_class (Pagination): The pagination class used to paginate the results.
+        renderer_classes (list): The renderers used to render the response.
+        ordering_fields (list): The fields that can be used for ordering the results.
+        filterset_fields (list): The fields that can be used for precise filtering.
+        search_fields (list): The fields that can be searched using the search filter.
     """
     queryset = ImageGallery.objects.select_related(
         'author', 'gallery').prefetch_related('tags').all()

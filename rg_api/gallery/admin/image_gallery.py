@@ -1,3 +1,6 @@
+"""
+ImageGallery Admin Configuration.
+"""
 import os
 from typing import Tuple, List
 

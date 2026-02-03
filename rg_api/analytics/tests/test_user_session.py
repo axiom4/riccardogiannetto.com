@@ -1,8 +1,15 @@
+"""
+Tests for UserSession model.
+"""
 from django.test import TestCase
 from ..models import UserSession
 
 
 class UserSessionModelTest(TestCase):
+    """
+    Test suite for UserSession model.
+    """
+
     def setUp(self):
         self.session = UserSession.objects.create(
             session_key="test_session_key_123",
@@ -18,7 +25,10 @@ class UserSessionModelTest(TestCase):
 
     def test_session_str(self):
         """Test the string representation of UserSession."""
-        expected_str = f"{self.session.ip_address} ({self.session.session_key}) - Pages: {self.session.page_count}"
+        expected_str = (
+            f"{self.session.ip_address} ({self.session.session_key}) "
+            f"- Pages: {self.session.page_count}"
+        )
         self.assertEqual(str(self.session), expected_str)
 
     def test_session_duration(self):

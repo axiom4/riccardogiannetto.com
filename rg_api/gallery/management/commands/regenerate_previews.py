@@ -1,4 +1,6 @@
-
+"""
+Management command to regenerate image previews.
+"""
 import glob
 import os
 from PIL import ImageCms
@@ -9,7 +11,10 @@ from utils.image_optimizer import ImageOptimizer
 
 
 class Command(BaseCommand):
-    help = 'Regenerate all image previews using OpenCV with Color Profile correction & manual Enhancement'
+    """
+    Management command to regenerate image previews.
+    """
+    help = 'Regenerate all image previews using custom ImageOptimizer'
 
     def add_arguments(self, parser):
         parser.add_argument('--clean', action='store_true',
@@ -19,8 +24,7 @@ class Command(BaseCommand):
         preview_dir = os.path.join(settings.MEDIA_ROOT, 'preview')
 
         # Ensure preview directory exists
-        if not os.path.exists(preview_dir):
-            os.makedirs(preview_dir)
+        os.makedirs(preview_dir, exist_ok=True)
 
         # Pre-load sRGB profile
         try:
@@ -76,9 +80,8 @@ class Command(BaseCommand):
                     self.stdout.write(
                         f'Processed {index + 1}/{total_images} images...')
 
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 self.stdout.write(self.style.ERROR(
-                    f'Error processing image ID {image_obj.pk}: {e}'))
+                    f'Error generating preview for {image_obj.pk}: {e}'))
 
-        self.stdout.write(self.style.SUCCESS(
-            'Successfully regenerated all previews.'))
+        self.stdout.write(self.style.SUCCESS('Regeneration complete.'))

@@ -17,6 +17,5 @@ class Comment(models.Model):
     ip = models.GenericIPAddressField(blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
-
     def __str__(self):
         return str(self.text)

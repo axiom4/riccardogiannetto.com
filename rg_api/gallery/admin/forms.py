@@ -1,3 +1,6 @@
+"""
+Gallery admin forms.
+"""
 from django import forms
 from django.contrib import admin
 from django.contrib.admin.widgets import AutocompleteSelectMultiple
@@ -16,27 +19,28 @@ class MultiFileInput(forms.FileInput):
 class MultipleFileField(forms.FileField):
     """Custom FileField for handling multiple file uploads."""
 
-    def to_python(self, data):
+    def to_python(self, data):  # pylint: disable=unused-argument
         return None
 
 
 class BulkUploadForm(forms.Form):
     """Form for bulk uploading images to a gallery."""
     images = MultipleFileField(
-        label='Images folder',
-        help_text='Select a folder from your computer.',
-        widget=MultiFileInput(
-            attrs={
-                'webkitdirectory': True,
-                'directory': True,
-                'multiple': True,
-            },
-        ),
+        label='Select Images',
+        widget=MultiFileInput(attrs={'multiple': True}),
+    )
+    gallery = forms.ModelChoiceField(
+        queryset=Gallery.objects.all(),
+        required=False,
+        empty_label="-- Select existing gallery --",
+    )
+    new_gallery_name = forms.CharField(
+        label='Or create new gallery',
         required=False,
     )
-    gallery = forms.ModelChoiceField(queryset=Gallery.objects.all())
-    author = forms.ModelChoiceField(
-        queryset=User.objects.all(),
+    auto_tag = forms.BooleanField(
+        label='Auto-generate tags with ML',
+        initial=True,
         required=False,
     )
 
@@ -47,7 +51,8 @@ class ImageGalleryForm(forms.ModelForm):
         queryset=Tag.objects.all(),
         required=False,
         widget=AutocompleteSelectMultiple(
-            ImageGallery._meta.get_field('tags'),
+            ImageGallery._meta.get_field(
+                'tags'),  # pylint: disable=protected-access
             admin.site,
         ),
     )

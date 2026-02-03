@@ -1,3 +1,6 @@
+"""
+Tests for UserActivity model and API.
+"""
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -9,6 +12,10 @@ User = get_user_model()
 
 
 class UserActivityModelTest(TestCase):
+    """
+    Test suite for UserActivity model.
+    """
+
     def setUp(self):
         self.user = User.objects.create_user(
             username='testuser', password='password')
@@ -33,6 +40,10 @@ class UserActivityModelTest(TestCase):
 
 
 class UserActivityAPITest(APITestCase):
+    """
+    Test suite for UserActivity API.
+    """
+
     def setUp(self):
         self.list_url = reverse('useractivity-list')
         self.user = User.objects.create_user(

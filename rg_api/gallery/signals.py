@@ -1,3 +1,6 @@
+"""
+Gallery signals.
+"""
 import os
 import glob
 import logging
@@ -15,13 +18,14 @@ def delete_image_on_delete(sender, instance, **kwargs):
     Deletes file from filesystem when corresponding `ImageGallery` object is deleted.
     Also deletes generated previews.
     """
+    # pylint: disable=unused-argument
     # 1. Delete the original image file
     if instance.image:
         try:
             # save=False is critical to prevent Django from trying to save the deleted model
             instance.image.delete(save=False)
-        except Exception as e:
-            logger.error(f"Error deleting file for {instance.title}: {e}")
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            logger.error("Error deleting file for %s: %s", instance.title, e)
 
     # 2. Delete generated previews
     try:
@@ -33,11 +37,11 @@ def delete_image_on_delete(sender, instance, **kwargs):
         ]
 
         for pattern in patterns:
-            for f in glob.glob(pattern):
+            for filepath in glob.glob(pattern):
                 try:
-                    os.remove(f)
+                    os.remove(filepath)
                 except OSError as e:
-                    logger.error(f"Error deleting preview {f}: {e}")
-
-    except Exception as e:
-        logger.error(f"Error cleaning up previews for {instance.title}: {e}")
+                    logger.error("Error deleting preview %s: %s", filepath, e)
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        logger.error("Error cleaning up previews for %s: %s",
+                     instance.title, e)

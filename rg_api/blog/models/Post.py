@@ -1,8 +1,8 @@
 """
 Post model.
 """
+from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
 
 from blog.classes import OverwriteStorage, image_directory_path
 from utils.mixins import ImageOptimizationMixin
@@ -22,7 +22,7 @@ class Post(ImageOptimizationMixin, models.Model):
         null=True, upload_to=image_directory_path, storage=OverwriteStorage())
     categories = models.ManyToManyField(Category)
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE)
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 

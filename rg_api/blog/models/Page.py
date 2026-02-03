@@ -1,8 +1,8 @@
 """
 Page model.
 """
+from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
 
 
 class Page(models.Model):
@@ -16,7 +16,7 @@ class Page(models.Model):
     tag = models.CharField(max_length=50, null=False, unique=True)
 
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE)
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, editable=True)
     updated_at = models.DateTimeField(auto_now=True)
 

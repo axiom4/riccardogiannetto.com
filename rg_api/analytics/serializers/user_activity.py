@@ -1,9 +1,16 @@
+"""
+Serializers for User Activity.
+"""
 from rest_framework import serializers
 from ..models import UserActivity
 
 
 class UserActivitySerializer(serializers.ModelSerializer):
+    """
+    Serializer for UserActivity model.
+    """
     class Meta:
+        """Meta configuration for UserActivitySerializer."""
         model = UserActivity
         fields = [
             'id', 'user', 'action', 'path',

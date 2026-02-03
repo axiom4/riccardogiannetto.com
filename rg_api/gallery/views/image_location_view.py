@@ -1,4 +1,4 @@
-""" Serializer for ImageGallery model. """
+""" ViewSet for ImageGallery location data. """
 from rest_framework import viewsets
 from rest_framework import permissions
 from gallery.models import ImageGallery
@@ -6,7 +6,7 @@ from gallery.models import ImageGallery
 from gallery.serializers import ImageLocationSerializer
 
 
-class ImageLocationViewSet(viewsets.ReadOnlyModelViewSet):
+class ImageLocationViewSet(viewsets.ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
     """
     ViewSet for retrieving image locations.
     """
