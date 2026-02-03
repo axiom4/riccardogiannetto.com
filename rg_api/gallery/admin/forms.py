@@ -52,7 +52,8 @@ class ImageGalleryForm(forms.ModelForm):
         queryset=Tag.objects.all(),
         required=False,
         widget=AutocompleteSelectMultiple(
-            ImageGallery._meta.get_field('tags'),  # pylint: disable=protected-access
+            ImageGallery._meta.get_field(
+                'tags'),  # pylint: disable=protected-access
             admin.site,
         ),
     )

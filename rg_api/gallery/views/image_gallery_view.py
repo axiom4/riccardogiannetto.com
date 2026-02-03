@@ -55,7 +55,7 @@ class ImageRenderer(renderers.BaseRenderer):  # pylint: disable=too-few-public-m
     def render(self, data, accepted_media_type=None, renderer_context=None):
         """
         Renders the resized image based on the provided width.
-        
+
         Args:
             data: The data to render (unused for image rendering).
             accepted_media_type: The accepted media type.

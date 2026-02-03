@@ -7,7 +7,8 @@ import os
 import sys
 
 # Add rg_api to path for standalone script execution
-_RG_API_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'rg_api')
+_RG_API_PATH = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), 'rg_api')
 if _RG_API_PATH not in sys.path:
     sys.path.insert(0, _RG_API_PATH)
 

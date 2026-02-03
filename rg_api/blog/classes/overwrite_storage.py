@@ -16,7 +16,7 @@ class OverwriteStorage(FileSystemStorage):
         """
         Returns a filename that is available in the storage system, and available
         to be written to.
-        
+
         Args:
             name: The filename to check.
             max_length: Maximum length for the filename (unused).
