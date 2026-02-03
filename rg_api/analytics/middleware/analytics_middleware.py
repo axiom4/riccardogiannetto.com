@@ -1,10 +1,15 @@
-from ..models import UserActivity, UserSession
+"""
+Docstring for rg_api.analytics.middleware.analytics_middleware
+"""
 import logging
+
 import ipaddress
 import hashlib
 import uuid
 from django.conf import settings
 from django.utils import timezone
+from ..models import UserActivity, UserSession
+
 try:
     import geoip2.database
 except ImportError:
@@ -14,6 +19,28 @@ logger = logging.getLogger(__name__)
 
 
 class AnalyticsMiddleware:
+    """
+    Middleware responsible for analytics tracking, user session management, and geolocation.
+
+    This middleware intercepts HTTP requests to specific application routes (API, blog, portfolio)
+    to capture analytics data. It operates after the response has been generated to ensure
+    only successful (2xx) requests are logged.
+
+    Key Functionalities:
+    - **IP Address Resolution**: Extracts client IPs handling potential proxy headers (X-Forwarded-For).
+    - **Geolocation**: Uses GeoIP2 to resolve IP addresses to physical locations (City, Country, Lat/Lon).
+    - **Session Tracking**: Manages `UserSession` records using a combination of Django session IDs,
+      persistent cookies ('rg_tid'), and device fingerprinting to track users consistently across
+      browser restarts.
+    - **Activity Logging**: Creates discrete `UserActivity` records for tracked interactions (excluding
+      admin and static paths).
+
+    Attributes:
+        get_response (callable): The next middleware or view in the chain.
+        reader (geoip2.database.Reader | None): The GeoIP2 database reader instance used for
+            location lookups, or None if the library/database is missing.
+    """
+
     def __init__(self, get_response):
         self.get_response = get_response
         self.reader = None
@@ -21,7 +48,7 @@ class AnalyticsMiddleware:
             try:
                 self.reader = geoip2.database.Reader(settings.GEOIP_PATH)
             except Exception as e:
-                logger.warning(f"GeoIP database not found or invalid: {e}")
+                logger.warning("GeoIP database not found or invalid: %s", e)
 
     def __call__(self, request):
         # Process request before view (and before cache check if cache middleware was used globaly,
@@ -33,7 +60,9 @@ class AnalyticsMiddleware:
         # Note: If cache_page intercepts inside the view layer, this middleware
         # still sees the request and the response coming back from the view "wrapper".
 
-        if request.path_info.startswith('/api/') or request.path_info.startswith('/blog/') or request.path_info.startswith('/portfolio/'):
+        if (request.path_info.startswith('/api/') or
+                request.path_info.startswith('/blog/') or
+                request.path_info.startswith('/portfolio/')):
             # Filter out admin, static, etc if needed.
             # Assuming typically API routes are relevant.
             # Adjust filter as needed.
@@ -83,12 +112,35 @@ class AnalyticsMiddleware:
         return hashlib.sha256(fingerprint_source.encode('utf-8')).hexdigest()
 
     def track_activity(self, request, response):
+        """
+        Captures and records analytics data for a successfully processed HTTP request.
+
+        This method serves as the core tracking logic for the middleware. It filters out
+        error responses (non-2xx) and static/admin paths before processing the request
+        to extract:
+        1. Geolocation data (City, Country, Lat/Lon) based on the client IP.
+        2. User session identifiers using a persistent tracking cookie ('rg_tid')
+           and device fingerprinting.
+
+        It handles the lifecycle of `UserSession` objects (creation or update) and
+        logs a discrete `UserActivity` record for the specific action taken.
+
+        Args:
+            request (HttpRequest): The incoming Django request object.
+            response (HttpResponse): The outgoing Django response object, used to modify
+                cookies and check status codes.
+
+        Returns:
+            None
+        """
         if not (200 <= response.status_code < 300):
             return
 
         # Simple ignoring of assets/admin/etc if not filtered above
         # Using path_info for consistency with urls.py structure
-        if request.path_info.startswith('/admin/') or request.path_info.startswith('/static') or request.path_info.startswith('/media'):
+        if (request.path_info.startswith('/admin/') or
+                request.path_info.startswith('/static') or
+                request.path_info.startswith('/media')):
             return
 
         try:
@@ -123,8 +175,7 @@ class AnalyticsMiddleware:
                         country = geo_response.country.name
                         lat = geo_response.location.latitude
                         lon = geo_response.location.longitude
-                    except Exception as e:
-                        # logger.warning(f"GeoIP Lookup failed for {ip}: {e}")
+                    except Exception:
                         pass
 
             # Manage UserSession
@@ -202,7 +253,10 @@ class AnalyticsMiddleware:
                         user_session.longitude = lon
 
                     user_session.save(update_fields=[
-                                      'session_key', 'last_seen_at', 'page_count', 'user', 'ip_address', 'city', 'country', 'latitude', 'longitude'])
+                        'session_key', 'last_seen_at', 'page_count', 'user',
+                        'ip_address', 'city', 'country', 'latitude',
+                        'longitude'
+                    ])
 
                 else:
                     # 2. Create New Session
@@ -235,10 +289,16 @@ class AnalyticsMiddleware:
                             user_session.device_fingerprint = device_fingerprint
 
                         user_session.save(
-                            update_fields=['last_seen_at', 'page_count', 'tracking_id', 'device_fingerprint'])
+                            update_fields=[
+                                'last_seen_at',
+                                'page_count',
+                                'tracking_id',
+                                'device_fingerprint'
+                            ]
+                        )
 
             except Exception as e:
-                logger.error(f"Session tracking failed: {e}")
+                logger.error("Session tracking failed: %s", e)
 
             UserActivity.objects.create(
                 session=user_session,
@@ -256,4 +316,4 @@ class AnalyticsMiddleware:
                 payload={}  # Middleware generally doesn't know parsed kwargs easily
             )
         except Exception as e:
-            logger.error(f"Analytics tracking failed: {e}")
+            logger.error("Analytics tracking failed: %s", e)
