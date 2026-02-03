@@ -17,6 +17,7 @@ class UserActivityModelTest(TestCase):
     """
 
     def setUp(self):
+        """Set up test environment."""
         self.user = User.objects.create_user(
             username='testuser', password='password')
         self.activity = UserActivity.objects.create(
@@ -45,6 +46,7 @@ class UserActivityAPITest(APITestCase):
     """
 
     def setUp(self):
+        """Set up test environment."""
         self.list_url = reverse('useractivity-list')
         self.user = User.objects.create_user(
             username='apiuser', password='password')

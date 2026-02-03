@@ -28,6 +28,7 @@ class ImageAdmin(admin.ModelAdmin):
     readonly_fields = ['image_tag']
 
     def get_form(self, request, obj=None, change=False, **kwargs):
+        """Customize form to set default author to current user."""
         form = super().get_form(request, obj, change, **kwargs)
         form.base_fields['author'].initial = request.user
         return form

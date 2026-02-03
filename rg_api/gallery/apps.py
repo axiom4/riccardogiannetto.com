@@ -4,6 +4,7 @@ Gallery app configuration.
 import sys
 import threading
 from django.apps import AppConfig
+from gallery.ml import get_model
 
 
 class GalleryConfig(AppConfig):
@@ -17,8 +18,6 @@ class GalleryConfig(AppConfig):
         """
         Run when the app is ready.
         """
-        # pylint: disable=unused-import, import-outside-toplevel
-        import gallery.signals
 
         # Heuristic to detect if we are running a server (runserver, daphne, etc.)
         # and avoid loading the model during management commands like migrate.
@@ -37,12 +36,11 @@ class GalleryConfig(AppConfig):
     def _start_model_warmup(self):
         """Start the model warmup in a separate thread."""
         def warmup_model():
-            from gallery.ml import get_model  # pylint: disable=import-outside-toplevel
             print("--- Starting Background Model Warmup ---")
             try:
                 get_model()
                 print("--- Model Warmup Complete ---")
-            except Exception as e:  # pylint: disable=broad-exception-caught
+            except (OSError, RuntimeError, ImportError) as e:
                 print(f"--- Model Warmup Error: {e} ---")
 
         # Run in a daemon thread so it doesn't block startup but runs immediately

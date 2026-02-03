@@ -52,9 +52,14 @@ class ImageRenderer(renderers.BaseRenderer):  # pylint: disable=too-few-public-m
     charset = None
     render_style = 'binary'
 
-    def render(self, data, accepted_media_type=None, renderer_context=None):  # pylint: disable=unused-argument
+    def render(self, data, accepted_media_type=None, renderer_context=None):
         """
         Renders the resized image based on the provided width.
+        
+        Args:
+            data: The data to render (unused for image rendering).
+            accepted_media_type: The accepted media type.
+            renderer_context: Context containing request details and kwargs.
         """
         if renderer_context['response'].status_code != 200:
             return b""

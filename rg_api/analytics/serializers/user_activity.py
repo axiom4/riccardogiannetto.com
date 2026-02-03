@@ -20,6 +20,7 @@ class UserActivitySerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'user', 'ip_address', 'timestamp']
 
     def create(self, validated_data):
+        """Create UserActivity instance with user from request context."""
         # User and IP are handled by the view/context usually
         request = self.context.get('request')
         if request and hasattr(request, 'user') and request.user.is_authenticated:

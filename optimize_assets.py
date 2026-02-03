@@ -1,15 +1,12 @@
 """
 Script to optimize static assets (images) in the frontend assets directory.
+
+This script must be run from the workspace root directory.
 """
-from utils.image_optimizer import ImageOptimizer
 import os
-import sys
 from io import BytesIO
 
-# Setup Django if needed for imports, but we just need utils
-sys.path.append(os.path.join(os.getcwd(), 'rg_api'))
-
-# pylint: disable=wrong-import-position
+from image_utils import ImageOptimizer
 
 ASSETS_DIR = 'rg_web/src/assets/images'
 
@@ -47,14 +44,14 @@ def optimize_static_assets():
                 new_size = len(optimized_bytes.getvalue())
 
                 if new_size < old_size:
-                    with open(full_path, 'wb') as f:
-                        f.write(optimized_bytes.getvalue())
+                    with open(full_path, 'wb') as output_file:
+                        output_file.write(optimized_bytes.getvalue())
                     print(
                         f"  Saved {old_size - new_size} bytes ({(old_size-new_size)/old_size:.1%})")
                 else:
                     print(
                         f"  Skipped (larger or same: {new_size} vs {old_size})")
-        except Exception as e:  # pylint: disable=broad-exception-caught
+        except (OSError, ValueError, IOError) as e:
             print(f"  Error: {e}")
 
 

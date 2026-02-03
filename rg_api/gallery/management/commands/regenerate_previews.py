@@ -17,10 +17,12 @@ class Command(BaseCommand):
     help = 'Regenerate all image previews using custom ImageOptimizer'
 
     def add_arguments(self, parser):
+        """Add command line arguments."""
         parser.add_argument('--clean', action='store_true',
                             help='Delete existing previews before regenerating')
 
     def handle(self, *args, **options):
+        """Execute the command to regenerate previews."""
         preview_dir = os.path.join(settings.MEDIA_ROOT, 'preview')
 
         # Ensure preview directory exists

@@ -19,7 +19,8 @@ class MultiFileInput(forms.FileInput):
 class MultipleFileField(forms.FileField):
     """Custom FileField for handling multiple file uploads."""
 
-    def to_python(self, data):  # pylint: disable=unused-argument
+    def to_python(self, data):
+        """Convert data to Python object (not used for multiple file upload)."""
         return None
 
 
@@ -51,8 +52,7 @@ class ImageGalleryForm(forms.ModelForm):
         queryset=Tag.objects.all(),
         required=False,
         widget=AutocompleteSelectMultiple(
-            ImageGallery._meta.get_field(
-                'tags'),  # pylint: disable=protected-access
+            ImageGallery._meta.get_field('tags'),  # pylint: disable=protected-access
             admin.site,
         ),
     )

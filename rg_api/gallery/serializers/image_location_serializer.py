@@ -13,6 +13,7 @@ class ImageLocationSerializer(serializers.ModelSerializer):
     thumbnail = serializers.SerializerMethodField()
 
     class Meta:
+        """Meta configuration for ImageLocationSerializer."""
         model = ImageGallery
         fields = ['id', 'title', 'latitude', 'longitude', 'thumbnail']
 

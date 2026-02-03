@@ -16,6 +16,10 @@ class OverwriteStorage(FileSystemStorage):
         """
         Returns a filename that is available in the storage system, and available
         to be written to.
+        
+        Args:
+            name: The filename to check.
+            max_length: Maximum length for the filename (unused).
         """
         # If the filename already exists, remove it as if it was a true file system
         if self.exists(name):

@@ -99,6 +99,7 @@ class ImageGallery(models.Model):
     image_tag.short_description = 'Image Preview'
 
     def save(self, *args, **kwargs):
+        """Save method with image metadata extraction."""
         if self.image:
             try:
                 with Image.open(self.image) as img:

@@ -18,6 +18,7 @@ class BlogAPITest(APITestCase):
     """
 
     def setUp(self):
+        """Set up test environment."""
         user_model = get_user_model()
         self.user = user_model.objects.create_user(
             username='apitestuser', password='password')

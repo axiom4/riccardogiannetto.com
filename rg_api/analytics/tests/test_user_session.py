@@ -11,6 +11,7 @@ class UserSessionModelTest(TestCase):
     """
 
     def setUp(self):
+        """Set up test environment."""
         self.session = UserSession.objects.create(
             session_key="test_session_key_123",
             ip_address="127.0.0.1",

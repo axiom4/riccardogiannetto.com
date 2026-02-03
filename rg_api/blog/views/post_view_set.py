@@ -27,7 +27,8 @@ class PostImageRenderer(renderers.BaseRenderer):  # pylint: disable=too-few-publ
     charset = None
     render_style = 'binary'
 
-    def render(self, data, accepted_media_type=None, renderer_context=None):  # pylint: disable=unused-argument
+    def render(self, data, accepted_media_type=None, renderer_context=None):
+        """Render post image as WebP."""
         if renderer_context['response'].status_code != 200:
             return b""
 
@@ -42,18 +43,21 @@ class PostImageRenderer(renderers.BaseRenderer):  # pylint: disable=too-few-publ
         return self._get_or_create_preview(post, width)
 
     def _get_width(self, renderer_context):
+        """Extract and validate width from renderer context."""
         try:
             return int(renderer_context['kwargs'].get('width', 0))
         except (ValueError, TypeError):
             return 0
 
     def _get_post(self, renderer_context):
+        """Retrieve post from renderer context."""
         try:
             return Post.objects.get(pk=renderer_context['kwargs']['pk'])
         except Post.DoesNotExist:  # pylint: disable=no-member
             return None
 
     def _get_or_create_preview(self, post, width):
+        """Get or create image preview at specified width."""
         # Ensure directory exists
         preview_dir = os.path.join(settings.MEDIA_ROOT, "blog", "preview")
         os.makedirs(preview_dir, exist_ok=True)

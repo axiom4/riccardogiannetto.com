@@ -1,4 +1,3 @@
-# pylint: skip-file
 """ Machine learning utilities for image classification using BLIP-2."""
 import logging
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
@@ -129,6 +128,6 @@ def classify_image(image_path):
 
         return list(set(tags))
 
-    except Exception as e:  # pylint: disable=broad-exception-caught
+    except (OSError, RuntimeError, ValueError, torch.cuda.OutOfMemoryError) as e:
         logger.error("Error classifying image %s: %s", image_path, e)
         return []

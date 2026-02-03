@@ -21,5 +21,6 @@ class AccessListPermission(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
+        """Check if request IP is in access list."""
         ip_addr = get_client_ip(request)
         return ip_addr in settings.ACCESS_LIST

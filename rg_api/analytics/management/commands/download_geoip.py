@@ -12,6 +12,7 @@ class Command(BaseCommand):
     help = 'Downloads a free GeoIP database (GeoLite2-City.mmdb) and configures it.'
 
     def handle(self, *args, **options):
+        """Execute the command to download GeoIP database."""
         # Database URL (using a reliable mirror or direct link to a free simplified DB)
         # Using the same source that worked previously: P3TERX/GeoLite.mmdb mirror
         db_url = "https://raw.githubusercontent.com/P3TERX/GeoLite.mmdb/download/GeoLite2-City.mmdb"

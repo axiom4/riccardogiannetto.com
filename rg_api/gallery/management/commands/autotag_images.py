@@ -14,6 +14,7 @@ class Command(BaseCommand):
     help = 'Automatically tags images in the gallery using the configured ML model'
 
     def add_arguments(self, parser):
+        """Add command line arguments."""
         parser.add_argument(
             '--force',
             action='store_true',
@@ -26,6 +27,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        """Execute the command to auto-tag images."""
         force = options['force']
         limit = options['limit']
 

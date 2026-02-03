@@ -19,6 +19,7 @@ class Command(BaseCommand):
     help = 'Updates the GeoLite2-City.mmdb file from a free alternative source'
 
     def handle(self, *args, **options):
+        """Execute the command to update GeoIP database."""
         # Using a public mirror for GeoLite2-City which doesn't require a license key
         # This is a direct download of the .mmdb file
         url = "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb"

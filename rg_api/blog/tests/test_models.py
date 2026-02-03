@@ -20,6 +20,7 @@ class CategoryModelTest(TestCase):
     """
 
     def setUp(self):
+        """Set up test environment."""
         self.category = Category.objects.create(name='Test Category')
 
     def test_category_creation(self):
@@ -39,6 +40,7 @@ class PostModelTest(TestCase):
     """
 
     def setUp(self):
+        """Set up test environment."""
         user_model = get_user_model()
         self.user = user_model.objects.create_user(
             username='authortest', password='password')
