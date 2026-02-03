@@ -1,106 +1,16 @@
-"""
-Django admin configuration for Gallery and ImageGallery models.
-
-Provides customized admin interfaces with bulk upload functionality,
-automatic GPS extraction, and ML-based image classification.
-"""
-
 import os
 from typing import Tuple, List
 
-from django import forms
 from django.contrib import admin, messages
-from django.contrib.admin.widgets import AutocompleteSelectMultiple
-from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import path
 
-from taggit.models import Tag
-
 from gallery.exif_utils import get_gps_data
 from gallery.ml import classify_image
-from gallery.models import Gallery, ImageGallery
-
-User = get_user_model()
-
-# Constants
-ALLOWED_IMAGE_EXTENSIONS = {'.jpg', '.jpeg',
-                            '.png', '.webp',
-                            '.tif', '.tiff',
-                            '.heic'}
-
-
-class MultiFileInput(forms.FileInput):
-    """Custom FileInput widget for multiple file selection."""
-    allow_multiple_selected = True
-
-
-class MultipleFileField(forms.FileField):
-    """Custom FileField for handling multiple file uploads."""
-
-    def to_python(self, data):
-        return None
-
-
-class BulkUploadForm(forms.Form):
-    """Form for bulk uploading images to a gallery."""
-    images = MultipleFileField(
-        label='Images folder',
-        help_text='Select a folder from your computer.',
-        widget=MultiFileInput(
-            attrs={
-                'webkitdirectory': True,
-                'directory': True,
-                'multiple': True,
-            },
-        ),
-        required=False,
-    )
-    gallery = forms.ModelChoiceField(queryset=Gallery.objects.all())
-    author = forms.ModelChoiceField(
-        queryset=User.objects.all(),
-        required=False,
-    )
-
-
-class ImageGalleryForm(forms.ModelForm):
-    """ModelForm for ImageGallery with autocomplete tag selection."""
-    tags = forms.ModelMultipleChoiceField(
-        queryset=Tag.objects.all(),
-        required=False,
-        widget=AutocompleteSelectMultiple(
-            ImageGallery._meta.get_field('tags'),
-            admin.site,
-        ),
-    )
-
-    class Meta:
-        """Configuration class for ImageGallery model admin form fields."""
-        model = ImageGallery
-        fields = '__all__'
-
-
-class GalleryImageInline(admin.TabularInline):
-    """Inline admin for ImageGallery within Gallery."""
-    model = ImageGallery
-    readonly_fields = ['image_tag', 'width',
-                       'height', 'created_at', 'updated_at']
-    extra = 0
-    list_per_page = 12
-
-
-class GalleryAdmin(admin.ModelAdmin):
-    """Admin interface for Gallery model."""
-    fields = [
-        ('title',),
-        ('author', 'tag'),
-        'description',
-    ]
-    list_display = ('title', 'tag', 'author', 'created_at')
-    save_on_top = True
-    search_fields = ['title']
-    inlines = [GalleryImageInline]
+from ..models import Gallery, ImageGallery
+from .forms import ImageGalleryForm, BulkUploadForm
+from .constants import ALLOWED_IMAGE_EXTENSIONS
 
 
 class ImageGalleryAdmin(admin.ModelAdmin):
@@ -388,7 +298,3 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                 details.append(f"Tags: {len(new_tags)}")
         except (OSError, ValueError) as e:
             print(f"Auto-tag error for {title}: {e}")
-
-
-admin.site.register(ImageGallery, ImageGalleryAdmin)
-admin.site.register(Gallery, GalleryAdmin)
