@@ -70,7 +70,7 @@ class ImageRenderer(WebPImageRenderer):
                     return f.read()
 
         except (KeyError, ObjectDoesNotExist):
-            pass
+            logger.warning("Failed to render image preview due to missing key or object", exc_info=True)
         except OSError as e:
             logger.error("Error generating preview: %s", e)
 
