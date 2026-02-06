@@ -28,13 +28,13 @@ drf-spectacular==0.29.0
 ecs-logging==2.3.0
 filelock==3.20.3
 frozenlist==1.8.0
-fsspec==2026.1.0
+fsspec==2026.2.0
 geoip2==5.2.0
 h11==0.16.0
 hf-xet==1.2.0
 httpcore==1.0.9
 httpx==0.28.1
-huggingface_hub==1.4.0
+huggingface_hub==1.4.1
 hyperlink==21.0.0
 idna==3.11
 Incremental==24.11.0
