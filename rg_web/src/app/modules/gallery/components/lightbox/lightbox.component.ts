@@ -79,22 +79,22 @@ export class LightboxComponent {
   getImgUrl(img: ImageGallery): string {
     if (!img || !img.url) return '';
 
-    // Attempt to normalize the URL using the environment's API base URL.
-    // We assume the resource path starts with '/portfolio/'.
-    const resourcePathTag = '/portfolio/';
-    const idx = img.url.indexOf(resourcePathTag);
-
-    if (idx !== -1) {
-      const path = img.url.substring(idx); // e.g. "/portfolio/images/1/"
-      // Remove trailing slash from api_url if present
-      const baseUrl = environment.api_url.endsWith('/')
-        ? environment.api_url.slice(0, -1)
-        : environment.api_url;
-
-      return `${baseUrl}${path}`;
-    }
-
-    return img.url;
+    // We expect the URL to contain '/images/{id}'.
+    // We rely on the environment API URL for the domain and base path (e.g. /api).
+    // This ensures consistency between development and production.
+    
+    // Pattern to find the ID after 'images/'
+    const match = img.url.match(/images\/([^\/]+)/);
+    
+    if (match && match[1]) {
+        const id = match[1];
+        // Normalize base URL (remove trailing slash)
+        const baseUrl = environment.api_url.endsWith('/') 
+            ? environment.api_url.slice(0, -1) 
+            : environment.api_url;
+            
+        // Construct the canonical URL for the image endpoint
+        return `${baseUrl}/portfolio/images/${id}`;
   }
 
   toggleInfo() {
