@@ -4,10 +4,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import {
-  BlogService,
-  Page,
-} from '../../../core/api/v1';
+import { BlogService, Page } from '../../../core/api/v1';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { HighlightService } from '../../../main/highlight.service';
@@ -54,9 +51,9 @@ export class PageComponent {
               console.log(error);
               this.router.navigate(['/notfound']);
               return EMPTY;
-            })
-          )
-        )
+            }),
+          ),
+        ),
       )
       .subscribe(async (page) => {
         this.page.set(page);

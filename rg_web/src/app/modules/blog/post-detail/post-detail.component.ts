@@ -45,13 +45,13 @@ export class PostDetailComponent {
             catchError((err: unknown) => {
               console.error('Error loading post:', err);
               this.error.set(
-                'Impossibile caricare il post. Potrebbe non esistere o esserci un problema di rete.'
+                'Impossibile caricare il post. Potrebbe non esistere o esserci un problema di rete.',
               );
               this.loading.set(false);
               return EMPTY;
-            })
-          )
-        )
+            }),
+          ),
+        ),
       )
       .subscribe(async (post: Post) => {
         this.post.set(post);
