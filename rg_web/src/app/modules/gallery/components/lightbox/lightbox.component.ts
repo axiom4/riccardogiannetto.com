@@ -95,6 +95,9 @@ export class LightboxComponent {
 
         // Construct the canonical URL for the image endpoint
         return `${baseUrl}/portfolio/images/${id}`;
+    }
+
+    return img.url;
   }
 
   toggleInfo() {
@@ -251,9 +254,10 @@ export class LightboxComponent {
     this.nextAction.emit();
   }
 
-  onLightboxTransitionEnd(event: TransitionEvent): void {
-    if (!this.previewImage() && event.propertyName === 'opacity') {
-      this.animationEnd.emit(event);
+  onLightboxTransitionEnd(event: Event): void {
+    const transitionEvent = event as TransitionEvent;
+    if (!this.previewImage() && transitionEvent.propertyName === 'opacity') {
+      this.animationEnd.emit(transitionEvent);
     }
   }
 
