@@ -7,6 +7,7 @@ import {
   ElementRef,
   inject,
   AfterViewInit,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { PortfolioService } from '../../../core/api/v1';
@@ -28,6 +29,7 @@ interface ImageLocation {
   styleUrls: ['./map.component.scss'],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapComponent implements OnDestroy, AfterViewInit {
   @ViewChild('map') mapContainer!: ElementRef;

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import {
   BlogPagesRetrieveRequestParams,
   BlogService,
@@ -7,15 +7,16 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { HighlightService } from '../../../main/highlight.service';
-import { MarkedPipe } from '../../../main/marked.pipe';
-import { AsyncPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
+import { marked } from 'marked';
 
 @Component({
   selector: 'app-page',
   templateUrl: './page.component.html',
   styleUrl: './page.component.scss',
-  imports: [DatePipe, MarkedPipe, AsyncPipe],
+  imports: [DatePipe],
   providers: [HighlightService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PageComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -25,6 +26,7 @@ export class PageComponent implements OnInit {
   private highlightService = inject(HighlightService);
 
   page = signal<Page | undefined>(undefined);
+  parsedBody = signal<string>('');
   highlighted = signal<boolean>(false);
   tag = signal<string>('');
 
@@ -34,6 +36,7 @@ export class PageComponent implements OnInit {
       if (tag) {
         this.tag.set(tag);
         this.page.set(undefined);
+        this.parsedBody.set('');
         this.highlighted.set(false);
         this.getPage(tag);
       }
@@ -45,15 +48,19 @@ export class PageComponent implements OnInit {
       tag: tag,
     };
     this.blogService.blogPagesRetrieve(params).subscribe({
-      next: (page) => {
+      next: async (page) => {
         this.page.set(page);
         this.title.setTitle(page.title);
+        
+        if (page.body) {
+           const parsed = await marked.parse(page.body);
+           this.parsedBody.set(parsed);
+        }
+
         // Timeout to allow DOM update before highlighting
         setTimeout(() => {
-          if (!this.highlighted()) {
-            this.highlightService.highlightAll();
-            this.highlighted.set(true);
-          }
+          this.highlightService.highlightAll();
+          this.highlighted.set(true);
         });
       },
       error: (error) => {

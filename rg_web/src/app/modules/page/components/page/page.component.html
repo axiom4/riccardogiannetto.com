@@ -1,22 +1,22 @@
-@if (page()) {
+@if (page(); as p) {
   <article class="mt-4 entry-content">
     <figure class="text-left">
       <blockquote class="blockquote">
-        <h1>{{ page()!.title }}</h1>
+        <h1>{{ p.title }}</h1>
       </blockquote>
       <figcaption class="blockquote-footer">
         <small>
           author:
           <strong>
-            {{ page()!.author.username }} -
-            <cite title="Source Title">{{ page()!.created_at | date }}</cite>
+            {{ p.author.username }} -
+            <cite title="Source Title">{{ p.created_at | date }}</cite>
           </strong>
         </small>
       </figcaption>
     </figure>
     <div
       class="mt-4 {{ tag() }}"
-      [innerHTML]="page()!.body | marked | async"
+      [innerHTML]="parsedBody()"
     ></div>
   </article>
 }
