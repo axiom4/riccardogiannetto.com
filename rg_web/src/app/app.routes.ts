@@ -1,13 +1,11 @@
 import { Routes } from '@angular/router';
+import { MainPageComponent } from './modules/main/components/main-page/main-page.component';
 
 export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    loadComponent: () =>
-      import('./modules/main/components/main-page/main-page.component').then(
-        (m) => m.MainPageComponent,
-      ),
+    component: MainPageComponent,
   },
   {
     path: 'notfound',
