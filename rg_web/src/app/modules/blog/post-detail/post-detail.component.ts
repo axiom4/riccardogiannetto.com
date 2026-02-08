@@ -1,4 +1,10 @@
-import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BlogService, Post } from '../../core/api/v1';
@@ -15,7 +21,7 @@ import { marked } from 'marked';
 export class PostDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private blogService = inject(BlogService);
-  
+
   post = signal<Post | null>(null);
   parsedBody = signal('');
   loading = signal(true);
@@ -37,7 +43,7 @@ export class PostDetailComponent implements OnInit {
         error: (err: unknown) => {
           console.error('Error loading post:', err);
           this.error.set(
-            'Impossibile caricare il post. Potrebbe non esistere o esserci un problema di rete.'
+            'Impossibile caricare il post. Potrebbe non esistere o esserci un problema di rete.',
           );
           this.loading.set(false);
         },

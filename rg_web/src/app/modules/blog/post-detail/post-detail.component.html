@@ -16,9 +16,7 @@
       <header class="entry-header">
         <h1 class="entry-title">{{ p.title }}</h1>
         <div class="entry-meta">
-          <span class="posted-on">{{
-            p.created_at | date: "longDate"
-          }}</span>
+          <span class="posted-on">{{ p.created_at | date: "longDate" }}</span>
           @if (p.author) {
             <span class="byline"> by {{ p.author.username }}</span>
           }
