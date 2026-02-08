@@ -1,4 +1,10 @@
-import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import {
   BlogPagesRetrieveRequestParams,
   BlogService,
@@ -51,10 +57,10 @@ export class PageComponent implements OnInit {
       next: async (page) => {
         this.page.set(page);
         this.title.setTitle(page.title);
-        
+
         if (page.body) {
-           const parsed = await marked.parse(page.body);
-           this.parsedBody.set(parsed);
+          const parsed = await marked.parse(page.body);
+          this.parsedBody.set(parsed);
         }
 
         // Timeout to allow DOM update before highlighting
