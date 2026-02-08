@@ -83,22 +83,22 @@
       />
     </div>
   }
-  @defer (when showMask()) {
-    @if (showMask()) {
-      <app-lightbox
-        [currentLightboxImg]="currentLightboxImg()"
-        [imageNum]="imageNum"
-        [totalImageCount]="totalImageCount"
-        [controls]="controls"
-        [previewImage]="previewImage()"
-        [pageFlipDirection]="pageFlipDirection()"
-        (closeLightbox)="onclosePreview()"
-        (prevAction)="prev()"
-        (nextAction)="next()"
-        (animationEnd)="onAnimationEnd()"
-      >
-      </app-lightbox>
-    }
-  }
 </div>
+@defer (when showMask()) {
+  @if (showMask()) {
+    <app-lightbox
+      [currentLightboxImg]="currentLightboxImg()"
+      [imageNum]="imageNum"
+      [totalImageCount]="totalImageCount"
+      [controls]="controls"
+      [previewImage]="previewImage()"
+      [pageFlipDirection]="pageFlipDirection()"
+      (closeLightbox)="onclosePreview()"
+      (prevAction)="prev()"
+      (nextAction)="next()"
+      (animationEnd)="onAnimationEnd()"
+    >
+    </app-lightbox>
+  }
+}
 <div #sentinel class="sentinel"></div>
