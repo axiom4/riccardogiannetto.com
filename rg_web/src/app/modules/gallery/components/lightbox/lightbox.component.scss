@@ -298,6 +298,8 @@
     // Styles
     object-fit: contain;
     border-radius: 1px;
+    width: auto;
+    height: auto;
 
     // Depth & Glass Effect
     box-shadow:
@@ -312,7 +314,7 @@
       // 5. Glass Reflection
       inset 0 0 60px rgba(255, 255, 255, 0.05);
 
-    transform: translate(-50%, -50%) translateZ(20px);
+    transform: translate(-50%, -50%);
     animation: none;
 
     @media (max-width: 768px), (max-height: 600px) {
