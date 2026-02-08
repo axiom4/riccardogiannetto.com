@@ -2,8 +2,6 @@ import {
   Component,
   EventEmitter,
   HostListener,
-  OnInit,
-  OnDestroy,
   Output,
   effect,
   input,
@@ -11,6 +9,7 @@ import {
   inject,
   computed,
   ChangeDetectionStrategy,
+  DestroyRef,
 } from '@angular/core';
 import {
   NgClass,
@@ -28,10 +27,10 @@ import type { Map as LeafletMap } from 'leaflet';
   templateUrl: './lightbox.component.html',
   styleUrls: ['./lightbox.component.scss'],
   standalone: true,
-  imports: [NgClass, NgOptimizedImage, DatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [NgClass, NgOptimizedImage, DatePipe],
 })
-export class LightboxComponent implements OnInit, OnDestroy {
+export class LightboxComponent {
   private document = inject<Document>(DOCUMENT);
   private platformId = inject(PLATFORM_ID);
 
@@ -97,10 +96,19 @@ export class LightboxComponent implements OnInit, OnDestroy {
       this.showInfo.set(false);
     });
 
-    effect(() => {
+    effect((onCleanup) => {
       const container = this.mapContainer()?.nativeElement;
       const img = this.currentLightboxImg();
       const infoVisible = this.showInfo();
+
+      let isCleanedUp = false;
+      onCleanup(() => {
+        isCleanedUp = true;
+        if (this.map) {
+          this.map.remove();
+          this.map = undefined;
+        }
+      });
 
       if (
         infoVisible &&
@@ -111,6 +119,8 @@ export class LightboxComponent implements OnInit, OnDestroy {
       ) {
         // Dynamic import to avoid SSR issues
         import('leaflet').then((module) => {
+          if (isCleanedUp) return;
+
           const L = module.default as typeof import('leaflet');
           const defaultIcon = L.icon({
             iconUrl: '/assets/leaflet/marker-icon.png',
@@ -147,7 +157,9 @@ export class LightboxComponent implements OnInit, OnDestroy {
 
           // Fix gray map issue by invalidating size after a tick
           setTimeout(() => {
-            map.invalidateSize();
+            if (!isCleanedUp && this.map) {
+              map.invalidateSize();
+            }
           }, 100);
         });
       }
@@ -163,20 +175,18 @@ export class LightboxComponent implements OnInit, OnDestroy {
         this.isLoading.set(true);
       }
     });
-  }
 
-  ngOnInit(): void {
-    if (typeof window !== 'undefined') {
+    if (isPlatformBrowser(this.platformId)) {
       this.innerWidth = window.innerWidth;
       this.innerHeight = window.innerHeight;
       this.document.body.style.overflow = 'hidden';
     }
-  }
 
-  ngOnDestroy(): void {
-    if (typeof window !== 'undefined') {
-      this.document.body.style.overflow = '';
-    }
+    inject(DestroyRef).onDestroy(() => {
+      if (isPlatformBrowser(this.platformId)) {
+        this.document.body.style.overflow = '';
+      }
+    });
   }
 
   @HostListener('window:resize')

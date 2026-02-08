@@ -1,12 +1,10 @@
 import {
   Component,
   inject,
-  OnInit,
   signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import {
-  BlogPagesRetrieveRequestParams,
   BlogService,
   Page,
 } from '../../../core/api/v1';
@@ -15,6 +13,8 @@ import { Title } from '@angular/platform-browser';
 import { HighlightService } from '../../../main/highlight.service';
 import { DatePipe } from '@angular/common';
 import { marked } from 'marked';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, EMPTY, filter, map, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-page',
@@ -24,7 +24,7 @@ import { marked } from 'marked';
   providers: [HighlightService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PageComponent implements OnInit {
+export class PageComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private blogService = inject(BlogService);
@@ -36,31 +36,39 @@ export class PageComponent implements OnInit {
   highlighted = signal<boolean>(false);
   tag = signal<string>('');
 
-  ngOnInit(): void {
-    this.route.paramMap.subscribe((params) => {
-      const tag = params.get('tag');
-      if (tag) {
-        this.tag.set(tag);
-        this.page.set(undefined);
-        this.parsedBody.set('');
-        this.highlighted.set(false);
-        this.getPage(tag);
-      }
-    });
-  }
-
-  getPage(tag: string) {
-    const params: BlogPagesRetrieveRequestParams = {
-      tag: tag,
-    };
-    this.blogService.blogPagesRetrieve(params).subscribe({
-      next: async (page) => {
+  constructor() {
+    this.route.paramMap
+      .pipe(
+        takeUntilDestroyed(),
+        map((params) => params.get('tag')),
+        filter((tag): tag is string => !!tag),
+        tap((tag) => {
+          this.tag.set(tag);
+          this.page.set(undefined);
+          this.parsedBody.set('');
+          this.highlighted.set(false);
+        }),
+        switchMap((tag) =>
+          this.blogService.blogPagesRetrieve({ tag: tag }).pipe(
+            catchError((error) => {
+              console.log(error);
+              this.router.navigate(['/notfound']);
+              return EMPTY;
+            })
+          )
+        )
+      )
+      .subscribe(async (page) => {
         this.page.set(page);
         this.title.setTitle(page.title);
 
         if (page.body) {
-          const parsed = await marked.parse(page.body);
-          this.parsedBody.set(parsed);
+          try {
+            const parsed = await marked.parse(page.body);
+            this.parsedBody.set(parsed);
+          } catch (e) {
+            console.error('Markdown parsing error', e);
+          }
         }
 
         // Timeout to allow DOM update before highlighting
@@ -68,11 +76,6 @@ export class PageComponent implements OnInit {
           this.highlightService.highlightAll();
           this.highlighted.set(true);
         });
-      },
-      error: (error) => {
-        this.router.navigate(['/notfound']);
-        console.log(error);
-      },
-    });
+      });
   }
 }
