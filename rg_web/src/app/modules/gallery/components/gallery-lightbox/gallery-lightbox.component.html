@@ -64,33 +64,17 @@
         </div>
       }
       <img
-        #galleryImg
+        [ngSrc]="item.data.url"
+        fill
+        [priority]="i < 4"
         [class.loaded]="!item.isLoading"
-        [attr.loading]="i >= 4 ? 'lazy' : 'eager'"
-        [attr.fetchpriority]="i === 0 ? 'high' : 'auto'"
         (click)="onPreviewImage(i)"
         (keyup.enter)="onPreviewImage(i)"
         tabindex="0"
         role="button"
         (load)="onImageLoad(item)"
         (error)="onImageLoad(item)"
-        alt="{{ item.data.title }}"
-        src="{{ item.data.url }}/width/{{ getGalleryPreviewWidth() }}"
-        width="{{ getGalleryPreviewWidth() }}"
-        height="{{
-          getGalleryPreviewHeight(item.data.width, item.data.height)
-        }}"
-        style="width: 100%; height: auto; display: block"
-        srcset="
-          {{ item.data.url }}/width/400 400w,
-          {{ item.data.url }}/width/500 500w,
-          {{ item.data.url }}/width/600 600w,
-          {{ item.data.url }}/width/700 700w,
-          {{ item.data.url }}/width/800 800w,
-          {{ item.data.url }}/width/900 900w,
-          {{ item.data.url }}/width/1000 1000w,
-          {{ item.data.url }}/width/1200 1200w
-        "
+        [alt]="item.data.title"
         sizes="{{
           item.cols === 2
             ? '(max-width: 650px) calc(100vw - 20px), (max-width: 1024px) 100vw, (max-width: 1500px) 66vw, 50vw'

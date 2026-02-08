@@ -11,7 +11,12 @@ import {
   afterNextRender,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { IMAGE_LOADER, ImageLoaderConfig, NgClass } from '@angular/common';
+import {
+  IMAGE_LOADER,
+  ImageLoaderConfig,
+  NgClass,
+  NgOptimizedImage,
+} from '@angular/common';
 import {
   ImageGallery,
   PortfolioImagesListRequestParams,
@@ -20,7 +25,10 @@ import {
 import { LightboxComponent } from '../lightbox/lightbox.component';
 
 const galleryLoaderProvider = (config: ImageLoaderConfig) => {
-  return `${config.src}`;
+  if (config.width) {
+    return `${config.src}/width/${config.width}`;
+  }
+  return config.src;
 };
 
 export interface GalleryItem {
@@ -36,7 +44,7 @@ export interface GalleryItem {
 
 @Component({
   selector: 'app-gallery-lightbox',
-  imports: [NgClass, LightboxComponent],
+  imports: [NgClass, LightboxComponent, NgOptimizedImage],
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
   providers: [
