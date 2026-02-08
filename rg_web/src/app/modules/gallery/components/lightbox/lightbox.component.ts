@@ -87,14 +87,14 @@ export class LightboxComponent {
     const match = img.url.match(/images\/([^\/]+)/);
 
     if (match && match[1]) {
-        const id = match[1];
-        // Normalize base URL (remove trailing slash)
-        const baseUrl = environment.api_url.endsWith('/')
-            ? environment.api_url.slice(0, -1)
-            : environment.api_url;
+      const id = match[1];
+      // Normalize base URL (remove trailing slash)
+      const baseUrl = environment.api_url.endsWith('/')
+        ? environment.api_url.slice(0, -1)
+        : environment.api_url;
 
-        // Construct the canonical URL for the image endpoint
-        return `${baseUrl}/portfolio/images/${id}`;
+      // Construct the canonical URL for the image endpoint
+      return `${baseUrl}/portfolio/images/${id}`;
     }
 
     return img.url;
