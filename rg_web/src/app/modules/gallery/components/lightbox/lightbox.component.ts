@@ -78,7 +78,7 @@ export class LightboxComponent {
 
   getImgUrl(img: ImageGallery): string {
     if (!img || !img.url) return '';
-    
+
     // Attempt to normalize the URL using the environment's API base URL.
     // We assume the resource path starts with '/portfolio/'.
     const resourcePathTag = '/portfolio/';
@@ -87,10 +87,10 @@ export class LightboxComponent {
     if (idx !== -1) {
       const path = img.url.substring(idx); // e.g. "/portfolio/images/1/"
       // Remove trailing slash from api_url if present
-      const baseUrl = environment.api_url.endsWith('/') 
-        ? environment.api_url.slice(0, -1) 
+      const baseUrl = environment.api_url.endsWith('/')
+        ? environment.api_url.slice(0, -1)
         : environment.api_url;
-        
+
       return `${baseUrl}${path}`;
     }
 
