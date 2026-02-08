@@ -19,7 +19,7 @@ def get_model():
     and context-aware descriptions that far surpass standard classification 
     or early captioning models.
     """
-    if not settings.ENABLE_ML_MODELS:
+    if not getattr(settings, 'ENABLE_ML_MODELS', False):
         logger.info("BLIP-2 Model loading is disabled.")
         return None, None
 
