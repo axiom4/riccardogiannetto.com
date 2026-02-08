@@ -103,10 +103,9 @@
             'page-next': pageFlipDirection() === 'next',
             'page-prev': pageFlipDirection() === 'prev',
           }"
-          alt="{{ prevImg.title }}"
-          src="{{ prevImg.url }}/width/{{ getLightboxRenderWidth() }}"
-          width="{{ getGalleryImageWidth(prevImg.width, prevImg.height) }}"
-          height="{{ getGalleryImageHeight(prevImg.width, prevImg.height) }}"
+          [alt]="prevImg.title"
+          [ngSrc]="prevImg.url"
+          fill
           aria-hidden="true"
         />
       }
@@ -121,22 +120,10 @@
             'page-next': pageFlipDirection() === 'next',
             'page-prev': pageFlipDirection() === 'prev',
           }"
-          alt="{{ img.title }}"
-          src="{{ img.url }}/width/{{ getLightboxRenderWidth() }}"
-          srcset="
-            {{ img.url }}/width/400 400w,
-            {{ img.url }}/width/600 600w,
-            {{ img.url }}/width/800 800w,
-            {{ img.url }}/width/1000 1000w,
-            {{ img.url }}/width/1200 1200w,
-            {{ img.url }}/width/1600 1600w,
-            {{ img.url }}/width/2000 2000w,
-            {{ img.url }}/width/2500 2500w
-          "
-          sizes="100vw"
-          width="{{ getGalleryImageWidth(img.width, img.height) }}"
-          height="{{ getGalleryImageHeight(img.width, img.height) }}"
-          fetchpriority="high"
+          [alt]="img.title"
+          [ngSrc]="img.url"
+          fill
+          priority
           (load)="onImageLoad()"
           (error)="onImageLoad()"
         />

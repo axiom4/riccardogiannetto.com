@@ -12,8 +12,6 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import {
-  IMAGE_LOADER,
-  ImageLoaderConfig,
   NgClass,
   NgOptimizedImage,
 } from '@angular/common';
@@ -23,13 +21,6 @@ import {
   PortfolioService,
 } from '../../../core/api/v1';
 import { LightboxComponent } from '../lightbox/lightbox.component';
-
-const galleryLoaderProvider = (config: ImageLoaderConfig) => {
-  if (config.width) {
-    return `${config.src}/width/${config.width}`;
-  }
-  return config.src;
-};
 
 export interface GalleryItem {
   data: ImageGallery;
@@ -47,12 +38,6 @@ export interface GalleryItem {
   imports: [NgClass, LightboxComponent, NgOptimizedImage],
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
-  providers: [
-    {
-      provide: IMAGE_LOADER,
-      useValue: galleryLoaderProvider,
-    },
-  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GalleryLightboxComponent implements OnInit, OnDestroy {

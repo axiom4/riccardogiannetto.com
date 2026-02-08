@@ -5,6 +5,8 @@ import { routes } from './app.routes';
 import { Configuration, ConfigurationParameters } from './modules/core/api/v1';
 import { environment } from '../environments/environment';
 import { provideHttpClient, withFetch } from '@angular/common/http';
+import { IMAGE_LOADER } from '@angular/common';
+import { galleryLoaderProvider } from './image-loader.config';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -25,5 +27,9 @@ export const appConfig: ApplicationConfig = {
     ),
     { provide: Configuration, useFactory: apiConfigFactory },
     provideHttpClient(withFetch()),
+    {
+      provide: IMAGE_LOADER,
+      useValue: galleryLoaderProvider,
+    }
   ],
 };

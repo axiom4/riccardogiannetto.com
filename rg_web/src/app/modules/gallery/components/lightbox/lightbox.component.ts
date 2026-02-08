@@ -14,6 +14,7 @@ import {
 } from '@angular/core';
 import {
   NgClass,
+  NgOptimizedImage,
   DOCUMENT,
   DatePipe,
   isPlatformBrowser,
@@ -27,7 +28,7 @@ import type { Map as LeafletMap } from 'leaflet';
   templateUrl: './lightbox.component.html',
   styleUrls: ['./lightbox.component.scss'],
   standalone: true,
-  imports: [NgClass, DatePipe],
+  imports: [NgClass, NgOptimizedImage, DatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LightboxComponent implements OnInit, OnDestroy {
@@ -225,33 +226,5 @@ export class LightboxComponent implements OnInit, OnDestroy {
 
   getIndex(): number {
     return this.imageNum();
-  }
-
-  getLightboxRenderWidth(): number {
-    if (typeof window !== 'undefined') {
-      const target = this.innerWidth * (window.devicePixelRatio || 1);
-      const buckets = [400, 600, 800, 1000, 1200, 1600, 2000, 2500];
-      const match = buckets.find((b) => b >= target);
-      return match || 2500;
-    }
-    return 1200;
-  }
-
-  getGalleryImageWidth(imageWidth: number, imageHeight: number): number {
-    if (imageHeight < imageWidth) {
-      return Math.floor(this.innerWidth * 0.7);
-    }
-    return Math.floor(
-      (imageWidth / imageHeight) * Math.floor(this.innerHeight * 0.8),
-    );
-  }
-
-  getGalleryImageHeight(imageWidth: number, imageHeight: number): number {
-    if (imageHeight < imageWidth) {
-      return Math.floor(
-        (imageHeight / imageWidth) * Math.floor(this.innerWidth * 0.7),
-      );
-    }
-    return Math.floor(this.innerHeight * 0.8);
   }
 }
