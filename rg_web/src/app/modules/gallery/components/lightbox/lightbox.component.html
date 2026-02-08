@@ -104,7 +104,7 @@
             'page-prev': pageFlipDirection() === 'prev',
           }"
           [alt]="prevImg.title"
-          [ngSrc]="prevImg.url"
+          [ngSrc]="getImgUrl(prevImg)"
           [width]="prevImg.width || 1920"
           [height]="prevImg.height || 1080"
           aria-hidden="true"
@@ -121,7 +121,7 @@
             'page-prev': pageFlipDirection() === 'prev',
           }"
           [alt]="img.title"
-          [ngSrc]="img.url"
+          [ngSrc]="getImgUrl(img)"
           [width]="img.width || 1920"
           [height]="img.height || 1080"
           priority

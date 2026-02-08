@@ -21,6 +21,7 @@ import {
 import { ImageGallery } from '../../../../modules/core/api/v1';
 import { PLATFORM_ID, viewChild, ElementRef } from '@angular/core';
 import type { Map as LeafletMap } from 'leaflet';
+import { environment } from '../../../../../../environments/environment';
 
 @Component({
   selector: 'app-lightbox',
@@ -74,6 +75,16 @@ export class LightboxComponent {
 
   innerWidth = 0;
   innerHeight = 0;
+
+  getImgUrl(img: ImageGallery): string {
+    if (!img || !img.url) return '';
+    // Extract ID from url. URLs are like .../images/1 or .../images/1/
+    const match = img.url.match(/images\/(\d+)/);
+    if (match && match[1]) {
+      return `${environment.api_url}/portfolio/images/${match[1]}`;
+    }
+    return img.url;
+  }
 
   toggleInfo() {
     this.showInfo.update((v) => !v);
