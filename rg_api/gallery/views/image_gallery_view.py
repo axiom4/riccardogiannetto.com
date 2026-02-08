@@ -98,7 +98,8 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
         preview_dir = os.path.join(settings.MEDIA_ROOT, "preview")
         os.makedirs(preview_dir, exist_ok=True)
 
-        filename = os.path.join(preview_dir, f"{image_gallery.pk}_{width}.webp")
+        filename = os.path.join(
+            preview_dir, f"{image_gallery.pk}_{width}.webp")
 
         if not os.path.exists(filename):
             try:
@@ -113,5 +114,5 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
 
         if os.path.exists(filename):
             return FileResponse(open(filename, "rb"), content_type="image/webp")
-        
+
         raise Http404

@@ -45,7 +45,7 @@ def optimize_file(file_name):
                 return f"  Skipped (larger or same: {new_size} vs {old_size}) for {file_name}"
     except (OSError, ValueError, IOError) as e:
         return f"  Error optimizing {file_name}: {e}"
-    
+
     return f"  No result for {file_name}"
 
 
@@ -58,7 +58,7 @@ def optimize_static_assets():
         return
 
     files = [f for f in os.listdir(ASSETS_DIR) if f.lower().endswith('.jpg')]
-    
+
     if not files:
         print("No .jpg files found to optimize.")
         return
@@ -68,7 +68,7 @@ def optimize_static_assets():
     # Pillow releases GIL, so threading might be okay, but ProcessPool is safer for heavy compression.
     with concurrent.futures.ProcessPoolExecutor() as executor:
         results = list(executor.map(optimize_file, files))
-    
+
     for result in results:
         print(result)
 

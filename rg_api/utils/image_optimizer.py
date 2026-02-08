@@ -50,7 +50,7 @@ class ImageOptimizer:
             with Image.open(image_path_or_file) as img:
                 # Capture ICC profile before any operations
                 original_icc_profile = img.info.get('icc_profile')
-                
+
                 # Auto-rotate based on EXIF tag
                 img = ImageOps.exif_transpose(img)
 
@@ -58,18 +58,19 @@ class ImageOptimizer:
                 if width and width < img.width:
                     wpercent = width / float(img.width)
                     hsize = int((float(img.height) * float(wpercent)))
-                    
+
                     # Use LANCZOS for high quality downsampling (similar/better to Inter-Area)
                     img = img.resize((width, hsize), Image.Resampling.LANCZOS)
 
                 # Handle Format Specific Conversions
                 fmt = output_format.upper()
-                
+
                 # Check if we need to convert to RGB (e.g. for JPEG which doesn't support Alpha)
                 if fmt == 'JPEG':
                     if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
                         # Create white background for transparent images
-                        background = Image.new("RGB", img.size, (255, 255, 255))
+                        background = Image.new(
+                            "RGB", img.size, (255, 255, 255))
                         if img.mode == 'P':
                             img = img.convert('RGBA')
                         if img.mode in ('RGBA', 'LA'):
@@ -77,7 +78,7 @@ class ImageOptimizer:
                         img = background
                     elif img.mode != 'RGB':
                         img = img.convert('RGB')
-                
+
                 # For WEBP/PNG, keeping RGBA is fine, but convert 'P' to RGBA/RGB to be safe
                 elif img.mode == 'P':
                     img = img.convert('RGBA')
@@ -85,7 +86,7 @@ class ImageOptimizer:
                 # Determine Quality settings
                 if quality is None:
                     quality = cls._determine_quality(img.width)
-                    
+
                 save_kwargs = {
                     'quality': quality,
                     'optimize': True,
