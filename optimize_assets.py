@@ -5,7 +5,6 @@ This script must be run from the workspace root directory.
 """
 import os
 import concurrent.futures
-from functools import partial
 
 from image_utils import ImageOptimizer
 
@@ -40,7 +39,8 @@ def optimize_file(file_name):
             if new_size < old_size:
                 with open(full_path, 'wb') as output_file:
                     output_file.write(optimized_bytes.getvalue())
-                return f"  Saved {old_size - new_size} bytes ({(old_size-new_size)/old_size:.1%}) for {file_name}"
+                return f"  Saved {old_size - new_size} bytes " \
+                    f"({(old_size-new_size)/old_size: .1 %}) for {file_name}"
             else:
                 return f"  Skipped (larger or same: {new_size} vs {old_size}) for {file_name}"
     except (OSError, ValueError, IOError) as e:
@@ -65,7 +65,8 @@ def optimize_static_assets():
 
     # Use ThreadPoolExecutor for I/O bound tasks (reading/writing files)
     # or ProcessPoolExecutor for CPU bound tasks (image compression).
-    # Pillow releases GIL, so threading might be okay, but ProcessPool is safer for heavy compression.
+    # Pillow releases GIL, so threading might be okay, but ProcessPool
+    # is safer for heavy compression.
     with concurrent.futures.ProcessPoolExecutor() as executor:
         results = list(executor.map(optimize_file, files))
 

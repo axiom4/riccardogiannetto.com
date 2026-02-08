@@ -88,8 +88,8 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
         try:
             image_gallery = self.get_object()
             width = int(kwargs.get('width', 0))
-        except (ValueError, TypeError, ObjectDoesNotExist):
-            raise Http404
+        except (ValueError, TypeError, ObjectDoesNotExist) as exc:
+            raise Http404 from exc
 
         if width <= 0:
             raise Http404
@@ -110,7 +110,7 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
                 )
             except Exception as e:
                 logger.error("Error creating preview: %s", e)
-                raise Http404
+                raise Http404 from e
 
         if os.path.exists(filename):
             return FileResponse(open(filename, "rb"), content_type="image/webp")

@@ -2,7 +2,7 @@
 import logging
 from io import BytesIO
 import os
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, UnidentifiedImageError
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +67,9 @@ class ImageOptimizer:
 
                 # Check if we need to convert to RGB (e.g. for JPEG which doesn't support Alpha)
                 if fmt == 'JPEG':
-                    if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
+                    if img.mode in ('RGBA', 'LA') or \
+                        (img.mode == 'P' and
+                         'transparency' in img.info):
                         # Create white background for transparent images
                         background = Image.new(
                             "RGB", img.size, (255, 255, 255))
@@ -114,6 +116,6 @@ class ImageOptimizer:
                     output.seek(0)
                     return output
 
-        except Exception as e:
+        except (IOError, OSError, UnidentifiedImageError) as e:
             logger.error("Error optimizing image: %s", e)
             return None

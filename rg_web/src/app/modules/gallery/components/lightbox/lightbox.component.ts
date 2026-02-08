@@ -84,7 +84,7 @@ export class LightboxComponent {
     // This ensures consistency between development and production.
 
     // Pattern to find the ID after 'images/'
-    const match = img.url.match(/images\/([^\/]+)/);
+    const match = img.url.match(/images\/([^/]+)/);
 
     if (match && match[1]) {
       const id = match[1];
