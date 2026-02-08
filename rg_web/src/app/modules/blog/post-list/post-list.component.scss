@@ -37,11 +37,17 @@
 .post-thumbnail {
   margin: 1.5rem 0;
 
-  img {
+  .ratio-container {
+    position: relative;
     width: 100%;
-    height: auto;
+    aspect-ratio: 3/2; // Standard aspect ratio for list thumbnails
+    overflow: hidden;
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  img {
+    object-fit: cover;
   }
 }
 

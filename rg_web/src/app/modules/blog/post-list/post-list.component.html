@@ -1,15 +1,15 @@
 <div class="site-content">
-  @if (isLoading) {
+  @if (isLoading()) {
     <div class="loading-container">
       <p>Caricamento in corso...</p>
     </div>
-  } @else if (error) {
+  } @else if (error()) {
     <div class="error-container">
-      <p>{{ error }}</p>
+      <p>{{ error() }}</p>
     </div>
   } @else {
     <div class="blog-list">
-      @for (post of posts; track post.id) {
+      @for (post of posts(); track post.id) {
         <article class="post-entry">
           <header class="entry-header">
             <h2 class="entry-title">
@@ -25,11 +25,14 @@
           @if (post.image) {
             <div class="post-thumbnail">
               <a [routerLink]="['/blog', post.id]">
-                <img
-                  [src]="getThumbnailUrl(post)"
-                  [alt]="post.title"
-                  loading="lazy"
-                />
+                <div class="ratio-container">
+                  <img
+                    [ngSrc]="'/api/blog/posts/' + post.id"
+                    [alt]="post.title"
+                    [priority]="$index < 2"
+                    fill
+                  />
+                </div>
               </a>
             </div>
           }

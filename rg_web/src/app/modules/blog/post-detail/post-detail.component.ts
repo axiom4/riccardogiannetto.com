@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BlogService, Post } from '../../core/api/v1';
@@ -10,14 +10,16 @@ import { marked } from 'marked';
   imports: [CommonModule, RouterLink],
   templateUrl: './post-detail.component.html',
   styleUrls: ['./post-detail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PostDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private blogService = inject(BlogService);
-  post: Post | null = null;
-  parsedBody = '';
-  loading = true;
-  error: string | null = null;
+  
+  post = signal<Post | null>(null);
+  parsedBody = signal('');
+  loading = signal(true);
+  error = signal<string | null>(null);
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -25,22 +27,24 @@ export class PostDetailComponent implements OnInit {
       // Chiama l'API per ottenere il dettaglio del post
       this.blogService.blogPostsRetrieve({ id: +id }).subscribe({
         next: async (post: Post) => {
-          this.post = post;
-          if (this.post.body) {
-            this.parsedBody = await marked.parse(this.post.body);
+          this.post.set(post);
+          if (post.body) {
+            const parsed = await marked.parse(post.body);
+            this.parsedBody.set(parsed);
           }
-          this.loading = false;
+          this.loading.set(false);
         },
         error: (err: unknown) => {
           console.error('Error loading post:', err);
-          this.error =
-            'Impossibile caricare il post. Potrebbe non esistere o esserci un problema di rete.';
-          this.loading = false;
+          this.error.set(
+            'Impossibile caricare il post. Potrebbe non esistere o esserci un problema di rete.'
+          );
+          this.loading.set(false);
         },
       });
     } else {
-      this.error = 'ID del post non valido.';
-      this.loading = false;
+      this.error.set('ID del post non valido.');
+      this.loading.set(false);
     }
   }
 

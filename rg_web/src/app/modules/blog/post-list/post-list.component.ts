@@ -1,37 +1,34 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { BlogService, PostPreview } from '../../core/api/v1';
 
 @Component({
   selector: 'app-post-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, NgOptimizedImage],
   templateUrl: './post-list.component.html',
   styleUrls: ['./post-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PostListComponent implements OnInit {
   private blogService = inject(BlogService);
-  posts: PostPreview[] = [];
-  isLoading = true;
-  error: string | null = null;
+  posts = signal<PostPreview[]>([]);
+  isLoading = signal(true);
+  error = signal<string | null>(null);
 
   ngOnInit(): void {
     // Chiama l'API per ottenere la lista dei post
     this.blogService.blogPostsList().subscribe({
       next: (response: { results: PostPreview[] }) => {
-        this.posts = response.results;
-        this.isLoading = false;
+        this.posts.set(response.results);
+        this.isLoading.set(false);
       },
       error: (error: unknown) => {
         console.error('Error fetching posts:', error);
-        this.error = 'Impossibile caricare i post. Riprova più tardi.';
-        this.isLoading = false;
+        this.error.set('Impossibile caricare i post. Riprova più tardi.');
+        this.isLoading.set(false);
       },
     });
-  }
-
-  getThumbnailUrl(post: PostPreview): string {
-    return post.image ? `/api/blog/posts/${post.id}/width/400` : '';
   }
 }

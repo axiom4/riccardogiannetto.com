@@ -1,42 +1,43 @@
 <div class="site-content">
-  @if (loading) {
+  @if (loading()) {
     <div class="loading-container">
       <p>Caricamento post in corso...</p>
     </div>
-  } @else if (error) {
+  } @else if (error()) {
     <div class="error-container">
       <h2>Ooops!</h2>
-      <p>{{ error }}</p>
+      <p>{{ error() }}</p>
       <a routerLink="/blog" class="back-link"
         >&larr; Torna alla lista dei post</a
       >
     </div>
-  } @else if (post) {
+  } @else if (post(); as p) {
     <article class="post-detail">
       <header class="entry-header">
-        <h1 class="entry-title">{{ post.title }}</h1>
+        <h1 class="entry-title">{{ p.title }}</h1>
         <div class="entry-meta">
           <span class="posted-on">{{
-            post.created_at | date: "longDate"
+            p.created_at | date: "longDate"
           }}</span>
-          @if (post.author) {
-            <span class="byline"> by {{ post.author.username }}</span>
+          @if (p.author) {
+            <span class="byline"> by {{ p.author.username }}</span>
           }
         </div>
       </header>
 
-      @if (post.image) {
+      @if (p.image) {
         <div class="post-featured-image">
           <img
-            [src]="getFeaturedImageUrl(post)"
-            [alt]="post.title"
+            [src]="getFeaturedImageUrl(p)"
+            [alt]="p.title"
             loading="eager"
+            fetchpriority="high"
           />
         </div>
       }
 
       <!-- Il contenuto del body è reso come HTML sicuro -->
-      <div class="entry-content" [innerHTML]="parsedBody"></div>
+      <div class="entry-content" [innerHTML]="parsedBody()"></div>
 
       <footer class="entry-footer">
         <a routerLink="/blog" class="back-link">&larr; Torna al Blog</a>
