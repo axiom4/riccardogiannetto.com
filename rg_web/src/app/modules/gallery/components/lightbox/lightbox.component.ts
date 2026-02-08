@@ -21,7 +21,7 @@ import {
 import { ImageGallery } from '../../../../modules/core/api/v1';
 import { PLATFORM_ID, viewChild, ElementRef } from '@angular/core';
 import type { Map as LeafletMap } from 'leaflet';
-import { environment } from '../../../../../../environments/environment';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-lightbox',
