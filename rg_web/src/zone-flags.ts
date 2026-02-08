@@ -6,4 +6,4 @@ declare global {
   }
 }
 
-window.__zone_symbol__PASSIVE_EVENTS = ['touchstart', 'wheel'];
+window.__zone_symbol__PASSIVE_EVENTS = ['touchstart'];
