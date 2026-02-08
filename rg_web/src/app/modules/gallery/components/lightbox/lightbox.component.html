@@ -105,7 +105,8 @@
           }"
           [alt]="prevImg.title"
           [ngSrc]="prevImg.url"
-          fill
+          [width]="prevImg.width || 1920"
+          [height]="prevImg.height || 1080"
           aria-hidden="true"
         />
       }
@@ -122,7 +123,8 @@
           }"
           [alt]="img.title"
           [ngSrc]="img.url"
-          fill
+          [width]="img.width || 1920"
+          [height]="img.height || 1080"
           priority
           (load)="onImageLoad()"
           (error)="onImageLoad()"
