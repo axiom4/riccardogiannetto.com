@@ -173,6 +173,7 @@ export class LightboxComponent {
         this.previousLightboxImg.set(lastImg);
         this.lastLightboxImg.set(nextImg);
         this.isLoading.set(true);
+        this.imageAnimA.update((v) => !v);
       }
     });
 
