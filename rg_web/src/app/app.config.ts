@@ -30,6 +30,6 @@ export const appConfig: ApplicationConfig = {
     {
       provide: IMAGE_LOADER,
       useValue: galleryLoaderProvider,
-    }
+    },
   ],
 };

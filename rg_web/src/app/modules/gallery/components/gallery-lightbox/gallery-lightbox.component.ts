@@ -11,10 +11,7 @@ import {
   afterNextRender,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import {
-  NgClass,
-  NgOptimizedImage,
-} from '@angular/common';
+import { NgClass, NgOptimizedImage } from '@angular/common';
 import {
   ImageGallery,
   PortfolioImagesListRequestParams,
