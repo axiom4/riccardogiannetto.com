@@ -3,6 +3,7 @@ import os
 import logging
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import FileResponse, Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import viewsets, permissions, renderers
@@ -12,7 +13,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from gallery.models import ImageGallery
 from gallery.serializers import ImageGallerySerializer
-from utils.renderers import WebPImageRenderer
 from utils.pagination import StandardPagination
 from utils.viewset_decorators import cached_viewset
 from utils.image_optimizer import ImageOptimizer
@@ -29,52 +29,6 @@ class ImageGalleryPagination(StandardPagination):
     """
     page_size = 4
     max_page_size = 100
-
-
-class ImageRenderer(WebPImageRenderer):
-    """
-    Custom DRF renderer for serving resized and optimized WebP images.
-
-    This renderer handles the dynamic generation, caching, and serving of image
-    previews based on the requested width.
-    """
-
-    def _render_image(self, renderer_context, width):
-        """
-        Renders the resized image based on the provided width.
-
-        Args:
-            renderer_context: Context containing request details and kwargs.
-            width: The width for the rendered image.
-        """
-        try:
-            this_object = ImageGallery.objects.get(
-                pk=renderer_context['kwargs']['pk'])
-
-            # Ensure directory exists
-            preview_dir = os.path.join(settings.MEDIA_ROOT, "preview")
-            os.makedirs(preview_dir, exist_ok=True)
-
-            filename = os.path.join(
-                preview_dir, f"{this_object.pk}_{width}.webp")
-
-            if not os.path.exists(filename):
-                ImageOptimizer.compress_and_resize(
-                    this_object.image.path,
-                    output_path=filename,
-                    width=width
-                )
-
-            if os.path.exists(filename):
-                with open(filename, "rb") as f:
-                    return f.read()
-
-        except (KeyError, ObjectDoesNotExist):
-            logger.warning("Failed to render image preview due to missing key or object", exc_info=True)
-        except OSError as e:
-            logger.error("Error generating preview: %s", e)
-
-        return b""
 
 
 @cached_viewset(list_timeout=60 * 60 * 24, retrieve_timeout=60 * 60 * 24)
@@ -126,19 +80,38 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
         detail=True,
         url_path='width/(?P<width>[0-9]+)',
         url_name='size',
-        renderer_classes=[ImageRenderer]
     )
     def jpeg(self, request, *args, **kwargs):
         """
-        Retrieve and return image gallery data in JPEG format.
-
-        Args:
-            request: The HTTP request object.
-            *args: Variable length argument list.
-            **kwargs: Arbitrary keyword arguments.
-
-        Returns:
-            Response: The serialized image gallery data.
+        Retrieve and return image gallery data in WebP format.
         """
-        data = self.retrieve(request, *args, **kwargs)
-        return data
+        try:
+            image_gallery = self.get_object()
+            width = int(kwargs.get('width', 0))
+        except (ValueError, TypeError, ObjectDoesNotExist):
+            raise Http404
+
+        if width <= 0:
+            raise Http404
+
+        # Ensure directory exists
+        preview_dir = os.path.join(settings.MEDIA_ROOT, "preview")
+        os.makedirs(preview_dir, exist_ok=True)
+
+        filename = os.path.join(preview_dir, f"{image_gallery.pk}_{width}.webp")
+
+        if not os.path.exists(filename):
+            try:
+                ImageOptimizer.compress_and_resize(
+                    image_gallery.image.path,
+                    output_path=filename,
+                    width=width
+                )
+            except Exception as e:
+                logger.error("Error creating preview: %s", e)
+                raise Http404
+
+        if os.path.exists(filename):
+            return FileResponse(open(filename, "rb"), content_type="image/webp")
+        
+        raise Http404

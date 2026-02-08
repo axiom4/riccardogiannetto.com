@@ -1,68 +1,20 @@
-""" Image optimization utilities using OpenCV and Pillow. """
+""" Image optimization utilities using Pillow. """
 import logging
 from io import BytesIO
 import os
-import cv2
-import numpy as np
-from PIL import Image
+from PIL import Image, ImageOps
 
 logger = logging.getLogger(__name__)
 
 
 class ImageOptimizer:
     """
-    A utility class for optimizing and resizing images using OpenCV and Pillow (PIL).
+    A utility class for optimizing and resizing images using Pillow (PIL).
 
     This class provides methods to handle image compression, resizing, and format conversion
     while attempting to preserve quality and metadata like ICC profiles where appropriate.
     It is designed to work with both file paths and file-like objects.
     """
-
-    @staticmethod
-    def _load_files_to_cv2(image_path_or_file):
-        """
-        Loads an image from path or file object into OpenCV format (numpy array).
-        Returns the OpenCV image and the ICC profile (if applicable).
-        """
-        if isinstance(image_path_or_file, str):
-            pil_img = Image.open(image_path_or_file)
-        else:
-            pil_img = Image.open(image_path_or_file)
-
-        with pil_img:
-            original_icc_profile = pil_img.info.get('icc_profile')
-
-            # Only preserve ICC profile if the image is already in RGB/RGBA mode.
-            if pil_img.mode not in ('RGB', 'RGBA'):
-                original_icc_profile = None
-                pil_img = pil_img.convert('RGB')
-
-            img_array = np.array(pil_img)
-            # Handle RGBA/RGB conversions to BGR (OpenCV standard)
-            if img_array.shape[2] == 4:
-                # Convert RGBA to BGRA using numpy slicing
-                cv_img = img_array[..., [2, 1, 0, 3]]
-            else:
-                # Convert RGB to BGR using numpy slicing
-                cv_img = img_array[..., ::-1]
-
-        return cv_img, original_icc_profile
-
-    @staticmethod
-    def _resize_cv2(cv_img, width):
-        """Resizes the OpenCV image using partial interpolation."""
-        original_height, original_width = cv_img.shape[:2]
-
-        if width and width < original_width:
-            wpercent = width / float(original_width)
-            hsize = int((float(original_height) * float(wpercent)))
-
-            # HIGH QUALITY RESIZING: Area (Better for compression)
-
-            return cv2.resize(cv_img, (width, hsize),
-                              interpolation=cv2.INTER_AREA)
-
-        return cv_img
 
     @staticmethod
     def _determine_quality(width):
@@ -73,94 +25,94 @@ class ImageOptimizer:
             return 65
         return 70
 
-    @staticmethod
-    def _convert_cv2_to_pil(cv_img):
-        """Converts an OpenCV image back to a Pillow Image."""
-        if cv_img.shape[2] == 4:
-            # Convert BGRA to RGBA using numpy slicing
-            result_rgb = cv_img[..., [2, 1, 0, 3]]
-        else:
-            # Convert BGR to RGB using numpy slicing
-            result_rgb = cv_img[..., ::-1]
-
-        pil_result = Image.fromarray(result_rgb)
-
-        # Ensure RGB for standard format compatibility (e.g. JPEG)
-        if pil_result.mode == 'RGBA':
-            background = Image.new("RGB", pil_result.size, (255, 255, 255))
-            background.paste(pil_result, mask=pil_result.split()[3])
-            pil_result = background
-        elif pil_result.mode != 'RGB':
-            pil_result = pil_result.convert('RGB')
-
-        return pil_result
-
-    @staticmethod
-    def _save_image(pil_img, output_path, output_format, settings_kwargs):
-        """Saves the PIL image to items path or bytes."""
-        if output_path:
-            # Ensure directory exists
-            os.makedirs(os.path.dirname(output_path), exist_ok=True)
-            pil_img.save(output_path, output_format, **settings_kwargs)
-            return True
-
-        output = BytesIO()
-        pil_img.save(output, output_format, **settings_kwargs)
-        output.seek(0)
-        return output
-
     @classmethod
     def compress_and_resize(cls,
                             image_path_or_file,
                             output_path=None,
                             width=None,
-                            output_format='WEBP'):
+                            output_format='WEBP',
+                            quality=None):
         """
-        Compresses and resizes an image using OpenCV and PIL.
+        Compresses and resizes an image using Pillow.
 
         Args:
             image_path_or_file: Path to the image or a file-like object.
             output_path: Path where to save the result. If None, returns bytes.
             width: Target width. If None, uses original width.
             output_format: Output format (default 'WEBP').
+            quality: Compression quality (1-100). If None, calculated based on width.
 
         Returns:
             bytes if output_path is None, else saves to file.
         """
         try:
-            cv_img, original_icc_profile = cls._load_files_to_cv2(
-                image_path_or_file)
+            # Open the image
+            with Image.open(image_path_or_file) as img:
+                # Capture ICC profile before any operations
+                original_icc_profile = img.info.get('icc_profile')
+                
+                # Auto-rotate based on EXIF tag
+                img = ImageOps.exif_transpose(img)
 
-            if cv_img is None:
-                return None
+                # Resize if needed
+                if width and width < img.width:
+                    wpercent = width / float(img.width)
+                    hsize = int((float(img.height) * float(wpercent)))
+                    
+                    # Use LANCZOS for high quality downsampling (similar/better to Inter-Area)
+                    img = img.resize((width, hsize), Image.Resampling.LANCZOS)
 
-            resize = cls._resize_cv2(cv_img, width)
-            pil_result = cls._convert_cv2_to_pil(resize)
+                # Handle Format Specific Conversions
+                fmt = output_format.upper()
+                
+                # Check if we need to convert to RGB (e.g. for JPEG which doesn't support Alpha)
+                if fmt == 'JPEG':
+                    if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
+                        # Create white background for transparent images
+                        background = Image.new("RGB", img.size, (255, 255, 255))
+                        if img.mode == 'P':
+                            img = img.convert('RGBA')
+                        if img.mode in ('RGBA', 'LA'):
+                            background.paste(img, mask=img.split()[-1])
+                        img = background
+                    elif img.mode != 'RGB':
+                        img = img.convert('RGB')
+                
+                # For WEBP/PNG, keeping RGBA is fine, but convert 'P' to RGBA/RGB to be safe
+                elif img.mode == 'P':
+                    img = img.convert('RGBA')
 
-            # Determine final width for quality calculation
-            # Use original width if resize width wasn't applied or was None
-            final_width = width if width else cv_img.shape[1]
-            quality = cls._determine_quality(final_width)
+                # Determine Quality settings
+                if quality is None:
+                    quality = cls._determine_quality(img.width)
+                    
+                save_kwargs = {
+                    'quality': quality,
+                    'optimize': True,
+                }
 
-            save_kwargs = {
-                'quality': quality,
-                'optimize': True,
-            }
+                if fmt == 'WEBP':
+                    save_kwargs['method'] = 6
+                elif fmt == 'JPEG':
+                    save_kwargs['progressive'] = True
+                elif fmt == 'PNG':
+                    save_kwargs['compress_level'] = 9
 
-            fmt = output_format.upper()
-            if fmt == 'WEBP':
-                save_kwargs['method'] = 6
-            elif fmt == 'JPEG':
-                save_kwargs['progressive'] = True
-            elif fmt == 'PNG':
-                save_kwargs['compress_level'] = 9
+                if original_icc_profile:
+                    save_kwargs['icc_profile'] = original_icc_profile
 
-            if original_icc_profile:
-                save_kwargs['icc_profile'] = original_icc_profile
+                # Save
+                if output_path:
+                    # Ensure directory exists
+                    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+                    img.save(output_path, fmt, **save_kwargs)
+                    return True
+                else:
+                    output = BytesIO()
+                    img.save(output, fmt, **save_kwargs)
+                    output.seek(0)
+                    return output
 
-            return cls._save_image(pil_result, output_path, output_format, save_kwargs)
-
-        except (OSError, ValueError, Exception) as e:
-            # Note: cv2.error doesn't inherit from Exception directly
+        except Exception as e:
             logger.error("Error optimizing image: %s", e)
             return None

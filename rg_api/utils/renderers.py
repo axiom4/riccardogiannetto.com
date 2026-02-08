@@ -29,7 +29,7 @@ class WebPImageRenderer(renderers.BaseRenderer):
         if width <= 0:
             return b""
 
-        return self._render_image(renderer_context, width)
+        return self._render_image(renderer_context, width, data=data)
 
     def _get_width(self, renderer_context):
         """Extract and validate width from renderer context."""
@@ -38,13 +38,14 @@ class WebPImageRenderer(renderers.BaseRenderer):
         except (ValueError, TypeError):
             return 0
 
-    def _render_image(self, renderer_context, width):
+    def _render_image(self, renderer_context, width, data=None):
         """
         Override this method to implement specific image rendering logic.
 
         Args:
             renderer_context: Context containing request details and kwargs.
             width: The width for the rendered image.
+            data: Optional data passed from the view (e.g. model instance).
 
         Returns:
             bytes: The rendered image data.

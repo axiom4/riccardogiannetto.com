@@ -26,9 +26,9 @@ class PostImageRenderer(WebPImageRenderer):
     Renderer for post images in WebP format.
     """
 
-    def _render_image(self, renderer_context, width):
+    def _render_image(self, renderer_context, width, data=None):
         """Render post image as WebP."""
-        post = self._get_post(renderer_context)
+        post = data if isinstance(data, Post) else self._get_post(renderer_context)
         if not post or not post.image:
             return b""
 
@@ -37,6 +37,7 @@ class PostImageRenderer(WebPImageRenderer):
     def _get_post(self, renderer_context):
         """Retrieve post from renderer context."""
         try:
+            # Fallback if object not passed in data
             return Post.objects.get(pk=renderer_context['kwargs']['pk'])
         except Post.DoesNotExist:
             return None
@@ -105,5 +106,4 @@ class PostViewSet(viewsets.ModelViewSet):
         """
         Serve the image in multiple sizes.
         """
-        data = self.retrieve(request, *args, **kwargs)
-        return data
+        return self.get_object()
