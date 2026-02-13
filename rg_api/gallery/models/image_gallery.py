@@ -94,7 +94,7 @@ class ImageGallery(models.Model):
         """
         if not self.image:
             return ''
-            
+
         base_url = getattr(settings, 'IMAGE_GENERATOR_BASE_URL', '')
         if not base_url:
             # Fallback for dev/testing if setting is missing

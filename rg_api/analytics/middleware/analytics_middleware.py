@@ -91,7 +91,7 @@ class AnalyticsMiddleware:
 
         # Clean brackets if present for IPv6 like [::1]
         ip = ip.strip('[]')
-        
+
         # Fast validation and IPv4 mapped check
         try:
             ip_obj = ipaddress.ip_address(ip)
