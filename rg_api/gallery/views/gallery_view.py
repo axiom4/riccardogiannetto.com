@@ -42,7 +42,7 @@ class GalleryViewSet(viewsets.ModelViewSet):
 
     ordering_fields = '__all__'
 
-    filterset_fields = ['title']
+    filterset_fields = ['title', 'slug']
 
     search_fields = [
         '$title',

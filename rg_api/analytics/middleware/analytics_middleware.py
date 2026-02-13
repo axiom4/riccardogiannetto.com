@@ -76,7 +76,8 @@ class AnalyticsMiddleware:
     def _get_client_ip(self, request):
         x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
         if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0].strip()
+            # First IP in the list is the client
+            ip = x_forwarded_for.split(',', 1)[0].strip()
         else:
             ip = request.META.get(
                 'HTTP_X_REAL_IP') or request.META.get('REMOTE_ADDR')
@@ -84,15 +85,17 @@ class AnalyticsMiddleware:
         if not ip:
             return None
 
-        # Clean brackets if present
-        ip = ip.strip('[]')
-
-        if ip == 'localhost':
+        # Basic cleanup
+        if ip == '127.0.0.1' or ip == '::1' or ip == 'localhost':
             return '127.0.0.1'
 
+        # Clean brackets if present for IPv6 like [::1]
+        ip = ip.strip('[]')
+        
+        # Fast validation and IPv4 mapped check
         try:
             ip_obj = ipaddress.ip_address(ip)
-            # Unmap IPv4 mapped IPv6 addresses
+            # Unmap IPv4 mapped IPv6 addresses (e.g., ::ffff:192.168.1.1)
             if isinstance(ip_obj, ipaddress.IPv6Address) and ip_obj.ipv4_mapped:
                 return str(ip_obj.ipv4_mapped)
             return str(ip_obj)

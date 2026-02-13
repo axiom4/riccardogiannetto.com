@@ -19,6 +19,7 @@ class UserActivityAdmin(admin.ModelAdmin):
     list_filter = ('action', 'method', 'timestamp', 'country')
     search_fields = ('user__username', 'path', 'ip_address', 'city', 'country')
     readonly_fields = ('timestamp', 'latitude', 'longitude', 'city', 'country')
+    list_select_related = ('user', 'session')
 
     change_list_template = 'admin/analytics/useractivity/change_list.html'
 

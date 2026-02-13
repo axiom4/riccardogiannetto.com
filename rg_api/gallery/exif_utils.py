@@ -21,21 +21,29 @@ def to_float(value):
         float: The floating-point representation of the input. Returns 0.0 if the
                conversion fails or if a denominator is zero.
     """
+    # Fast path for basic numeric types
+    if isinstance(value, (int, float)):
+        return float(value)
+
     if hasattr(value, 'numerator') and hasattr(value, 'denominator'):
         if value.denominator == 0:
             return 0.0
         return float(value.numerator) / float(value.denominator)
+
+    # Fallback for tuple encoding (num, den) which is common in older Pillow or raw EXIF
+    if isinstance(value, (tuple, list)) and len(value) == 2:
+        try:
+            num = float(value[0])
+            den = float(value[1])
+            if den == 0:
+                return 0.0
+            return num / den
+        except (ValueError, TypeError):
+            pass
+
     try:
         return float(value)
     except (ValueError, TypeError):
-        # Fallback for tuple encoding (num, den)
-        if hasattr(value, '__getitem__') and len(value) == 2:
-            try:
-                if value[1] == 0:
-                    return 0.0
-                return float(value[0]) / float(value[1])
-            except (ValueError, TypeError):
-                pass
         return 0.0
 
 

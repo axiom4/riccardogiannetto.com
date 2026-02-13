@@ -92,9 +92,17 @@ class ImageGallery(models.Model):
             str: A safe HTML string containing an <img> tag with a constructed source URL 
              pointing to the image generator, or an empty string if no image exists.
         """
+        if not self.image:
+            return ''
+            
+        base_url = getattr(settings, 'IMAGE_GENERATOR_BASE_URL', '')
+        if not base_url:
+            # Fallback for dev/testing if setting is missing
+            return mark_safe(f'<img src="{self.image.url}" width="150" />')
+
         return mark_safe(
-            f'<img src="{settings.IMAGE_GENERATOR_BASE_URL}/{self.pk}/width/700" width="150" />'
-        ) if self.image else ''
+            f'<img src="{base_url}/{self.pk}/width/300" width="150" height="auto" loading="lazy" />'
+        )
 
     image_tag.short_description = 'Image Preview'
 

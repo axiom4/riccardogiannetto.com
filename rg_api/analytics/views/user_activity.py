@@ -13,7 +13,7 @@ class UserActivityViewSet(mixins.CreateModelMixin,
     """
     ViewSet for viewing and creating user activities.
     """
-    queryset = UserActivity.objects.all()
+    queryset = UserActivity.objects.select_related('user', 'session').all()
     serializer_class = UserActivitySerializer
     permission_classes = [permissions.AllowAny]
 
@@ -21,7 +21,8 @@ class UserActivityViewSet(mixins.CreateModelMixin,
         """Custom create to capture IP and user."""
         x_forwarded_for = self.request.META.get('HTTP_X_FORWARDED_FOR')
         if x_forwarded_for:
-            ip_address = x_forwarded_for.split(',')[0]
+            # Take the first IP in the list and strip whitespace
+            ip_address = x_forwarded_for.split(',')[0].strip()
         else:
             ip_address = self.request.META.get('REMOTE_ADDR')
 
