@@ -211,16 +211,16 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
       let idx = this.currentIdx + offset;
       // Handle wrapping
       if (idx < 0) {
-        idx = (idx % len + len) % len;
+        idx = ((idx % len) + len) % len;
       } else if (idx >= len) {
         idx = idx % len;
       }
-      
+
       if (items[idx]?.data) {
         const item = items[idx].data;
         if (!seenUrls.has(item.url)) {
-           seenUrls.add(item.url);
-           nearby.push(item);
+          seenUrls.add(item.url);
+          nearby.push(item);
         }
       }
     }
