@@ -55,44 +55,50 @@
               viewBox="0 0 64 64"
               xmlns="http://www.w3.org/2000/svg"
             >
-            <defs>
-              <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow
-                  dx="2"
-                  dy="2"
-                  stdDeviation="1"
-                  flood-color="rgba(0,0,0,0.5)"
+              <defs>
+                <filter
+                  id="shadow"
+                  x="-20%"
+                  y="-20%"
+                  width="140%"
+                  height="140%"
+                >
+                  <feDropShadow
+                    dx="2"
+                    dy="2"
+                    stdDeviation="1"
+                    flood-color="rgba(0,0,0,0.5)"
+                  />
+                </filter>
+              </defs>
+              <g
+                filter="url(#shadow)"
+                stroke="#fff"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M8 16 H 18 L 22 10 H 42 L 46 16 H 56 C 58.2 16 60 17.8 60 20 V 48 C 60 50.2 58.2 52 56 52 H 8 C 5.8 52 4 50.2 4 48 V 20 C 4 17.8 5.8 16 8 16 Z"
+                  fill="none"
                 />
-              </filter>
-            </defs>
-            <g
-              filter="url(#shadow)"
-              stroke="#fff"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path
-                d="M8 16 H 18 L 22 10 H 42 L 46 16 H 56 C 58.2 16 60 17.8 60 20 V 48 C 60 50.2 58.2 52 56 52 H 8 C 5.8 52 4 50.2 4 48 V 20 C 4 17.8 5.8 16 8 16 Z"
-                fill="none"
-              />
-              <circle cx="32" cy="34" r="12" fill="none" />
-              <circle cx="32" cy="34" r="9" fill="#fff" stroke="none" />
-            </g>
-            <text
-              x="32"
-              y="62"
-              font-family="Arial, sans-serif"
-              font-size="9"
-              text-anchor="middle"
-              fill="#fff"
-              stroke="none"
-              filter="url(#shadow)"
-              letter-spacing="1"
-            >
-              LOADING...
-            </text>
-          </svg>
+                <circle cx="32" cy="34" r="12" fill="none" />
+                <circle cx="32" cy="34" r="9" fill="#fff" stroke="none" />
+              </g>
+              <text
+                x="32"
+                y="62"
+                font-family="Arial, sans-serif"
+                font-size="9"
+                text-anchor="middle"
+                fill="#fff"
+                stroke="none"
+                filter="url(#shadow)"
+                letter-spacing="1"
+              >
+                LOADING...
+              </text>
+            </svg>
           </div>
         </div>
       }
