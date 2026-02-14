@@ -95,39 +95,47 @@
         </div>
       }
       @if (previousLightboxImg(); as prevImg) {
-        <img
-          class="lightbox-image previous"
-          [ngClass]="{
-            'image-anim-a': imageAnimA(),
-            'image-anim-b': !imageAnimA(),
-            'page-next': pageFlipDirection() === 'next',
-            'page-prev': pageFlipDirection() === 'prev',
-          }"
-          [alt]="prevImg.title"
-          [ngSrc]="getImgUrl(prevImg)"
-          [width]="prevImg.width || 1920"
-          [height]="prevImg.height || 1080"
-          aria-hidden="true"
-        />
+        @if (prevImg.width && prevImg.height) {
+          @for (p of [prevImg]; track p.url) {
+            <img
+              class="lightbox-image previous"
+              [ngClass]="{
+                'image-anim-a': imageAnimA(),
+                'image-anim-b': !imageAnimA(),
+                'page-next': pageFlipDirection() === 'next',
+                'page-prev': pageFlipDirection() === 'prev',
+              }"
+              [alt]="p.title"
+              [ngSrc]="getImgUrl(p)"
+              [width]="p.width"
+              [height]="p.height"
+              aria-hidden="true"
+            />
+          }
+        }
       }
       @if (currentLightboxImg(); as img) {
-        <img
-          #galleryPreviewImg
-          class="lightbox-image current"
-          [ngClass]="{
-            'image-anim-a': imageAnimA(),
-            'image-anim-b': !imageAnimA(),
-            'page-next': pageFlipDirection() === 'next',
-            'page-prev': pageFlipDirection() === 'prev',
-          }"
-          [alt]="img.title"
-          [ngSrc]="getImgUrl(img)"
-          [width]="img.width || 1920"
-          [height]="img.height || 1080"
-          priority
-          (load)="onImageLoad()"
-          (error)="onImageLoad()"
-        />
+        @if (img.width && img.height) {
+          @for (i of [img]; track i.url) {
+            <img
+              #galleryPreviewImg
+              class="lightbox-image current"
+              [ngClass]="{
+                'image-anim-a': imageAnimA(),
+                'image-anim-b': !imageAnimA(),
+                'page-next': pageFlipDirection() === 'next',
+                'page-prev': pageFlipDirection() === 'prev',
+              }"
+              [alt]="i.title"
+              [ngSrc]="getImgUrl(i)"
+              [width]="i.width"
+              [height]="i.height"
+              priority
+              (load)="onImageLoad()"
+              (error)="onImageLoad()"
+            />
+          }
+        }
       }
     </div>
   </div>
