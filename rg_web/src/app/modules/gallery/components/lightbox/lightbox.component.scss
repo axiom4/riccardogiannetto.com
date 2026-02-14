@@ -257,6 +257,13 @@
       width: 100%;
       height: 100%;
     }
+
+    &.is-loading .lightbox-image {
+      border: none !important;
+      background: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
   }
 
   .loading-msg {

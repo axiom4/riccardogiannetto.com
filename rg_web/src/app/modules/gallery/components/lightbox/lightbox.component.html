@@ -44,7 +44,7 @@
       <span class="icon-lightbox-carousel">Next</span>
     </button>
   }
-  <div class="lightbox-img" [class.is-open]="previewImage()">
+  <div class="lightbox-img" [class.is-open]="previewImage()" [class.is-loading]="isLoading()">
     <div class="lightbox-frame">
       @if (isLoading()) {
         <div class="loading-msg">
