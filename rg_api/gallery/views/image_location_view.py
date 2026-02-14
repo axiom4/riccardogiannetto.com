@@ -13,7 +13,7 @@ class ImageLocationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ImageGallery.objects.filter(
         latitude__isnull=False,
         longitude__isnull=False
-    ).exclude(latitude=0, longitude=0).only('id', 'title', 'latitude', 'longitude', 'slug')
+    ).exclude(latitude=0, longitude=0).only('id', 'title', 'latitude', 'longitude')
     serializer_class = ImageLocationSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     pagination_class = None  # Return all locations without pagination
