@@ -1,69 +1,135 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <defs>
-    <!-- Gradients -->
-    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#81D4FA;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#29B6F6;stop-opacity:1" />
-    </linearGradient>
-    <linearGradient id="cameraGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#455A64;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#263238;stop-opacity:1" />
-    </linearGradient>
-    <radialGradient id="lensShadow" cx="50%" cy="50%" r="50%">
-      <stop offset="70%" stop-color="#000" stop-opacity="0"/>
-      <stop offset="100%" stop-color="#000" stop-opacity="0.3"/>
-    </radialGradient>
-    <!-- Drop Shadow Filter -->
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
-      <feOffset dx="0" dy="4" result="offsetblur"/>
-      <feComponentTransfer>
-        <feFuncA type="linear" slope="0.3"/>
-      </feComponentTransfer>
-      <feMerge>
-        <feMergeNode in="offsetblur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <clipPath id="round-corner">
+            <rect width="512" height="512" rx="100" />
+        </clipPath>
+        
+        <!-- Filters -->
+        <filter id="dropshadow" height="130%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+            <feOffset dx="4" dy="4" result="offsetblur"/>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.5"/>
+            </feComponentTransfer>
+            <feMerge> 
+                <feMergeNode in="offsetblur"/>
+                <feMergeNode in="SourceGraphic"/> 
+            </feMerge>
+        </filter>
+        
+        <!-- Gradients -->
+        <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#1E90FF;stop-opacity:1" /> <!-- DodgerBlue -->
+            <stop offset="100%" style="stop-color:#B0E0E6;stop-opacity:1" /> <!-- PowderBlue -->
+        </linearGradient>
+        
+        <radialGradient id="sunGrad" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+            <stop offset="0%" style="stop-color:#FFFACD;stop-opacity:1" /> <!-- LemonChiffon -->
+            <stop offset="100%" style="stop-color:#FFD700;stop-opacity:1" /> <!-- Gold -->
+        </radialGradient>
+        
+        <linearGradient id="mtLeftGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#2E8B57;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#3CB371;stop-opacity:1" />
+        </linearGradient>
+        
+        <linearGradient id="mtRightGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#3CB371;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#2E8B57;stop-opacity:1" />
+        </linearGradient>
 
-  <!-- Sky Background -->
-  <rect width="512" height="512" rx="100" fill="url(#skyGradient)"/>
+        <linearGradient id="lensGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#666;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#333;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    
+    <!-- Background Group with Clip Path -->
+    <g clip-path="url(#round-corner)">
+        <!-- Gradient Sky -->
+        <rect width="512" height="512" fill="url(#skyGrad)"/>
+        
+        <!-- Sun with Gradient -->
+        <circle cx="380" cy="80" r="50" fill="url(#sunGrad)"/>
+        
+        <!-- Mountains (Green with Gradient) -->
+        <polygon points="0,512 150,200 300,512" fill="url(#mtLeftGrad)"/>
+        <polygon points="112,280 150,200 188,280" fill="#F0F8FF"/> <!-- Snowcap -->
+        
+        <polygon points="200,512 400,180 600,512" fill="url(#mtRightGrad)"/>
+        <polygon points="360,246 400,180 440,246" fill="#F0F8FF"/> <!-- Snowcap -->
+        
+        <polygon points="100,512 256,250 412,512" fill="#228B22"/> <!-- ForestGreen (Foreground) -->
+    </g>
+    
+    <!-- Camera Group with Filter -->
+    <!-- CENTERED HORIZONTALLY: transform="translate(0, 40)" -->
+    <g filter="url(#dropshadow)" transform="translate(0, 40)">
+        
+        <!-- Hump Base (Lowered start from 80 to 95) -->
+        <rect x="180" y="95" width="152" height="31" fill="#141414"/>
+        <!-- Pentaprism Curve (Flatted) -->
+        <path d="M180 95 C180 90 210 88 256 88 C302 88 332 90 332 95" fill="#141414"/>
+        <!-- Hot Shoe -->
+        <rect x="236" y="85" width="40" height="6" fill="#323232"/>
+        
+        <!-- Main Body Chassis -->
+        <rect x="66" y="126" width="380" height="260" rx="20" fill="#191919"/>
+        
+        <!-- Shutter/Grip Side (Left of viewer) - Lowered -->
+        <rect x="76" y="120" width="90" height="10" rx="2" fill="#141414"/>
+        <path d="M76 130 H166 V370 C166 380 156 386 146 386 H96 C86 386 76 380 76 370 V130 Z" fill="#0A0A0A"/>
+        <!-- Finger Grove -->
+        <path d="M130 180 Q 90 280 130 350" stroke="#121212" stroke-width="4" fill="none"/>
+        
+        <!-- Mode Dial Side (Right of viewer) - Lowered -->
+        <rect x="366" y="120" width="60" height="10" rx="2" fill="#141414"/>
+        <rect x="380" y="118" width="30" height="2" fill="#282828"/> <!-- Dial itself (Barely visible) -->
+        
+        <!-- Shutter Button Area - Lowered -->
+        <path d="M96 122 L146 121 L146 130 L96 130 Z" fill="#1E1E1E"/>
+        <ellipse cx="121" cy="122" rx="15" ry="2" fill="#282828"/> <!-- Button Base (Flat) -->
+        <ellipse cx="121" cy="122" rx="12" ry="1" fill="#111"/> <!-- Button Top (Barely visible) -->
+        
+        <!-- Red Self Timer Light (Round & 3D, Right Side) -->
+        <g transform="translate(410, 160)">
+             <!-- Bezel/Socket -->
+            <circle cx="0" cy="0" r="10" fill="#1A0505"/>
+            <!-- Glassy Red LED -->
+            <circle cx="0" cy="0" r="8" fill="#D00000"/>
+            <!-- Inner Depth Gradient simulation -->
+            <radialGradient id="ledGlow">
+                <stop offset="0%" stop-color="#FF3333"/>
+                <stop offset="100%" stop-color="#990000"/>
+            </radialGradient>
+            <circle cx="0" cy="0" r="8" fill="url(#ledGlow)"/>
+            <!-- Specular Highlight -->
+            <ellipse cx="-3" cy="-3" rx="3" ry="2" transform="rotate(-45)" fill="#FFF" fill-opacity="0.8"/>
+        </g>
+        
+        <!-- RG Badge Area -->
+        <rect x="390" y="340" width="40" height="20" fill="#333"/>
+        <text x="395" y="355" font-family="Arial" font-size="14" fill="#DDD" font-weight="bold">RG</text>
 
-  <!-- Mountains Layer -->
-  <g transform="translate(0, 20)">
-    <!-- Back Left Mountain -->
-    <path d="M-20 512 L180 250 L380 512 Z" fill="#388E3C"/>
-    <path d="M180 250 L220 310 L180 290 L140 310 Z" fill="#E8F5E9"/>
+        <!-- Lens Mount -->
+        <circle cx="256" cy="256" r="115" fill="#C0C0C0"/>
+        
+        <!-- Lens Barrel -->
+        <circle cx="256" cy="256" r="110" fill="#0A0A0A"/>
+        
+        <!-- Red Ring (L-Series) -->
+        <circle cx="256" cy="256" r="105" stroke="#C81414" stroke-width="5" fill="none"/>
+        
+        <!-- Inner Frame -->
+        <circle cx="256" cy="256" r="95" fill="#1E1E1E"/>
+        
+        <!-- Glass -->
+        <circle cx="256" cy="256" r="85" fill="#050510"/>
+        
+        <!-- Reflections -->
+        <ellipse cx="286" cy="226" rx="25" ry="15" transform="rotate(-45 286 226)" fill="#00FF66" fill-opacity="0.2"/>
+        <ellipse cx="226" cy="286" rx="20" ry="10" transform="rotate(-45 226 286)" fill="#FF00FF" fill-opacity="0.2"/>
+        <circle cx="290" cy="220" r="8" fill="#FFF" fill-opacity="0.7"/>
 
-    <!-- Back Right Mountain (Tallest) -->
-    <path d="M250 512 L450 100 L650 512 Z" fill="#1B5E20"/>
-    <path d="M450 100 L500 180 L450 150 L400 180 Z" fill="#FFFFFF"/>
-
-    <!-- Front Center Mountain -->
-    <path d="M120 520 L300 300 L480 520 Z" fill="#4CAF50"/>
-    <path d="M300 300 L340 360 L300 340 L260 360 Z" fill="#F1F8E9"/>
-  </g>
-
-  <!-- Camera Group with Shadow -->
-  <g filter="url(#shadow)">
-    <!-- Body -->
-    <rect x="56" y="128" width="400" height="256" rx="40" ry="40" fill="url(#cameraGradient)"/>
-    <!-- Top prism -->
-    <path d="M160 128 L190 90 H322 L352 128 Z" fill="#37474F"/>
-
-    <!-- Lens Assembly -->
-    <circle cx="256" cy="256" r="95" fill="#CFD8DC"/>
-    <circle cx="256" cy="256" r="85" fill="#263238"/>
-    <circle cx="256" cy="256" r="75" fill="#102027"/>
-
-    <!-- Reflection -->
-    <path d="M290 220 A 40 40 0 0 1 310 260" stroke="rgba(255,255,255,0.2)" stroke-width="8" fill="none" stroke-linecap="round"/>
-
-    <!-- Initials -->
-    <text x="256" y="295" font-family="Arial, sans-serif" font-size="110" font-weight="bold" fill="#FFF" text-anchor="middle" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">RG</text>
-
-    <!-- Red Detail -->
-    <circle cx="410" cy="170" r="12" fill="#F44336" stroke="#B71C1C" stroke-width="2"/>
-  </g>
+    </g>
 </svg>

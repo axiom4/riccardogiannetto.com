@@ -241,6 +241,14 @@
       opacity: 1;
       transform: scale(1);
     }
+
+    &.is-loading .lightbox-image {
+      border: none !important;
+      background: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      opacity: 0 !important;
+    }
   }
 
   .lightbox-frame {
@@ -271,6 +279,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
+    .loading-box {
+      background-color: rgba(0, 0, 0, 0.4);
+      border-radius: 16px;
+      padding: 40px 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        width: 120px;
+        height: 120px;
+        opacity: 0.5;
+      }
+    }
   }
 
   .lightbox-img .lightbox-image {
@@ -334,6 +357,8 @@
 
   .lightbox-image.current {
     z-index: 2;
+    opacity: 0;
+    visibility: hidden;
   }
 
   .lightbox-image.previous {
@@ -342,10 +367,12 @@
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
+    opacity: 1;
   }
 
   .lightbox-image.current.image-anim-a,
   .lightbox-image.current.image-anim-b {
+    visibility: visible;
     animation-duration: 600ms;
     animation-timing-function: ease-in-out;
     animation-fill-mode: both;
