@@ -1,20 +1,21 @@
 import os
 from PIL import Image, ImageDraw, ImageFont
 
+
 def generate_favicons():
     # Paths
     base_dir = os.path.dirname(os.path.abspath(__file__))
     web_dir = os.path.join(base_dir, 'rg_web', 'src')
     assets_dir = os.path.join(web_dir, 'assets')
-    
+
     os.makedirs(assets_dir, exist_ok=True)
-    
+
     ico_path = os.path.join(web_dir, 'favicon.ico')
     svg_path = os.path.join(assets_dir, 'favicon.svg')
-    
+
     # 1. Generate ICO using Pillow (Camera Icon)
     size = (512, 512)
-    
+
     # Create the background scene
     # 1.1 Helper: Vertical Gradient
     def create_vertical_gradient(size, start_color, end_color):
@@ -30,176 +31,195 @@ def generate_favicons():
         return base
 
     # Sky Gradient: Deep Sky Blue to Lighter Blue
-    sky_top = (30, 144, 255) # Dodger Blue
-    sky_bottom = (176, 224, 230) # Powder Blue
+    sky_top = (30, 144, 255)  # Dodger Blue
+    sky_bottom = (176, 224, 230)  # Powder Blue
     scene = create_vertical_gradient(size, sky_top, sky_bottom)
     scene_draw = ImageDraw.Draw(scene)
-    
+
     # Draw Sun with Glow
-    sun_color = (255, 223, 0) # Golden Yellow
-    sun_glow = (255, 255, 200, 100) # Pale Yellow, Semi-transparent
+    sun_color = (255, 223, 0)  # Golden Yellow
+    sun_glow = (255, 255, 200, 100)  # Pale Yellow, Semi-transparent
     sun_x, sun_y = 380, 80
     sun_r = 50
     # Glow (simulated with larger circle, low alpha - requires separate layer)
-    glow_layer = Image.new('RGBA', size, (0,0,0,0))
+    glow_layer = Image.new('RGBA', size, (0, 0, 0, 0))
     glow_draw = ImageDraw.Draw(glow_layer)
-    glow_draw.ellipse([sun_x - sun_r - 20, sun_y - sun_r - 20, sun_x + sun_r + 20, sun_y + sun_r + 20], fill=sun_glow)
+    glow_draw.ellipse([sun_x - sun_r - 20, sun_y - sun_r - 20,
+                      sun_x + sun_r + 20, sun_y + sun_r + 20], fill=sun_glow)
     scene.alpha_composite(glow_layer)
     # Core Sun
-    scene_draw.ellipse([sun_x - sun_r, sun_y - sun_r, sun_x + sun_r, sun_y + sun_r], fill=sun_color)
-    
+    scene_draw.ellipse([sun_x - sun_r, sun_y - sun_r,
+                       sun_x + sun_r, sun_y + sun_r], fill=sun_color)
+
     # Draw Mountains (More realistic tones)
-    mt_back_left = (46, 139, 87) # SeaGreen
-    mt_back_right = (60, 179, 113) # MediumSeaGreen
-    mt_front = (34, 139, 34) # ForestGreen
-    snow_color = (255, 250, 250) # Snow
-    
+    mt_back_left = (46, 139, 87)  # SeaGreen
+    mt_back_right = (60, 179, 113)  # MediumSeaGreen
+    mt_front = (34, 139, 34)  # ForestGreen
+    snow_color = (255, 250, 250)  # Snow
+
     # Mountain 1 (Left Back)
     scene_draw.polygon([(0, 512), (150, 200), (300, 512)], fill=mt_back_left)
     scene_draw.polygon([(112, 280), (150, 200), (188, 280)], fill=snow_color)
 
     # Mountain 2 (Right Back)
-    scene_draw.polygon([(200, 512), (400, 180), (600, 512)], fill=mt_back_right)
+    scene_draw.polygon(
+        [(200, 512), (400, 180), (600, 512)], fill=mt_back_right)
     scene_draw.polygon([(360, 246), (400, 180), (440, 246)], fill=snow_color)
-    
+
     # Mountain 3 (Center Foreground - darker for contrast)
     scene_draw.polygon([(100, 512), (256, 250), (412, 512)], fill=mt_front)
-    
+
     # Create and apply rounded Mask
     mask = Image.new('L', size, 0)
     mask_draw = ImageDraw.Draw(mask)
     mask_draw.rounded_rectangle([(0, 0), size], radius=100, fill=255)
-    
+
     final_bg = Image.new('RGBA', size, (0, 0, 0, 0))
     final_bg.paste(scene, (0, 0), mask=mask)
-    
+
     # Prepare to draw camera on top
     draw = ImageDraw.Draw(final_bg)
-    
+
     # --- Draw Camera Icon (3D Effect) ---
-    cam_color = (31, 31, 31) # #1f1f1f
-    cam_shadow_color = (15, 15, 15) # Darker for depth
-    lens_dark = (200, 200, 200) # Light grey
-    lens_light = (50, 50, 50) # Dark grey for inner lens
-    
-    depth = 15 # Depth pixel amount
-    
+    cam_color = (31, 31, 31)  # 1f1f1f
+    cam_shadow_color = (15, 15, 15)  # Darker for depth
+    lens_dark = (200, 200, 200)  # Light grey
+    lens_light = (50, 50, 50)  # Dark grey for inner lens
+
+    depth = 15  # Depth pixel amount
+
     # Dimensions relative to 512x512
     # Camera body: 380x260 (slightly smaller to fit 3D)
     # MOVED DOWN: cy = 280
     cx, cy = 256, 280
     w, h = 380, 260
-    
+
     # Front face coordinates (shifted up-left slightly to make room for shadow)
     x1, y1 = cx - w//2 - depth//2, cy - h//2 - depth//2
     x2, y2 = cx + w//2 - depth//2, cy + h//2 - depth//2
-    
+
     # --- 1. Draw Depth (Shadows) first ---
     # We simulate depth by drawing the same shapes efficiently offset
-    
+
     # Camera Body Shadow (Bottom-Right)
     # --- Draw Camera Icon (Canon 5D Mark IV Style) ---
     cam_black = (20, 20, 20)      # Deep Black/Grey
     cam_grip = (10, 10, 10)       # Darker textured grip
     cam_shadow = (0, 0, 0, 140)   # Drop shadow
-    
-    depth = 12 
+
+    depth = 12
     cx, cy = 256, 260
-    
+
     # Body Dimensions
     w_body, h_body = 360, 240
     # MOVED DOWN: cy = 280
-    cx, cy = 256, 280 
-    
+    cx, cy = 256, 280
+
     x1, y1 = cx - w_body//2, cy - h_body//2
     x2, y2 = cx + w_body//2, cy + h_body//2
 
     # 1. Shadows (Simplified shape for robustness)
-    draw.rounded_rectangle([x1+10, y1+10, x2+10, y2+10], radius=20, fill=cam_shadow)
-    
+    draw.rounded_rectangle([x1+10, y1+10, x2+10, y2+10],
+                           radius=20, fill=cam_shadow)
+
     # 2. Main Body Block (Bottom)
-    draw.rounded_rectangle([x1, y1 + 40, x2, y2], radius=15, fill=cam_black) # Lower chassis
-    
+    draw.rounded_rectangle([x1, y1 + 40, x2, y2],
+                           radius=15, fill=cam_black)  # Lower chassis
+
     # 3. Grip (Viewer's Left side / Camera's Right)
     # The 5D grip is prominent.
     grip_w = 90
-    draw.rounded_rectangle([x1, y1 + 10, x1 + grip_w, y2], radius=15, fill=cam_grip)
-    
+    draw.rounded_rectangle(
+        [x1, y1 + 10, x1 + grip_w, y2], radius=15, fill=cam_grip)
+
     # Finger indent on Grip
-    draw.chord([x1 + 65, y1 + 60, x1 + 115, y1 + 200], 110, 250, fill=cam_black)
+    draw.chord([x1 + 65, y1 + 60, x1 + 115, y1 + 200],
+               110, 250, fill=cam_black)
 
     # 4. Top Plates (Shoulders)
     # Left Shoulder (Grip side, tall with shutter) - Lowered significantly - BARELY VISIBLE
-    draw.polygon([(x1, y1+40), (x1+20, y1 + 35), (x1+grip_w, y1 + 32), (x1+grip_w, y1+40)], fill=cam_black)
-    
+    draw.polygon([(x1, y1+40), (x1+20, y1 + 35), (x1+grip_w,
+                 y1 + 32), (x1+grip_w, y1+40)], fill=cam_black)
+
     # Right Shoulder (Mode dial side - Viewer Right)
-    draw.polygon([(x2-100, y1+40), (x2-90, y1+15), (x2, y1+15), (x2, y1+40)], fill=cam_black)
-    
+    draw.polygon([(x2-100, y1+40), (x2-90, y1+15),
+                 (x2, y1+15), (x2, y1+40)], fill=cam_black)
+
     # 5. Pentaprism Hump (Curved "Canon" style)
     hm_w = 140
     # Reduced height: was y1 - 45 for ref, chord top -80
     # New: Flatten the curve a bit
-    
+
     # Draw base of hump
-    draw.rectangle([cx - hm_w//2 + 10, y1, cx + hm_w//2 - 10, y1 + 40], fill=cam_black)
+    draw.rectangle([cx - hm_w//2 + 10, y1, cx + hm_w //
+                   2 - 10, y1 + 40], fill=cam_black)
     # Draw curved top (Barely visible: y1-12)
-    draw.chord([cx - hm_w//2, y1 - 12, cx + hm_w//2, y1 + 30], 190, 350, fill=cam_black)
-    
+    draw.chord([cx - hm_w//2, y1 - 12, cx + hm_w//2,
+               y1 + 30], 190, 350, fill=cam_black)
+
     # Hot Shoe (Lowered to match)
     shoe_top = y1 - 8
-    draw.rectangle([cx - 20, shoe_top, cx + 20, shoe_top + 5], fill=(50, 50, 50))
-    
+    draw.rectangle([cx - 20, shoe_top, cx + 20,
+                   shoe_top + 5], fill=(50, 50, 50))
+
     # 6. Controls
     # Shutter Button (Angled on grip, flatted/barely visible)
     draw.ellipse([x1 + 30, y1 + 8, x1 + 60, y1 + 15], fill=(40, 40, 40))
-    
+
     # Mode Dial (Right Shoulder - Barely visible)
     draw.rectangle([x2 - 50, y1 + 35, x2 - 10, y1 + 37], fill=(30, 30, 30))
-    
+
     # Self-timer light/LED (MOVED TO RIGHT, Round & 3D)
     led_x = x2 - 45
     led_y = y1 + 70
     led_r = 8
     # Dark bevel/ring
-    draw.ellipse([led_x - led_r - 2, led_y - led_r - 2, led_x + led_r + 2, led_y + led_r + 2], fill=(10, 0, 0))
+    draw.ellipse([led_x - led_r - 2, led_y - led_r - 2, led_x +
+                 led_r + 2, led_y + led_r + 2], fill=(10, 0, 0))
     # Main Glassy Red
-    draw.ellipse([led_x - led_r, led_y - led_r, led_x + led_r, led_y + led_r], fill=(180, 0, 0))
+    draw.ellipse([led_x - led_r, led_y - led_r, led_x +
+                 led_r, led_y + led_r], fill=(180, 0, 0))
     # Highlight
-    draw.ellipse([led_x - 3, led_y - 5, led_x + 2, led_y], fill=(255, 200, 200, 230))
-    
+    draw.ellipse([led_x - 3, led_y - 5, led_x + 2, led_y],
+                 fill=(255, 200, 200, 230))
+
     # Markings
     # "5D" Placeholder (White text area)
-    draw.rectangle([x2 - 50, y2 - 40, x2 - 20, y2 - 25], fill=(180, 180, 180)) # Silver badge
+    draw.rectangle([x2 - 50, y2 - 40, x2 - 20, y2 - 25],
+                   fill=(180, 180, 180))  # Silver badge
 
     # 7. Lens System (EF Mount style)
     # Silver Mount Ring
-    draw.ellipse([cx - 110, cy - 110, cx + 110, cy + 110], fill=(180, 180, 180))
-    
+    draw.ellipse([cx - 110, cy - 110, cx + 110, cy + 110],
+                 fill=(180, 180, 180))
+
     # Black inner barrel
     draw.ellipse([cx - 105, cy - 105, cx + 105, cy + 105], fill=(10, 10, 10))
-    
+
     # Red Ring (L-Series)
-    draw.ellipse([cx - 100, cy - 100, cx + 100, cy + 100], outline=(200, 0, 0), width=4)
-    
+    draw.ellipse([cx - 100, cy - 100, cx + 100, cy + 100],
+                 outline=(200, 0, 0), width=4)
+
     # Inner glass frame
     draw.ellipse([cx - 90, cy - 90, cx + 90, cy + 90], fill=(20, 20, 30))
-    
+
     # Glass (Big front element)
     draw.ellipse([cx - 80, cy - 80, cx + 80, cy + 80], fill=(5, 5, 20))
-    
+
     # Reflections (Green/Magenta coating)
     draw.ellipse([cx + 20, cy - 50, cx + 60, cy - 20], fill=(0, 255, 100, 40))
     draw.ellipse([cx - 50, cy + 30, cx - 30, cy + 50], fill=(255, 0, 255, 40))
-    draw.ellipse([cx + 30, cy - 40, cx + 40, cy - 30], fill=(255, 255, 255, 180))
-
+    draw.ellipse([cx + 30, cy - 40, cx + 40, cy - 30],
+                 fill=(255, 255, 255, 180))
 
     # Save as ICO (containing multiple sizes)
-    final_bg.save(ico_path, format='ICO', sizes=[(256, 256), (128, 128), (64, 64), (48, 48), (32, 32), (16, 16)])
+    final_bg.save(ico_path, format='ICO', sizes=[
+                  (256, 256), (128, 128), (64, 64), (48, 48), (32, 32), (16, 16)])
     print(f"Generated ICO at: {ico_path}")
-    
+
     # 2. Generate SVG
     # Updated text for SVG to include drop shadows and layers
-    
+
     svg_content = f"""<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
         <clipPath id="round-corner">
@@ -339,6 +359,7 @@ def generate_favicons():
     with open(svg_path, 'w') as f:
         f.write(svg_content)
     print(f"Generated SVG at: {svg_path}")
+
 
 if __name__ == "__main__":
     generate_favicons()
