@@ -70,6 +70,7 @@ export class LightboxComponent {
   readonly controls = input<boolean>(true);
   readonly previewImage = input<boolean>(false);
   readonly pageFlipDirection = input<'next' | 'prev'>('next');
+  readonly preloadImages = input<ImageGallery[]>([]); // New input for preloading
   readonly isLoading = signal(true);
   readonly showInfo = signal(false);
 

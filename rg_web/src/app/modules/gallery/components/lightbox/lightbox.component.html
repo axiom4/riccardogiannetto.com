@@ -223,5 +223,17 @@
       </div>
     }
   </div>
+
+  <div style="display: none;" aria-hidden="true">
+    @for (img of preloadImages(); track img.url) {
+      <img
+        [ngSrc]="getImgId(img)"
+        [width]="img.width"
+        [height]="img.height"
+        sizes="100vw"
+        priority
+      />
+    }
+  </div>
 </div>
 <!-- Closing if was removed -->

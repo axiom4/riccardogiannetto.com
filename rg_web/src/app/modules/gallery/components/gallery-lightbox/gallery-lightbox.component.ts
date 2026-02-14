@@ -54,6 +54,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   previewImage = signal(false);
   showMask = signal(false);
   currentLightboxImg = signal<ImageGallery | undefined>(undefined);
+  nearbyImages = signal<ImageGallery[]>([]); // Images to preload
   currentIdx = 0;
   controls = true;
 
@@ -140,6 +141,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     this.currentIdx = index;
     this.currentLightboxImg.set(this.galleryItems()[index].data);
     this.imageNum = index + 1;
+    this.updateNearbyImages();
   }
 
   onAnimationEnd(): void {
@@ -163,6 +165,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     }
     this.currentLightboxImg.set(this.galleryItems()[this.currentIdx].data);
     this.imageNum = this.currentIdx + 1;
+    this.updateNearbyImages();
   }
 
   next(): void {
@@ -191,6 +194,37 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
         this.imageNum = this.currentIdx + 1;
       }
     }
+    this.updateNearbyImages();
+  }
+
+  updateNearbyImages() {
+    const items = this.galleryItems();
+    if (!items.length) return;
+
+    const nearby: ImageGallery[] = [];
+    const len = items.length;
+    // Indices to preload: -2, -1, +1, +2
+    const offsets = [-2, -1, 1, 2];
+    const seenUrls = new Set<string>();
+
+    for (const offset of offsets) {
+      let idx = this.currentIdx + offset;
+      // Handle wrapping
+      if (idx < 0) {
+        idx = (idx % len + len) % len;
+      } else if (idx >= len) {
+        idx = idx % len;
+      }
+      
+      if (items[idx]?.data) {
+        const item = items[idx].data;
+        if (!seenUrls.has(item.url)) {
+           seenUrls.add(item.url);
+           nearby.push(item);
+        }
+      }
+    }
+    this.nearbyImages.set(nearby);
   }
 
   loadItems(): void {
