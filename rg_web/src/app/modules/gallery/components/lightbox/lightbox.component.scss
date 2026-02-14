@@ -271,6 +271,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
+    .loading-box {
+      background-color: rgba(0, 0, 0, 0.4);
+      border-radius: 16px;
+      padding: 40px 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        width: 120px;
+        height: 120px;
+        opacity: 0.5;
+      }
+    }
   }
 
   .lightbox-img .lightbox-image {
