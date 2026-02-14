@@ -17,11 +17,30 @@ import {
   DOCUMENT,
   DatePipe,
   isPlatformBrowser,
+  IMAGE_LOADER,
+  ImageLoaderConfig,
 } from '@angular/common';
 import { ImageGallery } from '../../../../modules/core/api/v1';
 import { PLATFORM_ID, viewChild, ElementRef } from '@angular/core';
 import type { Map as LeafletMap } from 'leaflet';
 import { environment } from '../../../../../environments/environment';
+
+export const lightboxImageLoader = (config: ImageLoaderConfig) => {
+  const src = config.src;
+  // If src is a full URL, return it (bypassing resize)
+  if (src.startsWith('http') || src.startsWith('/')) {
+    return src;
+  }
+  
+  let baseUrl = environment.api_url;
+  if (baseUrl.endsWith('/')) {
+    baseUrl = baseUrl.slice(0, -1);
+  }
+
+  // Construct resized URL: /portfolio/images/<ID>/width/<WIDTH>
+  // Note: The backend expects integer width. NgOptimizedImage provides it.
+  return `${baseUrl}/portfolio/images/${src}/width/${config.width}`;
+};
 
 @Component({
   selector: 'app-lightbox',
@@ -30,6 +49,12 @@ import { environment } from '../../../../../environments/environment';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgClass, NgOptimizedImage, DatePipe],
+  providers: [
+    {
+      provide: IMAGE_LOADER,
+      useValue: lightboxImageLoader,
+    },
+  ],
 })
 export class LightboxComponent {
   private document = inject<Document>(DOCUMENT);
@@ -76,28 +101,17 @@ export class LightboxComponent {
   innerWidth = 0;
   innerHeight = 0;
 
-  getImgUrl(img: ImageGallery): string {
+  getImgId(img: ImageGallery): string {
     if (!img || !img.url) return '';
-
-    // We expect the URL to contain '/images/{id}'.
-    // We rely on the environment API URL for the domain and base path (e.g. /api).
-    // This ensures consistency between development and production.
 
     // Pattern to find the ID after 'images/'
     const match = img.url.match(/images\/([^/]+)/);
 
     if (match && match[1]) {
-      const id = match[1];
-      // Normalize base URL (remove trailing slash)
-      const baseUrl = environment.api_url.endsWith('/')
-        ? environment.api_url.slice(0, -1)
-        : environment.api_url;
-
-      // Construct the canonical URL for the image endpoint
-      return `${baseUrl}/portfolio/images/${id}`;
+      return match[1]; // Return just the ID
     }
 
-    return img.url;
+    return img.url; // Fallback to full URL if extraction fails
   }
 
   toggleInfo() {

@@ -118,9 +118,10 @@
                 'page-prev': pageFlipDirection() === 'prev',
               }"
               [alt]="p.title"
-              [ngSrc]="getImgUrl(p)"
+              [ngSrc]="getImgId(p)"
               [width]="p.width"
               [height]="p.height"
+              sizes="100vw"
               aria-hidden="true"
             />
           }
@@ -139,9 +140,10 @@
                 'page-prev': pageFlipDirection() === 'prev',
               }"
               [alt]="i.title"
-              [ngSrc]="getImgUrl(i)"
+              [ngSrc]="getImgId(i)"
               [width]="i.width"
               [height]="i.height"
+              sizes="100vw"
               priority
               (load)="onImageLoad($event)"
               (error)="onImageLoad($event)"
