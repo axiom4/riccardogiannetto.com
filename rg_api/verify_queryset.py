@@ -1,3 +1,4 @@
+from gallery.models import ImageGallery
 import os
 import sys
 import django
@@ -14,7 +15,6 @@ except Exception as e:
     print(f"Django setup failed: {e}")
     sys.exit(1)
 
-from gallery.models import ImageGallery
 
 print("Testing VALID query (no slug)...")
 try:
@@ -34,8 +34,8 @@ try:
     ).exclude(latitude=0, longitude=0).only('id', 'title', 'latitude', 'longitude', 'slug')
     # Force evaluation
     count = qs_bad.count()
-    # Accessing the field 'slug' on a result would definitely fail if deferred, 
-    # but .only() validation usually happens at interaction. 
+    # Accessing the field 'slug' on a result would definitely fail if deferred,
+    # but .only() validation usually happens at interaction.
     # For .only(), if field doesn't exist, django throws FieldError immediately?
     print(f"INVALID Query oddly successful? Count: {count}")
 except Exception as e:
