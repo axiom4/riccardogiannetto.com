@@ -31,7 +31,7 @@ export const lightboxImageLoader = (config: ImageLoaderConfig) => {
   if (src.startsWith('http') || src.startsWith('/')) {
     return src;
   }
-  
+
   let baseUrl = environment.api_url;
   if (baseUrl.endsWith('/')) {
     baseUrl = baseUrl.slice(0, -1);
