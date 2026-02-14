@@ -334,6 +334,8 @@
 
   .lightbox-image.current {
     z-index: 2;
+    opacity: 0;
+    visibility: hidden;
   }
 
   .lightbox-image.previous {
@@ -342,10 +344,12 @@
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
+    opacity: 1;
   }
 
   .lightbox-image.current.image-anim-a,
   .lightbox-image.current.image-anim-b {
+    visibility: visible;
     animation-duration: 600ms;
     animation-timing-function: ease-in-out;
     animation-fill-mode: both;

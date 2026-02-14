@@ -198,7 +198,6 @@ export class LightboxComponent {
         this.previousLightboxImg.set(lastImg);
         this.lastLightboxImg.set(nextImg);
         this.isLoading.set(true);
-        this.imageAnimA.update((v) => !v);
       }
     });
 
@@ -238,8 +237,9 @@ export class LightboxComponent {
     this.nextAction.emit();
   }
 
-  onImageLoad(): void {
+  onImageLoad(e: Event): void {
     this.isLoading.set(false);
+    this.imageAnimA.update((v) => !v);
   }
 
   onclosePreview(): void {

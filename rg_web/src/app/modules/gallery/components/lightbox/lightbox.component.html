@@ -103,7 +103,7 @@
                 'image-anim-a': imageAnimA(),
                 'image-anim-b': !imageAnimA(),
                 'page-next': pageFlipDirection() === 'next',
-                'page-prev': pageFlipDirection() === 'prev',
+                'page-prev': pageFlipDirection() === 'prev'
               }"
               [alt]="p.title"
               [ngSrc]="getImgUrl(p)"
@@ -121,18 +121,18 @@
               #galleryPreviewImg
               class="lightbox-image current"
               [ngClass]="{
-                'image-anim-a': imageAnimA(),
-                'image-anim-b': !imageAnimA(),
+                'image-anim-a': !isLoading() && imageAnimA(),
+                'image-anim-b': !isLoading() && !imageAnimA(),
                 'page-next': pageFlipDirection() === 'next',
-                'page-prev': pageFlipDirection() === 'prev',
+                'page-prev': pageFlipDirection() === 'prev'
               }"
               [alt]="i.title"
               [ngSrc]="getImgUrl(i)"
               [width]="i.width"
               [height]="i.height"
               priority
-              (load)="onImageLoad()"
-              (error)="onImageLoad()"
+              (load)="onImageLoad($event)"
+              (error)="onImageLoad($event)"
             />
           }
         }
