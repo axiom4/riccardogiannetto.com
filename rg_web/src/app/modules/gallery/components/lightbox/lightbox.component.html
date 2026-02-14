@@ -103,7 +103,7 @@
                 'image-anim-a': imageAnimA(),
                 'image-anim-b': !imageAnimA(),
                 'page-next': pageFlipDirection() === 'next',
-                'page-prev': pageFlipDirection() === 'prev'
+                'page-prev': pageFlipDirection() === 'prev',
               }"
               [alt]="p.title"
               [ngSrc]="getImgUrl(p)"
@@ -124,7 +124,7 @@
                 'image-anim-a': !isLoading() && imageAnimA(),
                 'image-anim-b': !isLoading() && !imageAnimA(),
                 'page-next': pageFlipDirection() === 'next',
-                'page-prev': pageFlipDirection() === 'prev'
+                'page-prev': pageFlipDirection() === 'prev',
               }"
               [alt]="i.title"
               [ngSrc]="getImgUrl(i)"
