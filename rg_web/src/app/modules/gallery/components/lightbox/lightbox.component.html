@@ -121,7 +121,7 @@
               [ngSrc]="getImgId(p)"
               [width]="p.width"
               [height]="p.height"
-              sizes="100vw"
+              sizes="(max-width: 600px) 100vw, (max-height: 900px) 60vw, (max-width: 1200px) 70vw, 50vw"
               aria-hidden="true"
             />
           }
@@ -232,6 +232,7 @@
         [height]="img.height"
         sizes="100vw"
         priority
+        alt=""
       />
     }
   </div>
