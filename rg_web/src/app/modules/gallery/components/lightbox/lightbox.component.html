@@ -123,6 +123,7 @@
               [height]="p.height"
               sizes="(max-width: 600px) 100vw, (max-height: 900px) 60vw, (max-width: 1200px) 70vw, 50vw"
               aria-hidden="true"
+              style="width: auto; height: auto;"
             />
           }
         }
@@ -146,7 +147,7 @@
               sizes="(max-width: 600px) 100vw, (max-height: 900px) 60vw, (max-width: 1200px) 70vw, 50vw"
               priority
               (load)="onImageLoad($event)"
-              (error)="onImageLoad($event)"
+              style="width: auto; height: auto;"
             />
           }
         }
