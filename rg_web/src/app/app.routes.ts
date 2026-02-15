@@ -8,6 +8,10 @@ export const routes: Routes = [
     component: MainPageComponent,
   },
   {
+    path: 'p/:id',
+    component: MainPageComponent,
+  },
+  {
     path: 'notfound',
     loadComponent: () =>
       import('./modules/main/components/page-not-found/page-not-found.component').then(

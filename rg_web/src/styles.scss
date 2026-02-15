@@ -3,8 +3,8 @@
   font-family: "myfantasy";
   font-style: normal;
   font-weight: 400;
-  font-display: optional;
-  src: url("/assets/fonts/Fantasy.woff") format("woff");
+  font-display: swap;
+  src: url("assets/fonts/Fantasy.woff") format("woff");
 }
 
 html {
@@ -246,7 +246,7 @@ header.site-header {
 
 h1.page-title,
 h1.site-title {
-  font-family: myfantasy, sans-serif;
+  font-family: "myfantasy", sans-serif;
   text-shadow: 2px 1px 2px #d3d3d3;
 }
 

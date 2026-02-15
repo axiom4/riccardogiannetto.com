@@ -10,11 +10,15 @@ import {
   viewChildren,
   afterNextRender,
   ChangeDetectionStrategy,
+  input,
+  untracked,
 } from '@angular/core';
-import { NgClass, NgOptimizedImage } from '@angular/common';
+import { NgClass, NgOptimizedImage, Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   ImageGallery,
   PortfolioImagesListRequestParams,
+  PortfolioImagesRetrieveRequestParams,
   PortfolioService,
 } from '../../../core/api/v1';
 import { LightboxComponent } from '../lightbox/lightbox.component';
@@ -32,6 +36,7 @@ export interface GalleryItem {
 
 @Component({
   selector: 'app-gallery-lightbox',
+  standalone: true,
   imports: [NgClass, LightboxComponent, NgOptimizedImage],
   templateUrl: './gallery-lightbox.component.html',
   styleUrl: './gallery-lightbox.component.scss',
@@ -39,9 +44,14 @@ export interface GalleryItem {
 })
 export class GalleryLightboxComponent implements OnInit, OnDestroy {
   private portfolioService = inject(PortfolioService);
+  private location = inject(Location);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   isLoading = signal(false);
   galleryItems = signal<GalleryItem[]>([]);
+  photoId = input<string | undefined>(undefined);
+
   page = signal(1);
   perPage = 24;
   innerWidth = 0;
@@ -101,6 +111,50 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
         this.setupObserver(el.nativeElement);
       }
     });
+
+    effect(() => {
+      const id = this.photoId();
+      
+      untracked(() => {
+        if (id) {
+          this.openLightboxById(id);
+        } else {
+           if (this.previewImage()) {
+             // Only close if we are actually going back to root via routing
+             // If we just opened it manually, id is undefined but we don't want to close.
+             // But how to distinguish?
+             
+             // If we open manually, id stays undefined. Effect doesn't run if id doesn't change?
+             // Yes, if we only track photoId(), effect only runs when photoId() changes.
+             
+             // So if we are at root (id=undefined), and click open, id remains undefined. Effect doesn't run.
+             // If we go to /p/1, id becomes "1". Effect runs -> opens (or re-opens/updates).
+             // If we hit back, id becomes undefined. Effect runs -> closes.
+             
+             this.showMask.set(false);
+             this.previewImage.set(false);
+           }
+        }
+      });
+    });
+
+    effect(() => {
+      const items = this.galleryItems();
+      const currentImg = this.currentLightboxImg();
+      if (currentImg && this.currentIdx === -1) {
+         const currentId = this.getIdFromUrl(currentImg.url);
+         if (currentId) {
+             const index = items.findIndex(
+                (item) => this.getIdFromUrl(item.data.url) === currentId
+              );
+              if (index !== -1) {
+                this.currentIdx = index;
+                this.imageNum = index + 1;
+                this.updateNearbyImages();
+              }
+         }
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -133,15 +187,57 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.totalImageCount = 0;
     this.loadItems();
+
+    const id = this.photoId();
+    if (id) {
+      this.openLightboxById(id);
+    }
+  }
+
+  getIdFromUrl(url: string): string | null {
+    const match = url.match(/\/images\/(\d+)/);
+    return match ? match[1] : null;
+  }
+
+  openLightboxById(id: string) {
+    this.portfolioService.portfolioImagesRetrieve({ id: Number(id) }).subscribe({
+      next: (img) => {
+        if (img) {
+          this.currentLightboxImg.set(img);
+          this.showMask.set(true);
+          this.previewImage.set(true);
+
+          // Attempt to find index if item is already loaded
+          // Note: galleryItems() might be empty if we call this too early
+          // We could use effect(), but let's just do a simple check
+          const index = this.galleryItems().findIndex(
+            (item) => this.getIdFromUrl(item.data.url) === id
+          );
+          if (index !== -1) {
+            this.currentIdx = index;
+            this.imageNum = index + 1;
+            this.updateNearbyImages();
+          } else {
+              // If not found, prevent navigation or handle edge case
+              // For simplicity, we just display the image.
+              this.currentIdx = -1;
+              this.imageNum = 1;
+          }
+        }
+      },
+      error: (err) => console.error('Failed to load image', err),
+    });
   }
 
   onPreviewImage(index: number): void {
     this.showMask.set(true);
     this.previewImage.set(true);
     this.currentIdx = index;
-    this.currentLightboxImg.set(this.galleryItems()[index].data);
+    const item = this.galleryItems()[index].data;
+    this.currentLightboxImg.set(item);
     this.imageNum = index + 1;
     this.updateNearbyImages();
+    this.updateUrl(item);
   }
 
   onAnimationEnd(): void {
@@ -151,10 +247,18 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
 
   onclosePreview(): void {
     this.previewImage.set(false);
+    this.location.go('/');
   }
 
   onImageLoad(item: GalleryItem): void {
     item.isLoading = false;
+  }
+
+  updateUrl(item: ImageGallery): void {
+    const id = this.getIdFromUrl(item.url);
+    if (id) {
+      this.location.go(`/p/${id}`);
+    }
   }
 
   prev(): void {
@@ -163,9 +267,11 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     if (this.currentIdx < 0) {
       this.currentIdx = this.galleryItems().length - 1;
     }
-    this.currentLightboxImg.set(this.galleryItems()[this.currentIdx].data);
+    const item = this.galleryItems()[this.currentIdx].data;
+    this.currentLightboxImg.set(item);
     this.imageNum = this.currentIdx + 1;
     this.updateNearbyImages();
+    this.updateUrl(item);
   }
 
   next(): void {
@@ -180,8 +286,10 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
 
     if (nextIdx < this.galleryItems().length) {
       this.currentIdx = nextIdx;
-      this.currentLightboxImg.set(this.galleryItems()[this.currentIdx].data);
+      const item = this.galleryItems()[this.currentIdx].data;
+      this.currentLightboxImg.set(item);
       this.imageNum = this.currentIdx + 1;
+      this.updateUrl(item);
     } else {
       // End of currently loaded items
       if (this.hasNextPage) {
@@ -190,8 +298,10 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
       } else {
         // Loop back to start
         this.currentIdx = 0;
-        this.currentLightboxImg.set(this.galleryItems()[this.currentIdx].data);
+        const item = this.galleryItems()[this.currentIdx].data;
+        this.currentLightboxImg.set(item);
         this.imageNum = this.currentIdx + 1;
+        this.updateUrl(item);
       }
     }
     this.updateNearbyImages();

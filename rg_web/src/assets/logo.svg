@@ -2,7 +2,7 @@
   <style>
     @font-face {
         font-family: "myfantasy";
-        src: url("/assets/fonts/Fantasy.woff") format("woff");
+        src: url("assets/fonts/Fantasy.woff") format("woff");
     }
     .text {
       font-family: "myfantasy", "Brush Script MT", cursive;
