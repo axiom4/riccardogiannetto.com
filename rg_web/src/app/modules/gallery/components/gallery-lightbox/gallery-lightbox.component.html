@@ -3,7 +3,11 @@
   class="gallery-lightbox-container"
   [class.lightbox-open]="showMask()"
 >
-  @for (item of galleryItems(); track item.data.url + '-' + item.cols + '-' + (i < 4); let i = $index) {
+  @for (
+    item of galleryItems();
+    track item.data.url + "-" + item.cols + "-" + (i < 4);
+    let i = $index
+  ) {
     <div
       class="gallery-img"
       [ngClass]="
