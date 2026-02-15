@@ -114,26 +114,26 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
 
     effect(() => {
       const id = this.photoId();
-      
+
       untracked(() => {
         if (id) {
           this.openLightboxById(id);
         } else {
-           if (this.previewImage()) {
-             // Only close if we are actually going back to root via routing
-             // If we just opened it manually, id is undefined but we don't want to close.
-             // But how to distinguish?
-             
-             // If we open manually, id stays undefined. Effect doesn't run if id doesn't change?
-             // Yes, if we only track photoId(), effect only runs when photoId() changes.
-             
-             // So if we are at root (id=undefined), and click open, id remains undefined. Effect doesn't run.
-             // If we go to /p/1, id becomes "1". Effect runs -> opens (or re-opens/updates).
-             // If we hit back, id becomes undefined. Effect runs -> closes.
-             
-             this.showMask.set(false);
-             this.previewImage.set(false);
-           }
+          if (this.previewImage()) {
+            // Only close if we are actually going back to root via routing
+            // If we just opened it manually, id is undefined but we don't want to close.
+            // But how to distinguish?
+
+            // If we open manually, id stays undefined. Effect doesn't run if id doesn't change?
+            // Yes, if we only track photoId(), effect only runs when photoId() changes.
+
+            // So if we are at root (id=undefined), and click open, id remains undefined. Effect doesn't run.
+            // If we go to /p/1, id becomes "1". Effect runs -> opens (or re-opens/updates).
+            // If we hit back, id becomes undefined. Effect runs -> closes.
+
+            this.showMask.set(false);
+            this.previewImage.set(false);
+          }
         }
       });
     });
@@ -142,17 +142,17 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
       const items = this.galleryItems();
       const currentImg = this.currentLightboxImg();
       if (currentImg && this.currentIdx === -1) {
-         const currentId = this.getIdFromUrl(currentImg.url);
-         if (currentId) {
-             const index = items.findIndex(
-                (item) => this.getIdFromUrl(item.data.url) === currentId
-              );
-              if (index !== -1) {
-                this.currentIdx = index;
-                this.imageNum = index + 1;
-                this.updateNearbyImages();
-              }
-         }
+        const currentId = this.getIdFromUrl(currentImg.url);
+        if (currentId) {
+          const index = items.findIndex(
+            (item) => this.getIdFromUrl(item.data.url) === currentId,
+          );
+          if (index !== -1) {
+            this.currentIdx = index;
+            this.imageNum = index + 1;
+            this.updateNearbyImages();
+          }
+        }
       }
     });
   }
@@ -200,33 +200,35 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   }
 
   openLightboxById(id: string) {
-    this.portfolioService.portfolioImagesRetrieve({ id: Number(id) }).subscribe({
-      next: (img) => {
-        if (img) {
-          this.currentLightboxImg.set(img);
-          this.showMask.set(true);
-          this.previewImage.set(true);
+    this.portfolioService
+      .portfolioImagesRetrieve({ id: Number(id) })
+      .subscribe({
+        next: (img) => {
+          if (img) {
+            this.currentLightboxImg.set(img);
+            this.showMask.set(true);
+            this.previewImage.set(true);
 
-          // Attempt to find index if item is already loaded
-          // Note: galleryItems() might be empty if we call this too early
-          // We could use effect(), but let's just do a simple check
-          const index = this.galleryItems().findIndex(
-            (item) => this.getIdFromUrl(item.data.url) === id
-          );
-          if (index !== -1) {
-            this.currentIdx = index;
-            this.imageNum = index + 1;
-            this.updateNearbyImages();
-          } else {
+            // Attempt to find index if item is already loaded
+            // Note: galleryItems() might be empty if we call this too early
+            // We could use effect(), but let's just do a simple check
+            const index = this.galleryItems().findIndex(
+              (item) => this.getIdFromUrl(item.data.url) === id,
+            );
+            if (index !== -1) {
+              this.currentIdx = index;
+              this.imageNum = index + 1;
+              this.updateNearbyImages();
+            } else {
               // If not found, prevent navigation or handle edge case
               // For simplicity, we just display the image.
               this.currentIdx = -1;
               this.imageNum = 1;
+            }
           }
-        }
-      },
-      error: (err) => console.error('Failed to load image', err),
-    });
+        },
+        error: (err) => console.error('Failed to load image', err),
+      });
   }
 
   onPreviewImage(index: number): void {

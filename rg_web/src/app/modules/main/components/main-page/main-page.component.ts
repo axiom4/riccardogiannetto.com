@@ -16,6 +16,6 @@ export class MainPageComponent {
   private route = inject(ActivatedRoute);
 
   id = toSignal(
-    this.route.paramMap.pipe(map((params) => params.get('id') ?? undefined))
+    this.route.paramMap.pipe(map((params) => params.get('id') ?? undefined)),
   );
 }
