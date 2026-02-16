@@ -707,12 +707,12 @@ article th {
 }
 
 .gallery-lightbox-container {
-  --gallery-gap: 30px;
+  --gallery-gap: 20px;
   position: relative;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-auto-flow: dense;
-  padding: 30px;
+  padding: 20px;
   gap: var(--gallery-gap);
   z-index: 100;
   width: 100%;
