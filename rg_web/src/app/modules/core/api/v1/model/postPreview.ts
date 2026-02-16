@@ -10,6 +10,9 @@
 import { User } from './user';
 
 
+/**
+ * Serializer for the Post model (preview).
+ */
 export interface PostPreview { 
     readonly id: number;
     readonly url: string;

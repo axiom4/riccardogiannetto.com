@@ -9,6 +9,9 @@
  */
 
 
+/**
+ * Serializer for the User model.
+ */
 export interface User { 
     /**
      * Obbligatorio. 150 caratteri o meno.Solo lettere, cifre e @/./+/-/_

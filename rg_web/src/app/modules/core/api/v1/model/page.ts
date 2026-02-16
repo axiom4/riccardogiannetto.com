@@ -10,6 +10,9 @@
 import { User } from './user';
 
 
+/**
+ * Serializer for the Page model.
+ */
 export interface Page { 
     readonly id: number;
     readonly url: string;

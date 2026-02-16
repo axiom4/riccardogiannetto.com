@@ -9,6 +9,9 @@
  */
 
 
+/**
+ * Serializer for UserActivity model.
+ */
 export interface UserActivity { 
     readonly id: number;
     readonly user: number | null;

@@ -9,6 +9,9 @@
  */
 
 
+/**
+ * Serializer for the Category model.
+ */
 export interface Category { 
     readonly id: number;
     readonly posts: number;

@@ -10,15 +10,18 @@
 import { User } from './user';
 
 
+/**
+ * Serializer for the Post model (full).
+ */
 export interface Post { 
     readonly id: number;
     readonly url: string;
     readonly author: User;
     title: string;
-    body: string;
     readonly created_at: string;
     image?: string | null;
     categories: Array<string>;
     summary?: string;
+    body: string;
 }
 
