@@ -765,10 +765,15 @@ article th {
       width: 100%;
       height: 100% !important;
       display: block;
-      border-radius: 0.35rem;
-      padding: 10px;
-      border: 1px solid rgba(0, 0, 0, 0.5);
-      box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.5);
+
+      // Frame Style
+      background-color: #fff; // Mat (Passe-partout)
+      padding: 15px; // Mat size
+      border: 8px solid #222; // Frame
+      border-radius: 2px;
+
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); // Depth shadow
+
       object-fit: cover;
       box-sizing: border-box;
     }
