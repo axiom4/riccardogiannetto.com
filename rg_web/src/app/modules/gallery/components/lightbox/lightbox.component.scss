@@ -248,8 +248,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 90vw;
-    height: 85vh;
+    width: 95vw;
+    height: 92vh;
     transform-style: preserve-3d;
     perspective: 1400px;
 
@@ -294,19 +294,19 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 95%;
-    max-height: 95%;
-    width: auto;
-    height: auto;
+    max-width: 98%;
+    max-height: 98%;
+    // width: auto; // Remove explicit width/height auto which can cause issues with aspect ratio
+    // height: auto;
 
     // Mat (Passe-partout)
     background-color: #ffffff;
     // Paper texture pattern
     background-image: url("/assets/texture-noise.svg");
-    padding: 50px; // Increased mat size
+    padding: 30px; // Reduced mat size from 50px
 
     // Frame (Cornice) - Thicker and more pronounced
-    border: 30px solid #222;
+    border: 20px solid #222; // Reduced border from 30px
     border-top-color: #444; // Stronger Highlight
     border-left-color: #3a3a3a;
     border-bottom-color: #0a0a0a; // Deep Shadow
