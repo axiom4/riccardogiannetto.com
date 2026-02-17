@@ -13,7 +13,7 @@ import {
   input,
   untracked,
 } from '@angular/core';
-import { NgClass, NgOptimizedImage, Location } from '@angular/common';
+import { DOCUMENT, NgClass, NgOptimizedImage, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   ImageGallery,
@@ -46,6 +46,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   private location = inject(Location);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private document = inject<Document>(DOCUMENT);
 
   isLoading = signal(false);
   galleryItems = signal<GalleryItem[]>([]);
@@ -190,7 +191,26 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     const slug = this.photoId();
     if (slug) {
       this.openLightboxBySlug(slug);
+    } else {
+      this.updateCanonical();
     }
+  }
+
+  updateCanonical() {
+    // Determine the base URL for the gallery. Since GalleryLightboxComponent
+    // is used for the homepage, we use the root URL.
+    // If it's used elsewhere, we might need to adjust.
+    // Assuming this component is primarily the homepage gallery.
+    const url = 'https://www.riccardogiannetto.com/';
+
+    let link: HTMLLinkElement | null =
+      this.document.querySelector("link[rel='canonical']");
+    if (!link) {
+      link = this.document.createElement('link');
+      link.setAttribute('rel', 'canonical');
+      this.document.head.appendChild(link);
+    }
+    link.setAttribute('href', url);
   }
 
   getSlugFromUrl(url: string): string | null {
