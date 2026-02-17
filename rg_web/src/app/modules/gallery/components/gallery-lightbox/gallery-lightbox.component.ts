@@ -203,8 +203,9 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     // Assuming this component is primarily the homepage gallery.
     const url = 'https://www.riccardogiannetto.com/';
 
-    let link: HTMLLinkElement | null =
-      this.document.querySelector("link[rel='canonical']");
+    let link: HTMLLinkElement | null = this.document.querySelector(
+      "link[rel='canonical']",
+    );
     if (!link) {
       link = this.document.createElement('link');
       link.setAttribute('rel', 'canonical');
