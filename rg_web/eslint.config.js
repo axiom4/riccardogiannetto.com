@@ -5,10 +5,7 @@ const tseslint = require("typescript-eslint");
 
 module.exports = defineConfig([
   {
-    ignores: [
-      "src/app/modules/core/api/v1/**/*",
-      ".angular/**/*"
-    ],
+    ignores: ["src/app/modules/core/api/v1/**/*", ".angular/**/*"],
   },
   {
     files: ["**/*.ts"],
