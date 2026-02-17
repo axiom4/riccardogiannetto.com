@@ -6,6 +6,7 @@ from taggit.managers import TaggableManager
 from django.conf import settings
 from django.db import models
 from django.utils.html import mark_safe
+from django.utils.text import slugify
 
 from gallery.models import Gallery
 from gallery.exif_utils import get_gps_data
@@ -47,6 +48,7 @@ class ImageGallery(models.Model):
         date (DateTimeField): Original photo capture date extracted from EXIF data.
     """
     title = models.CharField(max_length=250, null=False, blank=False)
+    slug = models.SlugField(max_length=250, unique=True, blank=True)
     image = models.ImageField(
         null=False
     )
@@ -101,13 +103,16 @@ class ImageGallery(models.Model):
             return mark_safe(f'<img src="{self.image.url}" width="150" />')
 
         return mark_safe(
-            f'<img src="{base_url}/{self.pk}/width/300" width="150" height="auto" loading="lazy" />'
+            f'<img src="{base_url}/{self.slug}/width/300" width="150" height="auto" loading="lazy" />'
         )
 
     image_tag.short_description = 'Image Preview'
 
     def save(self, *args, **kwargs):
         """Save method with image metadata extraction."""
+        if not self.slug:
+            self.slug = slugify(self.title)
+
         if self.image:
             try:
                 with Image.open(self.image) as img:

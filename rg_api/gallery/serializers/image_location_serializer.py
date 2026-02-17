@@ -15,7 +15,7 @@ class ImageLocationSerializer(serializers.ModelSerializer):
     class Meta:
         """Meta configuration for ImageLocationSerializer."""
         model = ImageGallery
-        fields = ['id', 'title', 'latitude', 'longitude', 'thumbnail']
+        fields = ['id', 'title', 'latitude', 'longitude', 'slug', 'thumbnail']
 
     @extend_schema_field(serializers.CharField)
     def get_thumbnail(self, obj):
@@ -30,4 +30,5 @@ class ImageLocationSerializer(serializers.ModelSerializer):
         """
         # Construct the thumbnail URL manually or use the image_tag logic equivalent
         # Assuming we can use the same generic view pattern
-        return f"{settings.IMAGE_GENERATOR_BASE_URL}/{obj.pk}/width/300"
+        base_url = getattr(settings, 'IMAGE_GENERATOR_BASE_URL', '')
+        return f"{base_url}/{obj.slug}/width/300"

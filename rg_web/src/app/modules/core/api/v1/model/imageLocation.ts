@@ -17,6 +17,7 @@ export interface ImageLocation {
     title: string;
     latitude?: number | null;
     longitude?: number | null;
+    slug?: string;
     readonly thumbnail: string;
 }
 

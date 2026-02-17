@@ -16,7 +16,7 @@ class ImageGallerySerializer(serializers.HyperlinkedModelSerializer):
         author (StringRelatedField): String representation of the author.
     """
     url = serializers.HyperlinkedIdentityField(
-        read_only=True, view_name='image-detail')
+        read_only=True, view_name='image-detail', lookup_field='slug')
 
     author = serializers.StringRelatedField(read_only=True)
 
@@ -30,3 +30,4 @@ class ImageGallerySerializer(serializers.HyperlinkedModelSerializer):
         """
         fields = '__all__'
         model = ImageGallery
+        lookup_field = 'slug'

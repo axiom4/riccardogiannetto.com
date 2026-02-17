@@ -16,6 +16,7 @@ export interface ImageGallery {
     readonly url: string;
     readonly author: string;
     title: string;
+    slug?: string;
     image: string;
     width: number;
     height: number;

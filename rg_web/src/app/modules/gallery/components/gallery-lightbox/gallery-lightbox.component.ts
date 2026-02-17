@@ -112,11 +112,11 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     });
 
     effect(() => {
-      const id = this.photoId();
+      const slug = this.photoId();
 
       untracked(() => {
-        if (id) {
-          this.openLightboxById(id);
+        if (slug) {
+          this.openLightboxBySlug(slug);
         } else {
           if (this.previewImage()) {
             // Only close if we are actually going back to root via routing
@@ -141,10 +141,10 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
       const items = this.galleryItems();
       const currentImg = this.currentLightboxImg();
       if (currentImg && this.currentIdx === -1) {
-        const currentId = this.getIdFromUrl(currentImg.url);
-        if (currentId) {
+        const currentSlug = this.getSlugFromUrl(currentImg.url);
+        if (currentSlug) {
           const index = items.findIndex(
-            (item) => this.getIdFromUrl(item.data.url) === currentId,
+            (item) => this.getSlugFromUrl(item.data.url) === currentSlug,
           );
           if (index !== -1) {
             this.currentIdx = index;
@@ -187,20 +187,20 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     this.totalImageCount = 0;
     this.loadItems();
 
-    const id = this.photoId();
-    if (id) {
-      this.openLightboxById(id);
+    const slug = this.photoId();
+    if (slug) {
+      this.openLightboxBySlug(slug);
     }
   }
 
-  getIdFromUrl(url: string): string | null {
-    const match = url.match(/\/images\/(\d+)/);
+  getSlugFromUrl(url: string): string | null {
+    const match = url.match(/\/images\/([^\/]+)/);
     return match ? match[1] : null;
   }
 
-  openLightboxById(id: string) {
+  openLightboxBySlug(slug: string) {
     this.portfolioService
-      .portfolioImagesRetrieve({ id: Number(id) })
+      .portfolioImagesRetrieve({ slug: slug })
       .subscribe({
         next: (img) => {
           if (img) {
@@ -212,7 +212,7 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
             // Note: galleryItems() might be empty if we call this too early
             // We could use effect(), but let's just do a simple check
             const index = this.galleryItems().findIndex(
-              (item) => this.getIdFromUrl(item.data.url) === id,
+              (item) => this.getSlugFromUrl(item.data.url) === slug,
             );
             if (index !== -1) {
               this.currentIdx = index;
@@ -256,9 +256,13 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   }
 
   updateUrl(item: ImageGallery): void {
-    const id = this.getIdFromUrl(item.url);
-    if (id) {
-      this.location.go(`/p/${id}`);
+    if (item.slug) {
+      this.location.go(`/p/${item.slug}`);
+    } else {
+      const slug = this.getSlugFromUrl(item.url);
+      if (slug) {
+        this.location.go(`/p/${slug}`);
+      }
     }
   }
 
