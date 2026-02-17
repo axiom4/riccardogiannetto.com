@@ -20,7 +20,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
     """Admin interface for ImageGallery model with advanced features."""
     form = ImageGalleryForm
     fields = [
-        ('title',),
+        ('title', 'slug'),
         ('image', 'image_tag'),
         ('gallery', 'author', 'date'),
         ('tags',),
@@ -32,7 +32,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
         ('latitude', 'longitude', 'altitude', 'location'),
     ]
     list_display = (
-        'title', 'gallery', 'image_tag', 'author',
+        'title', 'slug', 'gallery', 'image_tag', 'author',
         'width', 'height', 'camera_model', 'lens_model',
         'iso_speed', 'aperture_f_number', 'shutter_speed',
         'tag_list', 'created_at', 'updated_at',
