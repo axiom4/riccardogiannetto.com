@@ -306,11 +306,11 @@
     padding: 60px; // Increased mat size
 
     // Frame (Cornice) - Thicker and more pronounced
-    border: 20px solid #222; // Reduced border from 30px
-    border-top-color: #444; // Stronger Highlight
-    border-left-color: #3a3a3a;
-    border-bottom-color: #0a0a0a; // Deep Shadow
-    border-right-color: #0a0a0a;
+    border: 20px solid #333333; // Reduced border from 30px
+    border-top-color: #555555; // Stronger Highlight
+    border-left-color: #444444;
+    border-bottom-color: #1a1a1a; // Deep Shadow
+    border-right-color: #1a1a1a;
 
     // Styles
     object-fit: contain;
