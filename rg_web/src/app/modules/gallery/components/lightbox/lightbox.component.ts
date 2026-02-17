@@ -332,8 +332,9 @@ export class LightboxComponent {
   }
 
   private updateCanonical(url: string) {
-    let link: HTMLLinkElement | null =
-      this.document.querySelector("link[rel='canonical']");
+    let link: HTMLLinkElement | null = this.document.querySelector(
+      "link[rel='canonical']",
+    );
     if (!link) {
       link = this.document.createElement('link');
       link.setAttribute('rel', 'canonical');
