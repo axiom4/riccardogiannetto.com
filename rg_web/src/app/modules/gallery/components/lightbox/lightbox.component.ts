@@ -252,7 +252,7 @@ export class LightboxComponent {
     this.nextAction.emit();
   }
 
-  onImageLoad(e: Event): void {
+  onImageLoad(): void {
     this.isLoading.set(false);
     this.imageAnimA.update((v) => !v);
   }

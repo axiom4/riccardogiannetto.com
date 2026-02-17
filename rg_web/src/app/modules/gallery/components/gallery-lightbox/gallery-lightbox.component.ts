@@ -18,7 +18,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   ImageGallery,
   PortfolioImagesListRequestParams,
-  PortfolioImagesRetrieveRequestParams,
   PortfolioService,
 } from '../../../core/api/v1';
 import { LightboxComponent } from '../lightbox/lightbox.component';
