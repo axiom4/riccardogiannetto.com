@@ -5,7 +5,7 @@ import { routes } from './app.routes';
 import { Configuration, ConfigurationParameters } from './modules/core/api/v1';
 import { environment } from '../environments/environment';
 import { provideHttpClient, withFetch } from '@angular/common/http';
-import { IMAGE_LOADER } from '@angular/common';
+import { IMAGE_CONFIG, IMAGE_LOADER } from '@angular/common';
 import { galleryLoaderProvider } from './image-loader.config';
 
 export function apiConfigFactory(): Configuration {
@@ -27,6 +27,14 @@ export const appConfig: ApplicationConfig = {
     ),
     { provide: Configuration, useFactory: apiConfigFactory },
     provideHttpClient(withFetch()),
+    {
+      provide: IMAGE_CONFIG,
+      useValue: {
+        breakpoints: [
+          320, 480, 640, 750, 828, 960, 1080, 1200, 1920, 2048, 3840,
+        ],
+      },
+    },
     {
       provide: IMAGE_LOADER,
       useValue: galleryLoaderProvider,
