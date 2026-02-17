@@ -88,6 +88,13 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   private resizeObserver: ResizeObserver | undefined;
 
   constructor() {
+    // If we're in the browser, initialize columns immediately to avoid CLS
+    if (typeof window !== 'undefined') {
+      this.setColumns(window.innerWidth);
+      this.innerWidth = window.innerWidth;
+      this.innerHeight = window.innerHeight;
+    }
+
     afterNextRender(() => {
       // Use ResizeObserver to avoid forced synchronous layout calculations
       this.resizeObserver = new ResizeObserver(() => {
