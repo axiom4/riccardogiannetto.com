@@ -13,8 +13,8 @@ import {
   input,
   untracked,
 } from '@angular/core';
-import { Title, Meta } from '@angular/platform-browser';
 import { NgClass, NgOptimizedImage, Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   ImageGallery,
   PortfolioImagesListRequestParams,
@@ -44,8 +44,8 @@ export interface GalleryItem {
 export class GalleryLightboxComponent implements OnInit, OnDestroy {
   private portfolioService = inject(PortfolioService);
   private location = inject(Location);
-  private titleService = inject(Title);
-  private metaService = inject(Meta);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   isLoading = signal(false);
   galleryItems = signal<GalleryItem[]>([]);
@@ -108,16 +108,6 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
       const el = this.sentinel();
       if (el) {
         this.setupObserver(el.nativeElement);
-      }
-    });
-
-    effect(() => {
-      const currentImg = this.currentLightboxImg();
-      const showPreview = this.previewImage();
-      if (currentImg && showPreview) {
-        this.updateTitleMeta(currentImg);
-      } else {
-        this.clearTitleMeta();
       }
     });
 
@@ -770,41 +760,5 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
       );
     }
     return Math.floor(this.innerHeight * 0.8);
-  }
-
-  private updateTitleMeta(image: ImageGallery): void {
-    const title = `${image.title} - Riccardo Giannetto`;
-    const description = `${image.title} by ${image.author}. Fine art nature photography.`;
-    const path = this.location.path();
-    const url = `https://www.riccardogiannetto.com${path}`;
-    const imageUrl = image.image; // Assuming image field is the URL
-
-    this.titleService.setTitle(title);
-
-    this.metaService.updateTag({ name: 'description', content: description });
-    this.metaService.updateTag({ property: 'og:title', content: title });
-    this.metaService.updateTag({
-      property: 'og:description',
-      content: description,
-    });
-    this.metaService.updateTag({ property: 'og:image', content: imageUrl });
-    this.metaService.updateTag({ property: 'og:url', content: url });
-    this.metaService.updateTag({
-      name: 'twitter:card',
-      content: 'summary_large_image',
-    });
-  }
-
-  private clearTitleMeta(): void {
-    this.titleService.setTitle('Riccardo Giannetto - Wild Nature Photography');
-    this.metaService.updateTag({
-      name: 'description',
-      content: 'Fine Art Nature Photography by Riccardo Giannetto',
-    });
-    this.metaService.removeTag("property='og:title'");
-    this.metaService.removeTag("property='og:description'");
-    this.metaService.removeTag("property='og:image'");
-    this.metaService.removeTag("property='og:url'");
-    this.metaService.removeTag("name='twitter:card'");
   }
 }
