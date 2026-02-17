@@ -199,35 +199,33 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   }
 
   openLightboxBySlug(slug: string) {
-    this.portfolioService
-      .portfolioImagesRetrieve({ slug: slug })
-      .subscribe({
-        next: (img) => {
-          if (img) {
-            this.currentLightboxImg.set(img);
-            this.showMask.set(true);
-            this.previewImage.set(true);
+    this.portfolioService.portfolioImagesRetrieve({ slug: slug }).subscribe({
+      next: (img) => {
+        if (img) {
+          this.currentLightboxImg.set(img);
+          this.showMask.set(true);
+          this.previewImage.set(true);
 
-            // Attempt to find index if item is already loaded
-            // Note: galleryItems() might be empty if we call this too early
-            // We could use effect(), but let's just do a simple check
-            const index = this.galleryItems().findIndex(
-              (item) => this.getSlugFromUrl(item.data.url) === slug,
-            );
-            if (index !== -1) {
-              this.currentIdx = index;
-              this.imageNum = index + 1;
-              this.updateNearbyImages();
-            } else {
-              // If not found, prevent navigation or handle edge case
-              // For simplicity, we just display the image.
-              this.currentIdx = -1;
-              this.imageNum = 1;
-            }
+          // Attempt to find index if item is already loaded
+          // Note: galleryItems() might be empty if we call this too early
+          // We could use effect(), but let's just do a simple check
+          const index = this.galleryItems().findIndex(
+            (item) => this.getSlugFromUrl(item.data.url) === slug,
+          );
+          if (index !== -1) {
+            this.currentIdx = index;
+            this.imageNum = index + 1;
+            this.updateNearbyImages();
+          } else {
+            // If not found, prevent navigation or handle edge case
+            // For simplicity, we just display the image.
+            this.currentIdx = -1;
+            this.imageNum = 1;
           }
-        },
-        error: (err) => console.error('Failed to load image', err),
-      });
+        }
+      },
+      error: (err) => console.error('Failed to load image', err),
+    });
   }
 
   onPreviewImage(index: number): void {

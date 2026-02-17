@@ -3,6 +3,7 @@
 from django.db import migrations
 from django.utils.text import slugify
 
+
 def populate_slugs(apps, schema_editor):
     ImageGallery = apps.get_model('gallery', 'ImageGallery')
     for image in ImageGallery.objects.all():
@@ -15,6 +16,7 @@ def populate_slugs(apps, schema_editor):
                 image.slug = f"{original_slug}-{count}"
                 count += 1
             image.save()
+
 
 class Migration(migrations.Migration):
 
