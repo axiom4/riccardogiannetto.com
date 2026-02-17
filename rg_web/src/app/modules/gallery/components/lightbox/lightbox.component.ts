@@ -300,6 +300,7 @@ export class LightboxComponent {
     const imageUrl = image.image; // Assuming image field is the URL
 
     this.titleService.setTitle(title);
+    this.updateCanonical(url);
 
     this.metaService.updateTag({ name: 'description', content: description });
     this.metaService.updateTag({ property: 'og:title', content: title });
@@ -316,6 +317,8 @@ export class LightboxComponent {
   }
 
   private clearTitleMeta(): void {
+    const url = window.location.href; // Get current URL (should be base)
+    this.updateCanonical(url);
     this.titleService.setTitle('Riccardo Giannetto - Wild Nature Photography');
     this.metaService.updateTag({
       name: 'description',
@@ -326,5 +329,16 @@ export class LightboxComponent {
     this.metaService.removeTag("property='og:image'");
     this.metaService.removeTag("property='og:url'");
     this.metaService.removeTag("name='twitter:card'");
+  }
+
+  private updateCanonical(url: string) {
+    let link: HTMLLinkElement | null =
+      this.document.querySelector("link[rel='canonical']");
+    if (!link) {
+      link = this.document.createElement('link');
+      link.setAttribute('rel', 'canonical');
+      this.document.head.appendChild(link);
+    }
+    link.setAttribute('href', url);
   }
 }
