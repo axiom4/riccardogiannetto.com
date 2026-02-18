@@ -38,8 +38,9 @@ class Command(BaseCommand):
             lastmod = image.updated_at.strftime(
                 '%Y-%m-%d') if image.updated_at else current_date_iso
 
-            # Using ID as per Angular route configuration (p/:id)
-            loc = f'{base_url}/p/{image.id}'
+            # Use slug for better SEO as requested
+            slug = image.slug if image.slug else image.id
+            loc = f'{base_url}/p/{slug}'
 
             urlset.append(
                 f'  <url>\n'

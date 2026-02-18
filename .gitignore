@@ -8,3 +8,5 @@ rg_api/rg_api/settings.py
 .DS_Store
 GeoLite2-City.mmdb
 deployment
+sitemap.xml
+rg_web/src/sitemap.xml
