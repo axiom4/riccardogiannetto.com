@@ -31,7 +31,7 @@
 
     .cookie-actions {
       .btn-accept {
-        background-color: #4caf50; /* Green */
+        background-color: #2e7d32; /* darker green for better contrast */
         border: none;
         color: white;
         padding: 10px 20px;
@@ -44,7 +44,7 @@
         transition: background-color 0.3s;
 
         &:hover {
-          background-color: #45a049;
+          background-color: #1b5e20;
         }
       }
     }
