@@ -18,6 +18,7 @@ export interface ImageGallery {
     title: string;
     slug?: string;
     image: string;
+    tags?: Array<string>;
     width: number;
     height: number;
     readonly created_at: string;
