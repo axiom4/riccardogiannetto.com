@@ -4,7 +4,8 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY, filter, map, switchMap, tap } from 'rxjs';
@@ -22,6 +23,9 @@ import { marked } from 'marked';
 export class PostDetailComponent {
   private route = inject(ActivatedRoute);
   private blogService = inject(BlogService);
+  private meta = inject(Meta);
+  private titleService = inject(Title);
+  private location = inject(Location);
 
   post = signal<Post | null>(null);
   parsedBody = signal('');
@@ -55,6 +59,24 @@ export class PostDetailComponent {
       )
       .subscribe(async (post: Post) => {
         this.post.set(post);
+
+        // Update SEO
+        this.titleService.setTitle(post.title + ' | Riccardo Giannetto Blog');
+        this.meta.updateTag({ name: 'description', content: post.summary || post.title });
+        
+        // Open Graph
+        this.meta.updateTag({ property: 'og:title', content: post.title });
+        this.meta.updateTag({ property: 'og:description', content: post.summary || post.title });
+        this.meta.updateTag({ property: 'og:type', content: 'article' });
+        
+        if (post.image) {
+            // Assuming image path/URL structure. Adjust as needed.
+            // Using window.location.origin is browser-only, but Angular Universal usually handles this if configured.
+            // Safe fallback if not SSR:
+            const origin = typeof window !== 'undefined' ? window.location.origin : '';
+            this.meta.updateTag({ property: 'og:image', content: `${origin}/api/blog/posts/${post.id}/width/1200` });
+        }
+        
         if (post.body) {
           try {
             const parsed = await marked.parse(post.body);

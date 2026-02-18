@@ -14,6 +14,7 @@ import {
   untracked,
 } from '@angular/core';
 import { DOCUMENT, NgClass, NgOptimizedImage, Location } from '@angular/common';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   ImageGallery,
@@ -47,6 +48,8 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private document = inject<Document>(DOCUMENT);
+  private meta = inject(Meta);
+  private titleService = inject(Title);
 
   isLoading = signal(false);
   galleryItems = signal<GalleryItem[]>([]);
@@ -148,6 +151,41 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     effect(() => {
       const items = this.galleryItems();
       const currentImg = this.currentLightboxImg();
+      if (currentImg) {
+        this.titleService.setTitle(currentImg.title + ' | Riccardo Giannetto');
+        this.meta.updateTag({
+          name: 'description',
+          content: currentImg.title + (currentImg.tags ? ' - ' + currentImg.tags.join(', ') : ''),
+        });
+        
+        // Open Graph tags
+        this.meta.updateTag({ property: 'og:title', content: currentImg.title });
+        this.meta.updateTag({
+          property: 'og:description',
+          content: currentImg.title + (currentImg.tags ? ' - ' + currentImg.tags.join(', ') : ''),
+        });
+        this.meta.updateTag({ property: 'og:image', content: `${location.origin}/api/gallery/images/${currentImg.slug}/width/1200` });
+        this.meta.updateTag({ property: 'og:url', content: location.href });
+        this.meta.updateTag({ property: 'og:type', content: 'website' });
+        
+        // Twitter Card
+        this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+        this.meta.updateTag({ name: 'twitter:title', content: currentImg.title });
+        this.meta.updateTag({
+          name: 'twitter:description',
+          content: currentImg.title + (currentImg.tags ? ' - ' + currentImg.tags.join(', ') : ''),
+        });
+        this.meta.updateTag({ name: 'twitter:image', content: `${location.origin}/api/gallery/images/${currentImg.slug}/width/1200` });
+      } else {
+        this.titleService.setTitle('Riccardo Giannetto - Wild Nature Photography');
+        this.meta.updateTag({
+           name: 'description',
+           content: 'Welcome to my Photography Blog. On this site you will be able to see my works.',
+        });
+      }
+    });
+
+    effect(() => {
       if (currentImg && this.currentIdx === -1) {
         const currentSlug = this.getSlugFromUrl(currentImg.url);
         if (currentSlug) {
