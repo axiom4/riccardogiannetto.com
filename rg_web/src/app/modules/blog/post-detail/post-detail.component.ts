@@ -62,21 +62,31 @@ export class PostDetailComponent {
 
         // Update SEO
         this.titleService.setTitle(post.title + ' | Riccardo Giannetto Blog');
-        this.meta.updateTag({ name: 'description', content: post.summary || post.title });
-        
+        this.meta.updateTag({
+          name: 'description',
+          content: post.summary || post.title,
+        });
+
         // Open Graph
         this.meta.updateTag({ property: 'og:title', content: post.title });
-        this.meta.updateTag({ property: 'og:description', content: post.summary || post.title });
+        this.meta.updateTag({
+          property: 'og:description',
+          content: post.summary || post.title,
+        });
         this.meta.updateTag({ property: 'og:type', content: 'article' });
-        
+
         if (post.image) {
-            // Assuming image path/URL structure. Adjust as needed.
-            // Using window.location.origin is browser-only, but Angular Universal usually handles this if configured.
-            // Safe fallback if not SSR:
-            const origin = typeof window !== 'undefined' ? window.location.origin : '';
-            this.meta.updateTag({ property: 'og:image', content: `${origin}/api/blog/posts/${post.id}/width/1200` });
+          // Assuming image path/URL structure. Adjust as needed.
+          // Using window.location.origin is browser-only, but Angular Universal usually handles this if configured.
+          // Safe fallback if not SSR:
+          const origin =
+            typeof window !== 'undefined' ? window.location.origin : '';
+          this.meta.updateTag({
+            property: 'og:image',
+            content: `${origin}/api/blog/posts/${post.id}/width/1200`,
+          });
         }
-        
+
         if (post.body) {
           try {
             const parsed = await marked.parse(post.body);
