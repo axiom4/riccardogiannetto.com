@@ -217,7 +217,8 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
         const currentSlug = this.getSlugFromUrl(currentImg.url);
         if (currentSlug) {
           const index = items.findIndex(
-            (item: GalleryItem) => this.getSlugFromUrl(item.data.url) === currentSlug,
+            (item: GalleryItem) =>
+              this.getSlugFromUrl(item.data.url) === currentSlug,
           );
           if (index !== -1) {
             this.currentIdx = index;
