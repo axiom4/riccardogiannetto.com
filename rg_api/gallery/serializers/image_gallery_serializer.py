@@ -18,6 +18,7 @@ class ImageGallerySerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         read_only=True, view_name='image-detail', lookup_field='slug')
 
+    tags = serializers.StringRelatedField(many=True, read_only=True)
     author = serializers.StringRelatedField(read_only=True)
 
     class Meta:
