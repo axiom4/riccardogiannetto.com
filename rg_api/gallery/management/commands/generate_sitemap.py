@@ -2,7 +2,6 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from gallery.models import ImageGallery
 from blog.models import Post, Page
-import os
 from datetime import datetime
 
 
@@ -116,6 +115,6 @@ class Command(BaseCommand):
             self.stdout.write(
                 f'Included: {count_images} images, {count_posts} posts, {count_pages} pages.')
 
-        except Exception as e:
+        except (IOError, OSError) as e:
             self.stdout.write(self.style.ERROR(
                 f'Error generating sitemap: {str(e)}'))
