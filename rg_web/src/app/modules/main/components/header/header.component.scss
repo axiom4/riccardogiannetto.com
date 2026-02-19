@@ -1,1 +1,28 @@
 // .site-branding styles are handled globally or inline
+
+.logo-svg {
+  width: 250px;
+  height: 96px;
+}
+
+.logo-text {
+  font-family: "myfantasy", "Brush Script MT", cursive;
+  fill: #595959;
+}
+
+.logo-title {
+  font-size: 60px;
+}
+
+.logo-subtitle {
+  font-size: 25px;
+}
+
+.site-branding {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.site-branding.loaded {
+  opacity: 1;
+}

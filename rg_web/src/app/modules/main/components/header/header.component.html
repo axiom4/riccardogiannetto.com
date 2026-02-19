@@ -3,7 +3,6 @@
     <div
       class="site-branding"
       [class.loaded]="isLoaded()"
-      [style.opacity]="isLoaded() ? 1 : 0"
     >
       <h1 class="site-title">
         <a
@@ -11,26 +10,7 @@
           rel="home"
           aria-label="Riccardo Giannetto - Wild Nature Photography"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 313 120"
-            width="250"
-            height="96"
-            class="logo-svg"
-            preserveAspectRatio="xMinYMid meet"
-          >
-            <style>
-              .logo-text {
-                font-family: "myfantasy", "Brush Script MT", cursive;
-                fill: #595959;
-              }
-              .logo-title {
-                font-size: 60px;
-              }
-              .logo-subtitle {
-                font-size: 25px;
-              }
-            </style>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 313 120" class="logo-svg" preserveAspectRatio="xMinYMid meet">
             <defs>
               <filter
                 id="logo-shadow"
