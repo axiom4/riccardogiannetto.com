@@ -2,7 +2,7 @@ import os
 from PIL import Image, ImageDraw
 
 
-def generate_favicons():
+def generate_favicons() -> None:
     # Paths
     base_dir = os.path.dirname(os.path.abspath(__file__))
     web_dir = os.path.join(base_dir, 'rg_web', 'src')
@@ -20,7 +20,6 @@ def generate_favicons():
     # 1.1 Helper: Vertical Gradient
     def create_vertical_gradient(size, start_color, end_color):
         base = Image.new('RGBA', size, start_color)
-        top = Image.new('RGBA', size, start_color)
         bottom = Image.new('RGBA', size, end_color)
         mask = Image.new('L', size)
         mask_data = []
@@ -85,7 +84,6 @@ def generate_favicons():
     cam_grip = (10, 10, 10)       # Darker textured grip
     cam_shadow = (0, 0, 0, 140)   # Drop shadow
 
-    depth = 12
     cx, cy = 256, 260
 
     # Body Dimensions
@@ -198,7 +196,7 @@ def generate_favicons():
     # 2. Generate SVG
     # Updated text for SVG to include drop shadows and layers
 
-    svg_content = f"""<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    svg_content = """<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
         <clipPath id="round-corner">
             <rect width="512" height="512" rx="100" />
@@ -334,7 +332,7 @@ def generate_favicons():
     </g>
 </svg>"""
 
-    with open(svg_path, 'w') as f:
+    with open(svg_path, 'w', encoding='utf-8') as f:
         f.write(svg_content)
     print(f"Generated SVG at: {svg_path}")
 
