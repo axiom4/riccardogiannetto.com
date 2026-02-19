@@ -15,7 +15,6 @@ import {
 } from '@angular/core';
 import { DOCUMENT, NgClass, NgOptimizedImage, Location } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
 import {
   ImageGallery,
   PortfolioImagesListRequestParams,
@@ -45,8 +44,6 @@ export interface GalleryItem {
 export class GalleryLightboxComponent implements OnInit, OnDestroy {
   private portfolioService = inject(PortfolioService);
   private location = inject(Location);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private document = inject<Document>(DOCUMENT);
   private meta = inject(Meta);
   private titleService = inject(Title);
@@ -149,7 +146,6 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
     });
 
     effect(() => {
-      const items = this.galleryItems();
       const currentImg = this.currentLightboxImg();
       if (currentImg) {
         this.titleService.setTitle(currentImg.title + ' | Riccardo Giannetto');
