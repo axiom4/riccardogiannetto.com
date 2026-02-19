@@ -1,5 +1,5 @@
 import os
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 
 
 def generate_favicons():
@@ -80,28 +80,6 @@ def generate_favicons():
     # Prepare to draw camera on top
     draw = ImageDraw.Draw(final_bg)
 
-    # --- Draw Camera Icon (3D Effect) ---
-    cam_color = (31, 31, 31)  # 1f1f1f
-    cam_shadow_color = (15, 15, 15)  # Darker for depth
-    lens_dark = (200, 200, 200)  # Light grey
-    lens_light = (50, 50, 50)  # Dark grey for inner lens
-
-    depth = 15  # Depth pixel amount
-
-    # Dimensions relative to 512x512
-    # Camera body: 380x260 (slightly smaller to fit 3D)
-    # MOVED DOWN: cy = 280
-    cx, cy = 256, 280
-    w, h = 380, 260
-
-    # Front face coordinates (shifted up-left slightly to make room for shadow)
-    x1, y1 = cx - w//2 - depth//2, cy - h//2 - depth//2
-    x2, y2 = cx + w//2 - depth//2, cy + h//2 - depth//2
-
-    # --- 1. Draw Depth (Shadows) first ---
-    # We simulate depth by drawing the same shapes efficiently offset
-
-    # Camera Body Shadow (Bottom-Right)
     # --- Draw Camera Icon (Canon 5D Mark IV Style) ---
     cam_black = (20, 20, 20)      # Deep Black/Grey
     cam_grip = (10, 10, 10)       # Darker textured grip
