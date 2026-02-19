@@ -84,8 +84,6 @@ def generate_favicons() -> None:
     cam_grip = (10, 10, 10)       # Darker textured grip
     cam_shadow = (0, 0, 0, 140)   # Drop shadow
 
-    cx, cy = 256, 260
-
     # Body Dimensions
     w_body, h_body = 360, 240
     # MOVED DOWN: cy = 280
