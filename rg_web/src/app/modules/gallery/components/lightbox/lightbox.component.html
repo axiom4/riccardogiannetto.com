@@ -214,7 +214,7 @@
 
       @if (currentLightboxImg()?.latitude && currentLightboxImg()?.longitude) {
         <div class="map-container">
-          <div #mapContainer style="height: 100%; width: 100%"></div>
+          <div #mapContainer class="map-inner"></div>
         </div>
       }
     } @else {
@@ -224,7 +224,7 @@
     }
   </div>
 
-  <div style="display: none" aria-hidden="true">
+  <div class="preloaded-images" aria-hidden="true">
     @for (img of preloadImages(); track img.url) {
       <img
         [ngSrc]="getImgId(img)"
