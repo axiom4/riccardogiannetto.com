@@ -1,8 +1,12 @@
+"""
+Docstring for rg_api.analytics.views.csp
+"""
 import json
 import logging
 from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from rg_api.permissions import get_client_ip
 
 try:
     import geoip2.database
@@ -12,7 +16,6 @@ except ImportError:
     GEOIP_LIB = None
 
 from ..models import CSPReport
-from rg_api.permissions import get_client_ip
 
 logger = logging.getLogger('django.security.csp')
 
@@ -55,10 +58,10 @@ def csp_report(request):
                             country = response.country.name
                             latitude = response.location.latitude
                             longitude = response.location.longitude
-                    except Exception as e:
+                    except (geoip2.errors.GeoIP2Error, OSError) as e:
                         # Log debug info but continue saving the report
                         logger.debug(
-                            f"Could not resolve location for IP {ip_address}: {e}")
+                            "Could not resolve location for IP %s: %s", ip_address, e)
 
                 # We use get_or_create to filter out identical reports that happen in the same context
                 CSPReport.objects.get_or_create(
