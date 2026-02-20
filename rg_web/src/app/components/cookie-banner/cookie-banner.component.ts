@@ -13,7 +13,6 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './cookie-banner.component.html',
-  styleUrl: './cookie-banner.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })

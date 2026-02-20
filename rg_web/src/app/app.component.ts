@@ -17,7 +17,6 @@ import { CookieBannerComponent } from './components/cookie-banner/cookie-banner.
     CookieBannerComponent,
   ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })

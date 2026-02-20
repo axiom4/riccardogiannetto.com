@@ -7,6 +7,7 @@ import {
   signal,
   viewChild,
   ChangeDetectionStrategy,
+  ViewEncapsulation,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
@@ -17,6 +18,7 @@ import { isPlatformBrowser } from '@angular/common';
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
 })
 export class HeaderComponent implements OnInit {
   menu = viewChild<ElementRef>('menu');
