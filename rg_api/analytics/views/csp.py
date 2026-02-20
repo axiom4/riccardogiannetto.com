@@ -36,8 +36,10 @@ def csp_report(request):
                 CSPReport.objects.create(
                     document_uri=csp_report_data.get('document-uri'),
                     referrer=csp_report_data.get('referrer'),
-                    violated_directive=csp_report_data.get('violated-directive'),
-                    effective_directive=csp_report_data.get('effective-directive'),
+                    violated_directive=csp_report_data.get(
+                        'violated-directive'),
+                    effective_directive=csp_report_data.get(
+                        'effective-directive'),
                     original_policy=csp_report_data.get('original-policy'),
                     blocked_uri=csp_report_data.get('blocked-uri'),
                     status_code=csp_report_data.get('status-code'),

@@ -10,12 +10,16 @@ class CSPReport(GeoLocationMixin):
     """
     Model for storing Content Security Policy violation reports.
     """
-    document_uri = models.URLField(max_length=500, blank=True, null=True, db_index=True)
+    document_uri = models.URLField(
+        max_length=500, blank=True, null=True, db_index=True)
     referrer = models.URLField(max_length=500, blank=True, null=True)
-    violated_directive = models.CharField(max_length=255, blank=True, null=True, db_index=True)
-    effective_directive = models.CharField(max_length=255, blank=True, null=True)
+    violated_directive = models.CharField(
+        max_length=255, blank=True, null=True, db_index=True)
+    effective_directive = models.CharField(
+        max_length=255, blank=True, null=True)
     original_policy = models.TextField(blank=True, null=True)
-    blocked_uri = models.CharField(max_length=500, blank=True, null=True, db_index=True)
+    blocked_uri = models.CharField(
+        max_length=500, blank=True, null=True, db_index=True)
     status_code = models.IntegerField(blank=True, null=True)
     source_file = models.CharField(max_length=500, blank=True, null=True)
     line_number = models.IntegerField(blank=True, null=True)
