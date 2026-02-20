@@ -57,7 +57,8 @@ def csp_report(request):
                             longitude = response.location.longitude
                     except Exception as e:
                         # Log debug info but continue saving the report
-                        logger.debug(f"Could not resolve location for IP {ip_address}: {e}")
+                        logger.debug(
+                            f"Could not resolve location for IP {ip_address}: {e}")
 
                 # We use get_or_create to filter out identical reports that happen in the same context
                 CSPReport.objects.get_or_create(
