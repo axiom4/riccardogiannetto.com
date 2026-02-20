@@ -3,6 +3,7 @@ import {
   inject,
   signal,
   ChangeDetectionStrategy,
+  ViewEncapsulation,
 } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -14,8 +15,8 @@ import { BlogService, PostPreview } from '../../core/api/v1';
   standalone: true,
   imports: [CommonModule, RouterLink, NgOptimizedImage],
   templateUrl: './post-list.component.html',
-  styleUrls: ['./post-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
 })
 export class PostListComponent {
   private blogService = inject(BlogService);
