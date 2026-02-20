@@ -1,14 +1,20 @@
-"""
-URL Configuration for Analytics app.
-"""
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import UserActivityViewSet, csp_report
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import viewsets
 
-router = DefaultRouter()
-router.register(r'activities', UserActivityViewSet)
+from .models import UserActivity
+from .serializers import UserActivitySerializer
 
-urlpatterns = [
-    path('csp-report/', csp_report, name='csp-report'),
-    path('', include(router.urls)),
-]
+# ...existing code...
+
+
+class UserActivityViewSet(viewsets.ModelViewSet):
+    queryset = UserActivity.objects.all()
+    serializer_class = UserActivitySerializer
+
+# ...existing code...
+
+
+@csrf_exempt
+def csp_report(request):
+    return HttpResponse(status=204)

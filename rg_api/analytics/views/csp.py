@@ -21,10 +21,10 @@ def csp_report(request):
 
                 # Log the formatted report
                 logger.warning(
-                    f"CSP Violation: "
-                    f"Blocked URI: {csp_report_data.get('blocked-uri', 'N/A')} | "
-                    f"Violated Directive: {csp_report_data.get('violated-directive', 'N/A')} | "
-                    f"Document URI: {csp_report_data.get('document-uri', 'N/A')}"
+                    "CSP Violation: Blocked URI: %s | Violated Directive: %s | Document URI: %s",
+                    csp_report_data.get('blocked-uri', 'N/A'),
+                    csp_report_data.get('violated-directive', 'N/A'),
+                    csp_report_data.get('document-uri', 'N/A')
                 )
 
                 # You can extend this to save to the database if needed
@@ -33,9 +33,9 @@ def csp_report(request):
 
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
-        except Exception as e:
-            logger.error(f"Error processing CSP report: {str(e)}")
-            return JsonResponse({'status': 'error'}, status=500)
+        except (ValueError, KeyError, TypeError) as e:
+            logger.error("Error processing CSP report: %s", str(e))
+            return JsonResponse({'status': 'error'}, status=400)
 
     # Browsers might send OPTIONS/GET
     return JsonResponse({'status': 'ok'}, status=200)
