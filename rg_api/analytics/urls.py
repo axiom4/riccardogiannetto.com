@@ -1,20 +1,16 @@
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework import viewsets
+"""
+Docstring for rg_api.analytics.urls
+"""
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 
-from .models import UserActivity
-from .serializers import UserActivitySerializer
+from .views import UserActivityViewSet, csp_report
 
-# ...existing code...
+router = DefaultRouter()
+router.register(r"user-activity", UserActivityViewSet,
+                basename="user-activity")
 
-
-class UserActivityViewSet(viewsets.ModelViewSet):
-    queryset = UserActivity.objects.all()
-    serializer_class = UserActivitySerializer
-
-# ...existing code...
-
-
-@csrf_exempt
-def csp_report(request):
-    return HttpResponse(status=204)
+urlpatterns = [
+    path("csp-report/", csp_report, name="csp-report"),
+    path("", include(router.urls)),
+]
