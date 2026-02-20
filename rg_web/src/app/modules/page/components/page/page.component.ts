@@ -39,15 +39,15 @@ export class PageComponent {
         takeUntilDestroyed(),
         map((params) => params.get('tag')),
         filter((tag): tag is string => !!tag),
-        tap((tag) => {
+        tap((tag: string) => {
           this.tag.set(tag);
           this.page.set(undefined);
           this.parsedBody.set('');
           this.highlighted.set(false);
         }),
-        switchMap((tag) =>
+        switchMap((tag: string) =>
           this.blogService.blogPagesRetrieve({ tag: tag }).pipe(
-            catchError((error) => {
+            catchError((error: unknown) => {
               console.log(error);
               this.router.navigate(['/notfound']);
               return EMPTY;
@@ -55,7 +55,7 @@ export class PageComponent {
           ),
         ),
       )
-      .subscribe(async (page) => {
+      .subscribe(async (page: Page) => {
         this.page.set(page);
         this.title.setTitle(page.title);
 
