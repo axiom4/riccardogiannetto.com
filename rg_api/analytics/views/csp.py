@@ -3,6 +3,9 @@ import logging
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+from ..models import CSPReport
+from rg_api.permissions import get_client_ip
+
 logger = logging.getLogger('django.security.csp')
 
 
@@ -14,7 +17,6 @@ def csp_report(request):
     if request.method == 'POST':
         try:
             # Parse the JSON body
-            # Browsers send this with Content-Type: application/csp-report
             if request.body:
                 report_data = json.loads(request.body)
                 csp_report_data = report_data.get('csp-report', {})
@@ -27,7 +29,25 @@ def csp_report(request):
                     csp_report_data.get('document-uri', 'N/A')
                 )
 
-                # You can extend this to save to the database if needed
+                # Save the report to the database
+                ip_address = get_client_ip(request)
+                user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+                CSPReport.objects.create(
+                    document_uri=csp_report_data.get('document-uri'),
+                    referrer=csp_report_data.get('referrer'),
+                    violated_directive=csp_report_data.get('violated-directive'),
+                    effective_directive=csp_report_data.get('effective-directive'),
+                    original_policy=csp_report_data.get('original-policy'),
+                    blocked_uri=csp_report_data.get('blocked-uri'),
+                    status_code=csp_report_data.get('status-code'),
+                    source_file=csp_report_data.get('source-file'),
+                    line_number=csp_report_data.get('line-number'),
+                    column_number=csp_report_data.get('column-number'),
+                    raw_report=report_data,
+                    ip_address=ip_address,
+                    user_agent=user_agent
+                )
 
                 return JsonResponse({'status': 'ok'})
 
