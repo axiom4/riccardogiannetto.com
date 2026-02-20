@@ -36,7 +36,8 @@ def csp_report(request):
                 # We use get_or_create to filter out identical reports that happen in the same context
                 CSPReport.objects.get_or_create(
                     document_uri=csp_report_data.get('document-uri'),
-                    violated_directive=csp_report_data.get('violated-directive'),
+                    violated_directive=csp_report_data.get(
+                        'violated-directive'),
                     blocked_uri=csp_report_data.get('blocked-uri'),
                     source_file=csp_report_data.get('source-file'),
                     line_number=csp_report_data.get('line-number'),
