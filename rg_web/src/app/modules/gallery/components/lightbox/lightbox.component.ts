@@ -10,6 +10,7 @@ import {
   computed,
   ChangeDetectionStrategy,
   DestroyRef,
+  ViewEncapsulation,
 } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
 import {
@@ -46,9 +47,9 @@ export const lightboxImageLoader = (config: ImageLoaderConfig) => {
 @Component({
   selector: 'app-lightbox',
   templateUrl: './lightbox.component.html',
-  styleUrls: ['./lightbox.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
   imports: [NgClass, NgOptimizedImage, DatePipe],
   providers: [
     {

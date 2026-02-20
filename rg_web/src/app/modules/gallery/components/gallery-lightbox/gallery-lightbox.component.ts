@@ -38,7 +38,6 @@ export interface GalleryItem {
   standalone: true,
   imports: [NgClass, LightboxComponent, NgOptimizedImage],
   templateUrl: './gallery-lightbox.component.html',
-  styleUrl: './gallery-lightbox.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GalleryLightboxComponent implements OnInit, OnDestroy {

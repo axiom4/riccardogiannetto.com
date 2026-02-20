@@ -26,7 +26,6 @@ interface ImageLocation {
 @Component({
   selector: 'app-gallery-map',
   templateUrl: './map.component.html',
-  styleUrls: ['./map.component.scss'],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
