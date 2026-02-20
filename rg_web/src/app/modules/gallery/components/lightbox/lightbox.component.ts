@@ -41,7 +41,8 @@ export const lightboxImageLoader = (config: ImageLoaderConfig) => {
 
   // Construct resized URL: /portfolio/images/<ID>/width/<WIDTH>
   // Note: The backend expects integer width. NgOptimizedImage provides it.
-  return `${baseUrl}/portfolio/images/${src}/width/${config.width}`;
+  const width = config.width || 1200;
+  return `${baseUrl}/portfolio/images/${src}/width/${width}`;
 };
 
 @Component({
