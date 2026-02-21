@@ -19,6 +19,18 @@ from ..models import CSPReport
 
 logger = logging.getLogger('django.security.csp')
 
+# Global variable to cache the reader
+_GEOIP_READER = None
+
+def get_geoip_reader():
+    global _GEOIP_READER
+    if _GEOIP_READER is None and hasattr(settings, 'GEOIP_PATH'):
+        try:
+             _GEOIP_READER = geoip2.database.Reader(settings.GEOIP_PATH)
+        except (geoip2.errors.GeoIP2Error, OSError):
+             pass
+    return _GEOIP_READER
+
 
 @csrf_exempt
 def csp_report(request):
@@ -61,20 +73,21 @@ def csp_report(request):
                 latitude = None
                 longitude = None
 
-                if ip_address and GEOIP_LIB and hasattr(settings, 'GEOIP_PATH'):
-                    try:
-                        with geoip2.database.Reader(settings.GEOIP_PATH) as reader:
+                if ip_address and GEOIP_LIB:
+                    reader = get_geoip_reader()
+                    if reader:
+                        try:
                             response = reader.city(ip_address)
                             city = response.city.name
                             country = response.country.name
                             latitude = response.location.latitude
                             longitude = response.location.longitude
-                    except (geoip2.errors.GeoIP2Error, OSError) as e:
-                        # Log debug info but continue saving the report
-                        safe_error_message = str(e).replace(
-                            '\n', '').replace('\r', '')
-                        logger.debug(
-                            "Could not resolve location for IP %s: %s", safe_ip_address, safe_error_message)
+                        except (geoip2.errors.GeoIP2Error, OSError) as e:
+                            # Log debug info but continue saving the report
+                            safe_error_message = str(e).replace(
+                                '\n', '').replace('\r', '')
+                            logger.debug(
+                                "Could not resolve location for IP %s: %s", safe_ip_address, safe_error_message)
 
                 # We use get_or_create to filter out identical reports that happen
                 # in the same context
