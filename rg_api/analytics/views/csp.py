@@ -42,6 +42,8 @@ def csp_report(request):
 
                 # Save the report to the database (avoiding typical duplicates)
                 ip_address = get_client_ip(request)
+                # Sanitize IP address for logging to prevent log injection
+                safe_ip_address = ip_address.replace('\r', '').replace('\n', '') if ip_address else ip_address
                 user_agent = request.META.get('HTTP_USER_AGENT', '')
 
                 # Resolve location
@@ -61,7 +63,7 @@ def csp_report(request):
                     except (geoip2.errors.GeoIP2Error, OSError) as e:
                         # Log debug info but continue saving the report
                         logger.debug(
-                            "Could not resolve location for IP %s: %s", ip_address, e)
+                            "Could not resolve location for IP %s: %s", safe_ip_address, e)
 
                 # We use get_or_create to filter out identical reports that happen in the same context
                 CSPReport.objects.get_or_create(
