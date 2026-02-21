@@ -24,12 +24,19 @@ const html = fs.readFileSync(INDEX_PATH, "utf8");
 const $ = cheerio.load(html);
 
 function generateIntegrity(filePath) {
-  if (!fs.existsSync(filePath)) {
-    return null;
+  try {
+    const fileBuffer = fs.readFileSync(filePath);
+    const hash = crypto
+      .createHash("sha384")
+      .update(fileBuffer)
+      .digest("base64");
+    return `sha384-${hash}`;
+  } catch (err) {
+    if (err.code === "ENOENT") {
+      return null;
+    }
+    throw err;
   }
-  const fileBuffer = fs.readFileSync(filePath);
-  const hash = crypto.createHash("sha384").update(fileBuffer).digest("base64");
-  return `sha384-${hash}`;
 }
 
 const distRoot = path.dirname(INDEX_PATH);
@@ -43,12 +50,10 @@ $("script").each((i, elem) => {
     const cleanSrc = src.split("?")[0];
     const fullPath = path.join(distRoot, cleanSrc);
 
-    if (fs.existsSync(fullPath)) {
-      const integrity = generateIntegrity(fullPath);
-      if (integrity) {
-        $(elem).attr("integrity", integrity);
-        $(elem).attr("crossorigin", "anonymous");
-      }
+    const integrity = generateIntegrity(fullPath);
+    if (integrity) {
+      $(elem).attr("integrity", integrity);
+      $(elem).attr("crossorigin", "anonymous");
     } else {
       console.warn(`Warning: Script file not found: ${fullPath}`);
     }
@@ -63,13 +68,12 @@ $('link[rel="stylesheet"], link[rel="modulepreload"]').each((i, elem) => {
     const cleanHref = href.split("?")[0];
     const fullPath = path.join(distRoot, cleanHref);
 
-    if (fs.existsSync(fullPath)) {
-      const integrity = generateIntegrity(fullPath);
-      if (integrity) {
-        $(elem).attr("integrity", integrity);
-        if ($(elem).attr("rel") === "stylesheet") {
-          $(elem).attr("crossorigin", "anonymous");
-        }
+    const integrity = generateIntegrity(fullPath);
+    if (integrity) {
+      $(elem).attr("integrity", integrity);
+      if ($(elem).attr("rel") === "stylesheet") {
+        $(elem).attr("crossorigin", "anonymous");
+      } else {
         // For modulepreload, crossorigin is usually implicit or 'anonymous' is fine,
         // but strict SRI often requires matching CORS settings.
         // Angular usually emits modulepreload without crossorigin,
