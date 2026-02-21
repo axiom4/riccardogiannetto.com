@@ -66,8 +66,10 @@ def csp_report(request):
 
                 # Save the report to the database (avoiding typical duplicates)
                 ip_address = get_client_ip(request)
-                # IP address is sanitized in get_client_ip; use it directly for logging
-                safe_ip_address = ip_address
+                # Explicitly sanitize IP address for logging to prevent log injection
+                safe_ip_address = (str(ip_address)
+                                   .replace('\n', '')
+                                   .replace('\r', '')) if ip_address is not None else ''
                 user_agent = request.META.get('HTTP_USER_AGENT', '')
 
                 # Resolve location
