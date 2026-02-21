@@ -19,21 +19,29 @@ from ..models import CSPReport
 
 logger = logging.getLogger('django.security.csp')
 
-# Global variable to cache the reader
-_GEOIP_READER = None
+
+class GeoIPReaderCache:
+    """Utility class to cache the GeoIP reader instance."""
+    _reader = None
+
+    @classmethod
+    def get_reader(cls):
+        """Get the cached GeoIP reader instance, initializing it if necessary."""
+        if cls._reader is None and hasattr(settings, 'GEOIP_PATH'):
+            try:
+                cls._reader = geoip2.database.Reader(settings.GEOIP_PATH)
+            except (geoip2.errors.GeoIP2Error, OSError) as e:
+                logger.warning(
+                    "Failed to initialize GeoIP reader with path %s: %s",
+                    getattr(settings, 'GEOIP_PATH', None),
+                    e,
+                )
+        return cls._reader
+
 
 def get_geoip_reader():
-    global _GEOIP_READER
-    if _GEOIP_READER is None and hasattr(settings, 'GEOIP_PATH'):
-        try:
-             _GEOIP_READER = geoip2.database.Reader(settings.GEOIP_PATH)
-        except (geoip2.errors.GeoIP2Error, OSError) as e:
-             logger.warning(
-                 "Failed to initialize GeoIP reader with path %s: %s",
-                 getattr(settings, 'GEOIP_PATH', None),
-                 e,
-             )
-    return _GEOIP_READER
+    """Helper function to get the GeoIP reader instance."""
+    return GeoIPReaderCache.get_reader()
 
 
 @csrf_exempt
@@ -92,7 +100,8 @@ def csp_report(request):
                             safe_error_message = str(e).replace(
                                 '\n', '').replace('\r', '')
                             logger.debug(
-                                "Could not resolve location for IP %s: %s", safe_ip_address, safe_error_message)
+                                "Could not resolve location for IP %s: %s",
+                                safe_ip_address, safe_error_message)
 
                 # We use get_or_create to filter out identical reports that happen
                 # in the same context
