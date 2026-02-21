@@ -27,8 +27,12 @@ def get_geoip_reader():
     if _GEOIP_READER is None and hasattr(settings, 'GEOIP_PATH'):
         try:
              _GEOIP_READER = geoip2.database.Reader(settings.GEOIP_PATH)
-        except (geoip2.errors.GeoIP2Error, OSError):
-             pass
+        except (geoip2.errors.GeoIP2Error, OSError) as e:
+             logger.warning(
+                 "Failed to initialize GeoIP reader with path %s: %s",
+                 getattr(settings, 'GEOIP_PATH', None),
+                 e,
+             )
     return _GEOIP_READER
 
 
