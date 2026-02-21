@@ -27,8 +27,12 @@ def get_geoip_reader():
     if _GEOIP_READER is None and hasattr(settings, 'GEOIP_PATH'):
         try:
              _GEOIP_READER = geoip2.database.Reader(settings.GEOIP_PATH)
-        except (geoip2.errors.GeoIP2Error, OSError):
-             pass
+        except (geoip2.errors.GeoIP2Error, OSError) as e:
+             logger.warning(
+                 "Failed to initialize GeoIP reader with path %s: %s",
+                 getattr(settings, 'GEOIP_PATH', None),
+                 e,
+             )
     return _GEOIP_READER
 
 
@@ -62,9 +66,8 @@ def csp_report(request):
 
                 # Save the report to the database (avoiding typical duplicates)
                 ip_address = get_client_ip(request)
-                # Sanitize IP address for logging to prevent log injection
-                safe_ip_address = ip_address.replace('\r', '').replace(
-                    '\n', '') if ip_address else ip_address
+                # IP address is sanitized in get_client_ip; use it directly for logging
+                safe_ip_address = ip_address
                 user_agent = request.META.get('HTTP_USER_AGENT', '')
 
                 # Resolve location

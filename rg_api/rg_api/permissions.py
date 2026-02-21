@@ -12,6 +12,12 @@ def get_client_ip(request):
         ip = x_forwarded_for.split(',')[0]
     else:
         ip = request.META.get('REMOTE_ADDR')
+
+    # Sanitize IP address to prevent log injection or malformed log entries
+    if ip is not None:
+        # Coerce to string and remove carriage returns, newlines, and other control chars
+        ip = ''.join(ch for ch in str(ip) if ch.isprintable() and ch not in '\r\n')
+
     return ip
 
 
