@@ -32,18 +32,27 @@ def csp_report(request):
                 report_data = json.loads(request.body)
                 csp_report_data = report_data.get('csp-report', {})
 
+                # Sanitize inputs for logging to prevent log injection
+                blocked_uri = str(csp_report_data.get(
+                    'blocked-uri', 'N/A')).replace('\n', '').replace('\r', '')
+                violated_directive = str(csp_report_data.get(
+                    'violated-directive', 'N/A')).replace('\n', '').replace('\r', '')
+                document_uri = str(csp_report_data.get(
+                    'document-uri', 'N/A')).replace('\n', '').replace('\r', '')
+
                 # Log the formatted report
                 logger.warning(
                     "CSP Violation: Blocked URI: %s | Violated Directive: %s | Document URI: %s",
-                    csp_report_data.get('blocked-uri', 'N/A'),
-                    csp_report_data.get('violated-directive', 'N/A'),
-                    csp_report_data.get('document-uri', 'N/A')
+                    blocked_uri,
+                    violated_directive,
+                    document_uri
                 )
 
                 # Save the report to the database (avoiding typical duplicates)
                 ip_address = get_client_ip(request)
                 # Sanitize IP address for logging to prevent log injection
-                safe_ip_address = ip_address.replace('\r', '').replace('\n', '') if ip_address else ip_address
+                safe_ip_address = ip_address.replace('\r', '').replace(
+                    '\n', '') if ip_address else ip_address
                 user_agent = request.META.get('HTTP_USER_AGENT', '')
 
                 # Resolve location
@@ -65,7 +74,8 @@ def csp_report(request):
                         logger.debug(
                             "Could not resolve location for IP %s: %s", safe_ip_address, e)
 
-                # We use get_or_create to filter out identical reports that happen in the same context
+                # We use get_or_create to filter out identical reports that happen
+                # in the same context
                 CSPReport.objects.get_or_create(
                     document_uri=csp_report_data.get('document-uri'),
                     violated_directive=csp_report_data.get(
