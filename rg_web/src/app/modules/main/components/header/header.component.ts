@@ -24,14 +24,11 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      // Use requestAnimationFrame to ensure we are in the next paint frame after init
-      // Or window.onload if strictly "page load" is required, but usually
-      // minimal delay after view init is better for SPA feeling.
-
-      // Let's use a small timeout to allow browser to parse SVG/Fonts
-      setTimeout(() => {
+      // Wait for fonts to be ready to avoid FOUC (Flash of Unstyled Content)
+      // especially for the SVG logo which uses a custom font
+      document.fonts.ready.then(() => {
         this.isLoaded.set(true);
-      }, 100);
+      });
     } else {
       this.isLoaded.set(true);
     }
