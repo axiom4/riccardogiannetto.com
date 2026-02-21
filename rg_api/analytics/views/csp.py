@@ -71,8 +71,10 @@ def csp_report(request):
                             longitude = response.location.longitude
                     except (geoip2.errors.GeoIP2Error, OSError) as e:
                         # Log debug info but continue saving the report
+                        safe_error_message = str(e).replace(
+                            '\n', '').replace('\r', '')
                         logger.debug(
-                            "Could not resolve location for IP %s: %s", safe_ip_address, e)
+                            "Could not resolve location for IP %s: %s", safe_ip_address, safe_error_message)
 
                 # We use get_or_create to filter out identical reports that happen
                 # in the same context
