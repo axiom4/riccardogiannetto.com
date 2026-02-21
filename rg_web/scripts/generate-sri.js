@@ -88,5 +88,12 @@ $('link[rel="stylesheet"], link[rel="modulepreload"]').each((i, elem) => {
   }
 });
 
-fs.writeFileSync(INDEX_PATH, $.html(), "utf8");
-console.log("SRI hashes added successfully to index.html");
+try {
+  const tempPath = `${INDEX_PATH}.tmp`;
+  fs.writeFileSync(tempPath, $.html(), "utf8");
+  fs.renameSync(tempPath, INDEX_PATH);
+  console.log("SRI hashes added successfully to index.html");
+} catch (err) {
+  console.error("Error writing index.html:", err);
+  process.exit(1);
+}
