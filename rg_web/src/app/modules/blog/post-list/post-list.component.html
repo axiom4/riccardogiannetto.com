@@ -16,9 +16,7 @@
               <a [routerLink]="['/blog', post.id]">{{ post.title }}</a>
             </h2>
             <div class="entry-meta">
-              <span>{{
-                post.created_at | date: "longDate"
-              }}</span>
+              <span>{{ post.created_at | date: "longDate" }}</span>
             </div>
           </header>
 
