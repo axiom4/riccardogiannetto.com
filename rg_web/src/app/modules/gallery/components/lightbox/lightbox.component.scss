@@ -297,36 +297,38 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 98%;
-    max-height: 98%;
-    // width: auto; // Remove explicit width/height auto which can cause issues with aspect ratio
-    // height: auto;
-
+    // Use border-box so padding and border are included in the size constraint
+    box-sizing: border-box;
+    // Constrain image to container size minus margin
+    max-width: 96%;
+    max-height: 96%;
+    // Ensure aspect ratio is maintained
+    width: auto;
+    height: auto;
+    
     // Mat (Passe-partout)
     background-color: #ffffff;
     // Paper texture pattern
     background-image: url("/assets/texture-noise.svg");
-    padding: 60px; // Increased mat size
+    padding: 60px; // Larger mat
 
-    // Frame (Cornice) - Thicker and more pronounced
-    border: 20px solid #333333; // Reduced border from 30px
-    border-top-color: #555555; // Stronger Highlight
+    // Frame (Cornice)
+    border: 20px solid #333333; // Thicker frame
+    border-top-color: #555555; // Highlight
     border-left-color: #444444;
-    border-bottom-color: #1a1a1a; // Deep Shadow
+    border-bottom-color: #1a1a1a; // Shadow
     border-right-color: #1a1a1a;
 
     // Styles
     object-fit: contain;
-    border-radius: 1px;
-    width: auto;
-    height: auto;
+    border-radius: 2px; // Slightly rounded outer corners
 
     // Depth & Glass Effect
     box-shadow:
       // 1. Marked White Border (Separation from background)
-      0 0 0 3px rgba(255, 255, 255, 0.9),
+      0 0 0 2px rgba(255, 255, 255, 0.9),
       // 2. External Drop Shadow (Wall Depth)
-      0 40px 80px 20px rgba(0, 0, 0, 0.95),
+      0 20px 50px 10px rgba(0, 0, 0, 0.8),
       // 3. Inner Frame Shadow (Frame casting shadow onto Mat)
       inset 5px 5px 15px rgba(0, 0, 0, 0.7),
       // 4. Inner Mat "Recess" (Simulate photo being deeper than glass)
@@ -334,19 +336,22 @@
       // 5. Glass Reflection
       inset 0 0 60px rgba(255, 255, 255, 0.05);
 
-    transform: translate(-50%, -50%);
     animation: none;
     opacity: 1;
 
+    @media (orientation: landscape) {
+       max-width: 95vh; // In landscape, limit by height mostly? No, limit by width relative to height to mimic frame
+       // Actually just max-height/width of container is safer
+       max-width: 95%;
+       max-height: 95%;
+    }
+
     @media (max-width: 768px), (max-height: 600px) {
       padding: 10px;
-      border: none;
-      background: none;
-      box-shadow: none;
-      max-width: 100%;
-      max-height: 100%;
-      width: auto !important;
-      height: auto !important;
+      border: 10px solid #222; // Smaller frame on mobile
+      max-width: 98%;
+      max-height: 98%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
   }
 
