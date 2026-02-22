@@ -88,6 +88,11 @@ $('link[rel="stylesheet"], link[rel="modulepreload"]').each((i, elem) => {
   }
 });
 
+// Add nonce to script and style tags
+$("script, style").each((i, elem) => {
+  $(elem).attr("nonce", "NGINX_CSP_NONCE");
+});
+
 try {
   const tempPath = `${INDEX_PATH}.tmp`;
   fs.writeFileSync(tempPath, $.html(), "utf8");
