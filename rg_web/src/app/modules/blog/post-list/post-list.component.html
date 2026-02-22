@@ -1,22 +1,22 @@
 <div class="site-content">
   @if (isLoading()) {
-    <div class="loading-container">
+    <div>
       <p>Caricamento in corso...</p>
     </div>
   } @else if (error()) {
-    <div class="error-container">
+    <div>
       <p>{{ error() }}</p>
     </div>
   } @else {
     <div class="blog-list">
       @for (post of posts(); track post.id) {
         <article class="post-entry">
-          <header class="entry-header">
+          <header>
             <h2 class="entry-title">
               <a [routerLink]="['/blog', post.id]">{{ post.title }}</a>
             </h2>
             <div class="entry-meta">
-              <span class="posted-on">{{
+              <span>{{
                 post.created_at | date: "longDate"
               }}</span>
             </div>
@@ -37,7 +37,7 @@
             </div>
           }
 
-          <div class="entry-summary">
+          <div>
             <!-- Add a summary or excerpt here if available in PostPreview -->
           </div>
         </article>

@@ -16,9 +16,9 @@
       <header class="entry-header">
         <h1 class="entry-title">{{ p.title }}</h1>
         <div class="entry-meta">
-          <span class="posted-on">{{ p.created_at | date: "longDate" }}</span>
+          <span>{{ p.created_at | date: "longDate" }}</span>
           @if (p.author) {
-            <span class="byline"> by {{ p.author.username }}</span>
+            <span> by {{ p.author.username }}</span>
           }
         </div>
       </header>
@@ -37,7 +37,7 @@
       <!-- Il contenuto del body è reso come HTML sicuro -->
       <div class="entry-content" [innerHTML]="parsedBody()"></div>
 
-      <footer class="entry-footer">
+      <footer>
         <a routerLink="/blog" class="back-link">&larr; Torna al Blog</a>
       </footer>
     </article>
