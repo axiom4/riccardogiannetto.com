@@ -300,20 +300,20 @@
     // Use border-box so padding and border are included in the size constraint
     box-sizing: border-box;
     // Constrain image to container size minus margin
-    max-width: 96%;
-    max-height: 96%;
+    max-width: 90vw; 
+    max-height: 90vh;
     // Ensure aspect ratio is maintained
     width: auto;
     height: auto;
-
+    
     // Mat (Passe-partout)
     background-color: #ffffff;
     // Paper texture pattern
     background-image: url("/assets/texture-noise.svg");
-    padding: 60px; // Larger mat
+    padding: 40px; // Larger mat
 
     // Frame (Cornice)
-    border: 20px solid #333333; // Thicker frame
+    border: 15px solid #333333; // Thicker frame
     border-top-color: #555555; // Highlight
     border-left-color: #444444;
     border-bottom-color: #1a1a1a; // Shadow
@@ -340,21 +340,15 @@
     opacity: 1;
 
     @media (orientation: landscape) {
-      max-width: 95vh; // In landscape, limit by height mostly? No, limit by width relative to height to mimic frame
-      // Actually just max-height/width of container is safer
-      max-width: 95%;
-      max-height: 95%;
+       max-height: 94vh;
+       max-width: auto; // Let width flow naturally based on height
     }
 
-    @media (max-width: 768px), (max-height: 600px) {
-      padding: 10px;
-      border: 10px solid #222; // Smaller frame on mobile
-      max-width: 98%;
-      max-height: 98%;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    }
-  }
-
+    @media (max-width: 768px) {
+      padding: 15px; // Smaller mat on mobile
+      border: 10px solid #222; // Smaller frame
+      max-width: 95vw;
+      max-height: 80vh; // Mobile usually vertical, limit height more
   .lightbox-image.current {
     z-index: 2;
     opacity: 0;
