@@ -14,6 +14,7 @@ import {
   untracked,
 } from '@angular/core';
 import { DOCUMENT, NgClass, NgOptimizedImage, Location } from '@angular/common';
+import { Router } from '@angular/router';
 import { Meta, Title } from '@angular/platform-browser';
 import {
   ImageGallery,
@@ -43,6 +44,7 @@ export interface GalleryItem {
 export class GalleryLightboxComponent implements OnInit, OnDestroy {
   private portfolioService = inject(PortfolioService);
   private location = inject(Location);
+  private router = inject(Router);
   private document = inject<Document>(DOCUMENT);
   private meta = inject(Meta);
   private titleService = inject(Title);
@@ -313,7 +315,10 @@ export class GalleryLightboxComponent implements OnInit, OnDestroy {
           }
         }
       },
-      error: (err) => console.error('Failed to load image', err),
+      error: (err) => {
+        console.error('Failed to load image', err);
+        this.router.navigate(['/notfound']);
+      },
     });
   }
 
