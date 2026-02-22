@@ -60,7 +60,7 @@ $("script").each((i, elem) => {
         $(elem).attr("crossorigin", "anonymous");
       }
     } else {
-        console.warn(`Warning: Script file not found: ${filePath}`);
+      console.warn(`Warning: Script file not found: ${filePath}`);
     }
   }
   // Add nonce placeholder
@@ -80,21 +80,21 @@ $('link[rel="stylesheet"], link[rel="modulepreload"]').each((i, elem) => {
       if (integrity) {
         $(elem).attr("integrity", integrity);
         if ($(elem).attr("rel") === "stylesheet") {
-            $(elem).attr("crossorigin", "anonymous");
+          $(elem).attr("crossorigin", "anonymous");
         } else {
-            if (!$(elem).attr("crossorigin")) {
-                $(elem).attr("crossorigin", "anonymous");
-            }
+          if (!$(elem).attr("crossorigin")) {
+            $(elem).attr("crossorigin", "anonymous");
+          }
         }
       }
     } else {
-        console.warn(`Warning: Resource file not found: ${filePath}`);
+      console.warn(`Warning: Resource file not found: ${filePath}`);
     }
   }
 });
 
 $("style").each((i, elem) => {
-    $(elem).attr("nonce", "NGINX_CSP_NONCE");
+  $(elem).attr("nonce", "NGINX_CSP_NONCE");
 });
 
 // Write updated HTML
@@ -112,7 +112,7 @@ console.log("\nAnalyzing for unused JS files...");
 // Recursive function to find referenced chunks inside a file content
 function findReferencedChunks(filePath, knownFiles) {
   if (!fs.existsSync(filePath)) return;
-  
+
   const content = fs.readFileSync(filePath, "utf8");
   // Simple regex to find chunk filenames (e.g. "chunk-XXXX.js")
   // Adjust based on your chunk format (esbuild uses chunk-HASH.js)
@@ -121,12 +121,12 @@ function findReferencedChunks(filePath, knownFiles) {
   while ((match = chunkRegex.exec(content)) !== null) {
     const chunkName = match[0];
     if (!knownFiles.has(chunkName)) {
-        const chunkPath = path.join(DIST_ROOT, chunkName);
-        if (fs.existsSync(chunkPath)) {
-            knownFiles.add(chunkName);
-            // Recursively scan this chunk too
-            findReferencedChunks(chunkPath, knownFiles);
-        }
+      const chunkPath = path.join(DIST_ROOT, chunkName);
+      if (fs.existsSync(chunkPath)) {
+        knownFiles.add(chunkName);
+        // Recursively scan this chunk too
+        findReferencedChunks(chunkPath, knownFiles);
+      }
     }
   }
 }
@@ -135,38 +135,40 @@ function findReferencedChunks(filePath, knownFiles) {
 const allReferencedFiles = new Set(referencedFiles);
 
 // Iterate over initial set and find their dependencies
-// We use Array.from to iterate because we add to the Set during recursion 
+// We use Array.from to iterate because we add to the Set during recursion
 // (though recursion uses the pass-by-reference Set, iterating the initial list is fine)
 // Correct approach: recursively process files as we find them.
-referencedFiles.forEach(file => {
-    const filePath = path.join(DIST_ROOT, file);
-    findReferencedChunks(filePath, allReferencedFiles);
+referencedFiles.forEach((file) => {
+  const filePath = path.join(DIST_ROOT, file);
+  findReferencedChunks(filePath, allReferencedFiles);
 });
 
 // List all JS files in directory
-const allJsFiles = fs.readdirSync(DIST_ROOT).filter(f => f.endsWith('.js'));
+const allJsFiles = fs.readdirSync(DIST_ROOT).filter((f) => f.endsWith(".js"));
 
 let unusedCount = 0;
-allJsFiles.forEach(file => {
-    if (!allReferencedFiles.has(file)) {
-        // Double check against 'polyfills' or 'main' or 'scripts' if somehow missed 
-        // (but they should have been in index.html)
-        // If file is NOT in index.html and NOT referenced by any other file, it is unused.
-        
-        console.warn(`Warning: Potentially unused JS file found and deleted: ${file}`);
-        
-        const fullPath = path.join(DIST_ROOT, file);
-        try {
-            fs.unlinkSync(fullPath);
-            unusedCount++;
-        } catch (e) {
-            console.error(`Failed to delete ${file}: ${e.message}`);
-        }
+allJsFiles.forEach((file) => {
+  if (!allReferencedFiles.has(file)) {
+    // Double check against 'polyfills' or 'main' or 'scripts' if somehow missed
+    // (but they should have been in index.html)
+    // If file is NOT in index.html and NOT referenced by any other file, it is unused.
+
+    console.warn(
+      `Warning: Potentially unused JS file found and deleted: ${file}`,
+    );
+
+    const fullPath = path.join(DIST_ROOT, file);
+    try {
+      fs.unlinkSync(fullPath);
+      unusedCount++;
+    } catch (e) {
+      console.error(`Failed to delete ${file}: ${e.message}`);
     }
+  }
 });
 
 if (unusedCount === 0) {
-    console.log("No unused JS files found.");
+  console.log("No unused JS files found.");
 } else {
-    console.log(`Deleted ${unusedCount} unused JS files.`);
+  console.log(`Deleted ${unusedCount} unused JS files.`);
 }
