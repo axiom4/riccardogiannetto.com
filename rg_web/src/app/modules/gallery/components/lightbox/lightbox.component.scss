@@ -340,8 +340,8 @@
     opacity: 1;
 
     @media (orientation: landscape) {
-       max-height: 94vh;
-       max-width: auto; // Let width flow naturally based on height
+      max-height: 94vh;
+      max-width: auto; // Let width flow naturally based on height
     }
 
     @media (max-width: 768px) {
