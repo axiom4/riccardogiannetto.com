@@ -22,6 +22,56 @@ if (!fs.existsSync(INDEX_PATH)) {
   }
 }
 
+// --- Sanitize JS Files (Remove console.log) ---
+function sanitizeFile(filePath) {
+  if (!fs.existsSync(filePath)) return;
+  let content = fs.readFileSync(filePath, "utf8");
+  
+  // Regex to remove console.log/warn/error/debug/info/trace calls
+  // This is a basic implementation and might miss complex multi-line cases or
+  // nested parentheses, but for minified/generated code it is usually sufficient
+  // to target the specific patterns often emitted.
+  // We use a specific replacement to 'void 0' to maintain validity in expressions.
+  // Note: We need to be careful not to break the code.
+  // Since this is a post-build step on minified code, patterns are likely:
+  // console.log("...") or console.log(k)
+  
+  // Pattern: console\.(log|debug|info|warn|error|trace)\s*\(.*?\);?
+  // We need to handle balanced parentheses to be safe, but JS regex doesn't support recursive matching.
+  // However, simple grep showed lines like: (console.log(e),this.router...)
+  // We can try a slightly more robust regex or just target the most common case in minified code.
+  
+  // A safer approach for this specific codebase based on grep output:
+  // The grep showed: ...pipe(u(e=>(console.log(e),this.router...
+  // Replacing 'console.log(e)' with 'void 0' works.
+  
+  // We will loop to replace patterns to handle nested parens somewhat for simple cases
+  // content = content.replace(/console\.(log|debug|info|warn|error|trace)\s*\(([^()]*|\(([^()]*|\([^()]*\))*\))*\)/g, "void 0");
+  
+  // Actually, 'console.log' returning undefined is often used in comma expressions.
+  // 'void 0' is a safe replacement.
+
+  const originalLength = content.length;
+  // We use a regex that handles up to 2 levels of nested parentheses which covers most simple logging
+  const regex = /console\.(log|debug|info|warn|error|trace)\s*\((?:[^()]*|\((?:[^()]*|\([^()]*\))*\))*\)/g;
+  content = content.replace(regex, "void 0");
+  
+  if (content.length !== originalLength) {
+    console.log(`Sanitized ${path.basename(filePath)} (removed console logs)`);
+    fs.writeFileSync(filePath, content, "utf8");
+  }
+}
+
+// Sanitize all JS files in DIST_ROOT before processing
+try {
+  const jsFiles = fs.readdirSync(DIST_ROOT).filter(f => f.endsWith('.js'));
+  jsFiles.forEach(file => {
+    sanitizeFile(path.join(DIST_ROOT, file));
+  });
+} catch (err) {
+  console.warn("Warning: Could not list files for sanitization:", err);
+}
+
 console.log(`Processing SRI for: ${INDEX_PATH}`);
 const html = fs.readFileSync(INDEX_PATH, "utf8");
 const $ = cheerio.load(html);
