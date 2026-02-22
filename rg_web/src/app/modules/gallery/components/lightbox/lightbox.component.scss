@@ -349,6 +349,9 @@
       border: 10px solid #222; // Smaller frame
       max-width: 95vw;
       max-height: 80vh; // Mobile usually vertical, limit height more
+    }
+  }
+
   .lightbox-image.current {
     z-index: 2;
     opacity: 0;
