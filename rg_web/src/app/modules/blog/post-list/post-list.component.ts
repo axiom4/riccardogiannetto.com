@@ -15,6 +15,7 @@ import { BlogService, PostPreview } from '../../core/api/v1';
   standalone: true,
   imports: [CommonModule, RouterLink, NgOptimizedImage],
   templateUrl: './post-list.component.html',
+  styleUrls: ['./post-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
