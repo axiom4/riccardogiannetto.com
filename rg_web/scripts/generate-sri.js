@@ -32,14 +32,16 @@ function sanitizeFile(filePath) {
   try {
     const result = esbuild.transformSync(content, {
       minify: true,
-      drop: ['console', 'debugger'],
-      legalComments: 'none',
+      drop: ["console", "debugger"],
+      legalComments: "none",
       treeShaking: true,
-      format: 'esm' // Assuming usage of ESM modules for Angular outputs (default for modern builds)
+      format: "esm", // Assuming usage of ESM modules for Angular outputs (default for modern builds)
     });
 
     if (result.code !== content) {
-      console.log(`Sanitized ${path.basename(filePath)} (removed logs/unnecessary code)`);
+      console.log(
+        `Sanitized ${path.basename(filePath)} (removed logs/unnecessary code)`,
+      );
       fs.writeFileSync(filePath, result.code, "utf8");
     }
   } catch (err) {
