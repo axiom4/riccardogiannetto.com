@@ -48,6 +48,7 @@ export const lightboxImageLoader = (config: ImageLoaderConfig) => {
 @Component({
   selector: 'app-lightbox',
   templateUrl: './lightbox.component.html',
+  styleUrl: './lightbox.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
