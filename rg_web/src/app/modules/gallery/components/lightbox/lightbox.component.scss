@@ -305,7 +305,7 @@
     // Ensure aspect ratio is maintained
     width: auto;
     height: auto;
-    
+
     // Mat (Passe-partout)
     background-color: #ffffff;
     // Paper texture pattern
@@ -340,10 +340,10 @@
     opacity: 1;
 
     @media (orientation: landscape) {
-       max-width: 95vh; // In landscape, limit by height mostly? No, limit by width relative to height to mimic frame
-       // Actually just max-height/width of container is safer
-       max-width: 95%;
-       max-height: 95%;
+      max-width: 95vh; // In landscape, limit by height mostly? No, limit by width relative to height to mimic frame
+      // Actually just max-height/width of container is safer
+      max-width: 95%;
+      max-height: 95%;
     }
 
     @media (max-width: 768px), (max-height: 600px) {
@@ -351,7 +351,7 @@
       border: 10px solid #222; // Smaller frame on mobile
       max-width: 98%;
       max-height: 98%;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
   }
 
