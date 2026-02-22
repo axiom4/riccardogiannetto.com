@@ -9,8 +9,11 @@ const BASE_DIST = path.join(__dirname, "../dist/rg_web");
 
 // Try to find index.html in either browser/ or root
 let INDEX_PATH = path.join(BASE_DIST, "browser", "index.html");
+let DIST_ROOT = path.join(BASE_DIST, "browser");
+
 if (!fs.existsSync(INDEX_PATH)) {
   INDEX_PATH = path.join(BASE_DIST, "index.html");
+  DIST_ROOT = BASE_DIST;
   if (!fs.existsSync(INDEX_PATH)) {
     console.error(
       `Error: Cannot find index.html in ${BASE_DIST} or ${path.join(BASE_DIST, "browser")}. Did you run 'ng build'?`,
@@ -39,66 +42,131 @@ function generateIntegrity(filePath) {
   }
 }
 
-const distRoot = path.dirname(INDEX_PATH);
+// Track referenced files from index.html
+const referencedFiles = new Set();
 
-// Process JS scripts
+// Process JS scripts in index.html
 $("script").each((i, elem) => {
   const src = $(elem).attr("src");
   if (src && !src.startsWith("http") && !src.startsWith("//")) {
-    // Only local files
-    // Clean query params if any
     const cleanSrc = src.split("?")[0];
-    const fullPath = path.join(distRoot, cleanSrc);
+    const filePath = path.join(DIST_ROOT, cleanSrc);
 
-    const integrity = generateIntegrity(fullPath);
-    if (integrity) {
-      $(elem).attr("integrity", integrity);
-      $(elem).attr("crossorigin", "anonymous");
-    } else {
-      console.warn(`Warning: Script file not found: ${fullPath}`);
-    }
-  }
-});
-
-// Process CSS stylesheets
-$('link[rel="stylesheet"], link[rel="modulepreload"]').each((i, elem) => {
-  const href = $(elem).attr("href");
-  if (href && !href.startsWith("http") && !href.startsWith("//")) {
-    // Only local files
-    const cleanHref = href.split("?")[0];
-    const fullPath = path.join(distRoot, cleanHref);
-
-    const integrity = generateIntegrity(fullPath);
-    if (integrity) {
-      $(elem).attr("integrity", integrity);
-      if ($(elem).attr("rel") === "stylesheet") {
+    if (fs.existsSync(filePath)) {
+      referencedFiles.add(path.basename(cleanSrc));
+      const integrity = generateIntegrity(filePath);
+      if (integrity) {
+        $(elem).attr("integrity", integrity);
         $(elem).attr("crossorigin", "anonymous");
-      } else {
-        // For modulepreload, crossorigin is usually implicit or 'anonymous' is fine,
-        // but strict SRI often requires matching CORS settings.
-        // Angular usually emits modulepreload without crossorigin,
-        // but if we add integrity, we must add crossorigin='anonymous' to avoid fetch errors.
-        if (!$(elem).attr("crossorigin")) {
-          $(elem).attr("crossorigin", "anonymous");
-        }
       }
     } else {
-      console.warn(`Warning: Resource file not found: ${fullPath}`);
+        console.warn(`Warning: Script file not found: ${filePath}`);
     }
   }
-});
-
-// Add nonce to script and style tags
-$("script, style").each((i, elem) => {
+  // Add nonce placeholder
   $(elem).attr("nonce", "NGINX_CSP_NONCE");
 });
 
+// Process CSS stylesheets and modulepreload
+$('link[rel="stylesheet"], link[rel="modulepreload"]').each((i, elem) => {
+  const href = $(elem).attr("href");
+  if (href && !href.startsWith("http") && !href.startsWith("//")) {
+    const cleanHref = href.split("?")[0];
+    const filePath = path.join(DIST_ROOT, cleanHref);
+
+    if (fs.existsSync(filePath)) {
+      referencedFiles.add(path.basename(cleanHref));
+      const integrity = generateIntegrity(filePath);
+      if (integrity) {
+        $(elem).attr("integrity", integrity);
+        if ($(elem).attr("rel") === "stylesheet") {
+            $(elem).attr("crossorigin", "anonymous");
+        } else {
+            if (!$(elem).attr("crossorigin")) {
+                $(elem).attr("crossorigin", "anonymous");
+            }
+        }
+      }
+    } else {
+        console.warn(`Warning: Resource file not found: ${filePath}`);
+    }
+  }
+});
+
+$("style").each((i, elem) => {
+    $(elem).attr("nonce", "NGINX_CSP_NONCE");
+});
+
+// Write updated HTML
 try {
-  const tempPath = `${INDEX_PATH}.tmp`;
-  fs.writeFileSync(tempPath, $.html(), "utf8");
-  fs.renameSync(tempPath, INDEX_PATH);
+  fs.writeFileSync(INDEX_PATH, $.html(), "utf8");
   console.log("SRI hashes added successfully to index.html");
 } catch (err) {
   console.error("Error writing index.html:", err);
   process.exit(1);
+}
+
+// --- Prune Unused Files Analysis (Javascript) ---
+console.log("\nAnalyzing for unused JS files...");
+
+// Recursive function to find referenced chunks inside a file content
+function findReferencedChunks(filePath, knownFiles) {
+  if (!fs.existsSync(filePath)) return;
+  
+  const content = fs.readFileSync(filePath, "utf8");
+  // Simple regex to find chunk filenames (e.g. "chunk-XXXX.js")
+  // Adjust based on your chunk format (esbuild uses chunk-HASH.js)
+  const chunkRegex = /chunk-[A-Z0-9]+\.js/g;
+  let match;
+  while ((match = chunkRegex.exec(content)) !== null) {
+    const chunkName = match[0];
+    if (!knownFiles.has(chunkName)) {
+        const chunkPath = path.join(DIST_ROOT, chunkName);
+        if (fs.existsSync(chunkPath)) {
+            knownFiles.add(chunkName);
+            // Recursively scan this chunk too
+            findReferencedChunks(chunkPath, knownFiles);
+        }
+    }
+  }
+}
+
+// Start with files referenced in index.html
+const allReferencedFiles = new Set(referencedFiles);
+
+// Iterate over initial set and find their dependencies
+// We use Array.from to iterate because we add to the Set during recursion 
+// (though recursion uses the pass-by-reference Set, iterating the initial list is fine)
+// Correct approach: recursively process files as we find them.
+referencedFiles.forEach(file => {
+    const filePath = path.join(DIST_ROOT, file);
+    findReferencedChunks(filePath, allReferencedFiles);
+});
+
+// List all JS files in directory
+const allJsFiles = fs.readdirSync(DIST_ROOT).filter(f => f.endsWith('.js'));
+
+let unusedCount = 0;
+allJsFiles.forEach(file => {
+    if (!allReferencedFiles.has(file)) {
+        // Double check against 'polyfills' or 'main' or 'scripts' if somehow missed 
+        // (but they should have been in index.html)
+        // If file is NOT in index.html and NOT referenced by any other file, it is unused.
+        
+        console.warn(`Warning: Potentially unused JS file found and deleted: ${file}`);
+        
+        const fullPath = path.join(DIST_ROOT, file);
+        try {
+            fs.unlinkSync(fullPath);
+            unusedCount++;
+        } catch (e) {
+            console.error(`Failed to delete ${file}: ${e.message}`);
+        }
+    }
+});
+
+if (unusedCount === 0) {
+    console.log("No unused JS files found.");
+} else {
+    console.log(`Deleted ${unusedCount} unused JS files.`);
 }
