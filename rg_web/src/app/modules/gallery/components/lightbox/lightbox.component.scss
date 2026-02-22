@@ -300,12 +300,12 @@
     // Use border-box so padding and border are included in the size constraint
     box-sizing: border-box;
     // Constrain image to container size minus margin
-    max-width: 90vw; 
+    max-width: 90vw;
     max-height: 90vh;
     // Ensure aspect ratio is maintained
     width: auto;
     height: auto;
-    
+
     // Mat (Passe-partout)
     background-color: #ffffff;
     // Paper texture pattern
