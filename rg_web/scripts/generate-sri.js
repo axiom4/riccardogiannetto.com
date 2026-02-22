@@ -35,14 +35,23 @@ function sanitizeFile(filePath) {
       drop: ["console", "debugger"],
       legalComments: "none",
       treeShaking: true,
-      format: "esm", // Assuming usage of ESM modules for Angular outputs (default for modern builds)
+      sourcemap: true,
+      sourcefile: path.basename(filePath),
+      loader: "js",
+      sourcesContent: true, // Include source content in the map
     });
 
     if (result.code !== content) {
       console.log(
         `Sanitized ${path.basename(filePath)} (removed logs/unnecessary code)`,
       );
-      fs.writeFileSync(filePath, result.code, "utf8");
+      let outputCode = result.code;
+      if (result.map) {
+        fs.writeFileSync(filePath + ".map", result.map, "utf8");
+        // Append source mapping URL comment
+        outputCode += `\n//# sourceMappingURL=${path.basename(filePath)}.map`;
+      }
+      fs.writeFileSync(filePath, outputCode, "utf8");
     }
   } catch (err) {
     console.error(`Error sanitizing ${path.basename(filePath)}:`, err.message);
