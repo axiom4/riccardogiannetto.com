@@ -47,11 +47,29 @@ function sanitizeFile(filePath) {
       );
       let outputCode = result.code;
       if (result.map) {
-        fs.writeFileSync(filePath + ".map", result.map, "utf8");
+        const mapTmp = filePath + ".map.tmp";
+        try {
+          fs.writeFileSync(mapTmp, result.map, "utf8");
+          fs.renameSync(mapTmp, filePath + ".map");
+        } catch (e) {
+          try {
+            fs.unlinkSync(mapTmp);
+          } catch (_) {}
+          throw e;
+        }
         // Append source mapping URL comment
         outputCode += `\n//# sourceMappingURL=${path.basename(filePath)}.map`;
       }
-      fs.writeFileSync(filePath, outputCode, "utf8");
+      const fileTmp = filePath + ".tmp";
+      try {
+        fs.writeFileSync(fileTmp, outputCode, "utf8");
+        fs.renameSync(fileTmp, filePath);
+      } catch (e) {
+        try {
+          fs.unlinkSync(fileTmp);
+        } catch (_) {}
+        throw e;
+      }
     }
   } catch (err) {
     console.error(`Error sanitizing ${path.basename(filePath)}:`, err.message);
@@ -144,11 +162,17 @@ $("style").each((i, elem) => {
   $(elem).attr("nonce", "NGINX_CSP_NONCE");
 });
 
-// Write updated HTML
+// Write updated HTML atomically (write to temp file, then rename)
+const INDEX_TMP_PATH = INDEX_PATH + ".tmp";
 try {
-  fs.writeFileSync(INDEX_PATH, $.html(), "utf8");
+  fs.writeFileSync(INDEX_TMP_PATH, $.html(), "utf8");
+  fs.renameSync(INDEX_TMP_PATH, INDEX_PATH);
   console.log("SRI hashes added successfully to index.html");
 } catch (err) {
+  // Clean up temp file if it exists
+  try {
+    fs.unlinkSync(INDEX_TMP_PATH);
+  } catch (_) {}
   console.error("Error writing index.html:", err);
   process.exit(1);
 }
