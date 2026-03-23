@@ -16,7 +16,7 @@
     "@angular/common": "^21.2.4",
     "@angular/core": "^21.2.4",
     "@angular/platform-browser": "^21.2.4",
-    "@angular/router": "^21.2.4",
+    "@angular/router": "^21.2.5",
     "@types/leaflet": "^1.9.21",
     "@types/prismjs": "^1.26.6",
     "leaflet": "^1.9.4",
