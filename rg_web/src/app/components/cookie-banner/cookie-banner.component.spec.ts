@@ -1,3 +1,4 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CookieBannerComponent } from './cookie-banner.component';
@@ -8,7 +9,8 @@ describe('CookieBannerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CookieBannerComponent]
+      imports: [CookieBannerComponent],
+      providers: [provideZonelessChangeDetection()],
     })
     .compileComponents();
 
