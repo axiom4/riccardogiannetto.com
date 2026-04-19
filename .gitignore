@@ -9,3 +9,5 @@ GeoLite2-City.mmdb
 deployment
 sitemap.xml
 rg_web/src/sitemap.xml
+.env
+rg_api/run.sh

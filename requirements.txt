@@ -52,6 +52,7 @@ numpy==2.4.4
 packaging==26.1
 pillow==12.2.0
 propcache==0.4.1
+python-dotenv==1.2.2
 psutil==7.2.2
 py-ubjson==0.16.1
 pyasn1==0.6.3
