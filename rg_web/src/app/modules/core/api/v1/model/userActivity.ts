@@ -19,7 +19,7 @@ export interface UserActivity {
     path?: string;
     method?: string;
     readonly ip_address: string | null;
-    user_agent?: string | null;
+    readonly user_agent: string | null;
     payload?: any | null;
     readonly timestamp: string;
 }
