@@ -6,10 +6,11 @@ import {
 } from '@angular/core';
 import { BlogService, Page } from '../../../core/api/v1';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Title } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 import { HighlightService } from '../../../main/highlight.service';
 import { DatePipe } from '@angular/common';
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY, filter, map, switchMap, tap } from 'rxjs';
 
@@ -27,9 +28,10 @@ export class PageComponent {
   private blogService = inject(BlogService);
   private title = inject(Title);
   private highlightService = inject(HighlightService);
+  private sanitizer = inject(DomSanitizer);
 
   page = signal<Page | undefined>(undefined);
-  parsedBody = signal<string>('');
+  parsedBody = signal<SafeHtml>('');
   highlighted = signal<boolean>(false);
   tag = signal<string>('');
 
@@ -62,7 +64,8 @@ export class PageComponent {
         if (page.body) {
           try {
             const parsed = await marked.parse(page.body);
-            this.parsedBody.set(parsed);
+            const clean = DOMPurify.sanitize(parsed, { USE_PROFILES: { html: true } });
+            this.parsedBody.set(this.sanitizer.bypassSecurityTrustHtml(clean));
           } catch (e) {
             console.error('Markdown parsing error', e);
           }

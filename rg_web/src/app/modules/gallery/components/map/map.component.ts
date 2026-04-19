@@ -103,17 +103,26 @@ export class MapComponent implements OnDestroy, AfterViewInit {
         locations.forEach((loc) => {
           if (loc.latitude == null || loc.longitude == null) return;
 
-          const popupContent = `
-            <div class="popup-content">
-                <img src="${loc.thumbnail}" alt="${loc.title}" loading="lazy" />
-                <div class="info">
-                    <h3>${loc.title}</h3>
-                </div>
-            </div>
-            `;
+          // Build popup via DOM to avoid XSS from server-controlled strings
+          const container = document.createElement('div');
+          container.className = 'popup-content';
+
+          const img = document.createElement('img');
+          img.src = loc.thumbnail ?? '';
+          img.alt = loc.title ?? '';
+          img.loading = 'lazy';
+          container.appendChild(img);
+
+          const info = document.createElement('div');
+          info.className = 'info';
+
+          const heading = document.createElement('h3');
+          heading.textContent = loc.title ?? '';
+          info.appendChild(heading);
+          container.appendChild(info);
 
           const marker = L.marker([loc.latitude, loc.longitude]).bindPopup(
-            popupContent,
+            container,
           );
 
           markers.addLayer(marker);

@@ -5,12 +5,13 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { Meta, Title } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml, Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY, filter, map, switchMap, tap } from 'rxjs';
 import { BlogService, Post } from '../../core/api/v1';
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
 @Component({
   selector: 'app-post-detail',
@@ -26,9 +27,10 @@ export class PostDetailComponent {
   private meta = inject(Meta);
   private titleService = inject(Title);
   private location = inject(Location);
+  private sanitizer = inject(DomSanitizer);
 
   post = signal<Post | null>(null);
-  parsedBody = signal('');
+  parsedBody = signal<SafeHtml>('');
   loading = signal(true);
   error = signal<string | null>(null);
 
@@ -90,7 +92,8 @@ export class PostDetailComponent {
         if (post.body) {
           try {
             const parsed = await marked.parse(post.body);
-            this.parsedBody.set(parsed);
+            const clean = DOMPurify.sanitize(parsed, { USE_PROFILES: { html: true } });
+            this.parsedBody.set(this.sanitizer.bypassSecurityTrustHtml(clean));
           } catch (e) {
             console.error('Error parsing markdown:', e);
           }

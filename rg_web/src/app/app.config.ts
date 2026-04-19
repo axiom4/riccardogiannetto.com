@@ -7,7 +7,7 @@ import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { routes } from './app.routes';
 import { Configuration, ConfigurationParameters } from './modules/core/api/v1';
 import { environment } from '../environments/environment';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withXsrfConfiguration } from '@angular/common/http';
 import { IMAGE_CONFIG, IMAGE_LOADER } from '@angular/common';
 import { galleryLoaderProvider } from './image-loader.config';
 
@@ -29,7 +29,13 @@ export const appConfig: ApplicationConfig = {
       }),
     ),
     { provide: Configuration, useFactory: apiConfigFactory },
-    provideHttpClient(withFetch()),
+    provideHttpClient(
+      withFetch(),
+      withXsrfConfiguration({
+        cookieName: 'csrftoken',
+        headerName: 'X-CSRFToken',
+      }),
+    ),
     {
       provide: IMAGE_CONFIG,
       useValue: {
