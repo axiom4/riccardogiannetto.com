@@ -11,7 +11,6 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
-import { PaginatedUserActivityList } from '../model/models';
 import { UserActivity } from '../model/models';
 
 
@@ -22,15 +21,6 @@ export interface AnalyticsUserActivityCreateRequestParams {
     userActivity: UserActivity;
 }
 
-export interface AnalyticsUserActivityListRequestParams {
-    limit?: number;
-    offset?: number;
-}
-
-export interface AnalyticsUserActivityRetrieveRequestParams {
-    id: number;
-}
-
 
 export interface AnalyticsServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -38,26 +28,10 @@ export interface AnalyticsServiceInterface {
 
     /**
      * 
-     * ViewSet for viewing and creating user activities.
+     * Write-only ViewSet for creating user activity records. List and retrieve are intentionally excluded to prevent exposure of ip_address, user_agent, and path data to unauthenticated users.
      * @endpoint post /analytics/user-activity/
 * @param requestParameters
      */
     analyticsUserActivityCreate(requestParameters: AnalyticsUserActivityCreateRequestParams, extraHttpRequestParams?: any): Observable<UserActivity>;
-
-    /**
-     * 
-     * ViewSet for viewing and creating user activities.
-     * @endpoint get /analytics/user-activity/
-* @param requestParameters
-     */
-    analyticsUserActivityList(requestParameters: AnalyticsUserActivityListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedUserActivityList>;
-
-    /**
-     * 
-     * ViewSet for viewing and creating user activities.
-     * @endpoint get /analytics/user-activity/{id}/
-* @param requestParameters
-     */
-    analyticsUserActivityRetrieve(requestParameters: AnalyticsUserActivityRetrieveRequestParams, extraHttpRequestParams?: any): Observable<UserActivity>;
 
 }

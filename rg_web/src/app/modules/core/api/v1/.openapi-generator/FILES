@@ -24,7 +24,6 @@ model/paginatedGalleryList.ts
 model/paginatedImageGalleryList.ts
 model/paginatedPageList.ts
 model/paginatedPostPreviewList.ts
-model/paginatedUserActivityList.ts
 model/post.ts
 model/postPreview.ts
 model/user.ts
