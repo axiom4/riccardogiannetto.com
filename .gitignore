@@ -4,7 +4,6 @@ __pycache__
 theme
 rg_api/files
 rg_web_old
-rg_api/rg_api/settings.py
 .DS_Store
 GeoLite2-City.mmdb
 deployment
