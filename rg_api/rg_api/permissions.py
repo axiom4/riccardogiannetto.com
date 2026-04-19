@@ -24,9 +24,18 @@ def get_client_ip(request):
 class AccessListPermission(permissions.BasePermission):
     """
     Global permission check for blocked IPs.
+
+    Uses X-Real-IP (set by the trusted nginx reverse proxy) to get the client IP.
+    Falls back to REMOTE_ADDR when the header is not present (e.g. in development).
+    Never reads X-Forwarded-For here to avoid client-controlled header spoofing.
     """
 
     def has_permission(self, request, view):
         """Check if request IP is in access list."""
-        ip_addr = get_client_ip(request)
+        # X-Real-IP is set by nginx and cannot be spoofed by the client
+        ip_addr = request.META.get('HTTP_X_REAL_IP') or request.META.get('REMOTE_ADDR', '')
+
+        # Sanitize to prevent log injection
+        ip_addr = ''.join(ch for ch in str(ip_addr) if ch.isprintable() and ch not in '\r\n').strip()
+
         return ip_addr in settings.ACCESS_LIST

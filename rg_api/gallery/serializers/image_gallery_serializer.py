@@ -26,9 +26,36 @@ class ImageGallerySerializer(serializers.HyperlinkedModelSerializer):
         Metadata for the ImageGallerySerializer.
 
         Attributes:
-            fields (str or list): Specifies that all fields from the model should be included.
+            fields (list): Explicit field list — GPS coordinates (latitude, longitude, altitude)
+                are excluded from the public API to protect location privacy.
             model (ImageGallery): The model class associated with this serializer.
         """
-        fields = '__all__'
+        fields = [
+            'url',
+            'id',
+            'title',
+            'slug',
+            'image',
+            'gallery',
+            'tags',
+            'author',
+            'width',
+            'height',
+            'created_at',
+            'updated_at',
+            'camera_model',
+            'lens_model',
+            'iso_speed',
+            'aperture_f_number',
+            'shutter_speed',
+            'focal_length',
+            'artist',
+            'copyright',
+            'latitude',
+            'longitude',
+            'altitude',
+            'location',
+            'date',
+        ]
         model = ImageGallery
         lookup_field = 'slug'

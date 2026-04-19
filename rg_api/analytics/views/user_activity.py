@@ -1,9 +1,13 @@
 """
 User activity views.
 """
-from rest_framework import viewsets, permissions, mixins
+from rest_framework import viewsets, permissions, mixins, throttling
 from ..models import UserActivity
 from ..serializers import UserActivitySerializer
+
+
+class UserActivityCreateThrottle(throttling.AnonRateThrottle):
+    rate = '30/minute'
 
 
 class UserActivityViewSet(mixins.CreateModelMixin,
@@ -16,6 +20,7 @@ class UserActivityViewSet(mixins.CreateModelMixin,
     queryset = UserActivity.objects.select_related('user', 'session').all()
     serializer_class = UserActivitySerializer
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [UserActivityCreateThrottle]
 
     def perform_create(self, serializer):
         """Custom create to capture IP and user."""

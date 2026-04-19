@@ -4,6 +4,8 @@ ImageGallery Admin Configuration.
 import os
 from typing import Tuple, List
 
+from PIL import Image as PilImage, UnidentifiedImageError
+
 from django.contrib import admin, messages
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
@@ -235,6 +237,16 @@ class ImageGalleryAdmin(admin.ModelAdmin):
             if ext.lower() not in ALLOWED_IMAGE_EXTENSIONS:
                 skipped += 1
                 continue
+
+            # Validate file content via magic bytes (not just extension)
+            upload.seek(0)
+            try:
+                img = PilImage.open(upload)
+                img.verify()
+            except (UnidentifiedImageError, Exception):
+                skipped += 1
+                continue
+            upload.seek(0)
 
             title = os.path.splitext(base_name)[0]
             if ImageGallery.objects.filter(title=title, gallery=gallery).exists():
