@@ -256,11 +256,16 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 if not DEBUG:
     CACHES = {
         "default": {
-            "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
-            "LOCATION": "127.0.0.1:11211",
-            "KEY_PREFIX": 'gallery_'
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/0"),
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+            "KEY_PREFIX": "gallery_",
         }
     }
+    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+    SESSION_CACHE_ALIAS = "default"
 
 ACCESS_LIST = ['127.0.0.1']
 
