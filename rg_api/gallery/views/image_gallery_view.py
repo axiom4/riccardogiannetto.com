@@ -91,7 +91,7 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
         except (ValueError, TypeError, ObjectDoesNotExist) as exc:
             raise Http404 from exc
 
-        if width <= 0:
+        if not (1 <= width <= 2000):
             raise Http404
 
         # Ensure directory exists
@@ -113,6 +113,11 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
                 raise Http404 from e
 
         if os.path.exists(filename):
-            return FileResponse(open(filename, "rb"), content_type="image/webp")
+            file_handle = open(filename, "rb")  # noqa: WPS515
+            try:
+                return FileResponse(file_handle, content_type="image/webp")
+            except Exception:
+                file_handle.close()
+                raise
 
         raise Http404

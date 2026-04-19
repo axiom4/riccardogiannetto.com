@@ -170,7 +170,8 @@ class AnalyticsMiddleware:
                 tracking_id,
                 max_age=31536000,  # 1 year
                 samesite='None',
-                secure=True
+                secure=True,
+                httponly=True,
             )
         return tracking_id
 
@@ -316,8 +317,8 @@ class AnalyticsMiddleware:
             UserActivity.objects.create(
                 session=user_session,
                 user=user,
-                action=f"{request.method} {request.path}",
-                path=request.path,
+                action=f"{request.method} {request.path}"[:200].replace('\n', '').replace('\r', ''),
+                path=request.path[:500].replace('\n', '').replace('\r', ''),
                 method=request.method,
                 ip_address=ip,
                 city=city,

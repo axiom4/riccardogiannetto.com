@@ -4,6 +4,7 @@ Docstring for rg_api.analytics.views.csp
 import json
 import logging
 from django.conf import settings
+from django.core.cache import cache
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rg_api.permissions import get_client_ip
@@ -50,6 +51,17 @@ def csp_report(request):
     Endpoint to receive Content Security Policy (CSP) violation reports.
     """
     if request.method == 'POST':
+        # Rate limit: 30 reports per minute per IP
+        ip_address = get_client_ip(request)
+        rate_key = f"csp_rate_{ip_address or 'unknown'}"
+        try:
+            count = cache.incr(rate_key)
+        except ValueError:
+            cache.set(rate_key, 1, 60)
+            count = 1
+        if count > 30:
+            return JsonResponse({'status': 'error', 'message': 'Rate limit exceeded'}, status=429)
+
         try:
             # Parse the JSON body
             if request.body:
@@ -73,7 +85,7 @@ def csp_report(request):
                 )
 
                 # Save the report to the database (avoiding typical duplicates)
-                ip_address = get_client_ip(request)
+                # ip_address already extracted for rate limiting above
                 # Explicitly sanitize IP address for logging to prevent log injection
                 safe_ip_address = (str(ip_address)
                                    .replace('\n', '')

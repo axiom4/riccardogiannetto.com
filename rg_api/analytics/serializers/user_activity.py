@@ -17,7 +17,7 @@ class UserActivitySerializer(serializers.ModelSerializer):
             'method', 'ip_address', 'user_agent',
             'payload', 'timestamp'
         ]
-        read_only_fields = ['id', 'user', 'ip_address', 'timestamp']
+        read_only_fields = ['id', 'user', 'ip_address', 'user_agent', 'timestamp']
 
     def create(self, validated_data):
         """Create UserActivity instance with user from request context."""

@@ -6,12 +6,16 @@ from rest_framework import permissions
 
 
 def get_client_ip(request):
-    """Retrieves the client IP address from the request."""
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
+    """Retrieves the client IP address from the request.
+
+    Prefers HTTP_X_REAL_IP (set by the trusted nginx reverse proxy) to avoid
+    client-controlled header spoofing via X-Forwarded-For.
+    Falls back to REMOTE_ADDR for direct connections (development).
+    """
+    ip = (
+        request.META.get('HTTP_X_REAL_IP') or
+        request.META.get('REMOTE_ADDR')
+    )
 
     # Sanitize IP address to prevent log injection or malformed log entries
     if ip is not None:

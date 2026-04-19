@@ -11,11 +11,11 @@ class UserActivityCreateThrottle(throttling.AnonRateThrottle):
 
 
 class UserActivityViewSet(mixins.CreateModelMixin,
-                          mixins.RetrieveModelMixin,
-                          mixins.ListModelMixin,
                           viewsets.GenericViewSet):
     """
-    ViewSet for viewing and creating user activities.
+    Write-only ViewSet for creating user activity records.
+    List and retrieve are intentionally excluded to prevent exposure of
+    ip_address, user_agent, and path data to unauthenticated users.
     """
     queryset = UserActivity.objects.select_related('user', 'session').all()
     serializer_class = UserActivitySerializer
@@ -24,12 +24,8 @@ class UserActivityViewSet(mixins.CreateModelMixin,
 
     def perform_create(self, serializer):
         """Custom create to capture IP and user."""
-        x_forwarded_for = self.request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            # Take the first IP in the list and strip whitespace
-            ip_address = x_forwarded_for.split(',')[0].strip()
-        else:
-            ip_address = self.request.META.get('REMOTE_ADDR')
+        ip_address = self.request.META.get('HTTP_X_REAL_IP') or \
+            self.request.META.get('REMOTE_ADDR')
 
         user = self.request.user if self.request.user.is_authenticated else None
 
