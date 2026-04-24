@@ -245,7 +245,7 @@ USE_X_FORWARDED_HOST = True
 SCRIPT_NAME = "/api"
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-MEDIA_ROOT = 'files'
+MEDIA_ROOT = os.environ.get('MEDIA_ROOT', 'files')
 MEDIA_URL = '/files/'
 
 GEOIP_PATH = str(BASE_DIR / 'geoip' / 'GeoLite2-City.mmdb')
