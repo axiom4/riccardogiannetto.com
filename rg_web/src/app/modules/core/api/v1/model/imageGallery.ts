@@ -19,7 +19,7 @@ export interface ImageGallery {
     slug?: string;
     image: string;
     gallery: string;
-    tags: Array<string>;
+    readonly tags: Array<string>;
     readonly author: string;
     width: number;
     height: number;

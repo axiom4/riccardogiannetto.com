@@ -16,7 +16,7 @@ export interface Gallery {
     readonly url: string;
     id: number;
     readonly author: string;
-    images: Array<string>;
+    readonly images: Array<string>;
     title: string;
     description: string;
     tag: string;
