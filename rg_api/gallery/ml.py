@@ -33,6 +33,12 @@ def get_model():
             "Loading BLIP-2 Model (OPT-2.7b)... this may take a moment.")
 
         model_id = "Salesforce/blip2-opt-2.7b"
+        # Pin to a specific commit hash to prevent supply-chain attacks (CWE-494).
+        # Update this value after reviewing the new revision's release notes.
+        model_revision = getattr(
+            settings, 'BLIP2_MODEL_REVISION',
+            '3669b04dc5f90a6f8c1af2f72a22a28e30dbf9bc'
+        )
 
         # Determine device: MPS (Apple Silicon), CUDA, or CPU
         device = "cpu"
@@ -45,7 +51,7 @@ def get_model():
 
         # Explicitly set use_fast=True to suppress warning and future-proof
         get_model.processor = Blip2Processor.from_pretrained(
-            model_id, use_fast=True)
+            model_id, use_fast=True, revision=model_revision)
 
         # device_map="auto" is excellent for CUDA but can cause shape errors on MPS/Mac.
         # For MPS, it's safer to load manually and move to device.
@@ -55,7 +61,8 @@ def get_model():
                     model_id,
                     device_map="auto",
                     dtype=torch.float16,
-                    low_cpu_mem_usage=True
+                    low_cpu_mem_usage=True,
+                    revision=model_revision
                 )
             elif device == "mps":
                 # MPS supports float16. low_cpu_mem_usage=True uses
@@ -63,14 +70,16 @@ def get_model():
                 get_model.model = Blip2ForConditionalGeneration.from_pretrained(
                     model_id,
                     dtype=torch.float16,
-                    low_cpu_mem_usage=True
+                    low_cpu_mem_usage=True,
+                    revision=model_revision
                 )
                 get_model.model.to("mps")
             else:
                 get_model.model = Blip2ForConditionalGeneration.from_pretrained(
                     model_id,
                     dtype=torch.float32,
-                    low_cpu_mem_usage=True
+                    low_cpu_mem_usage=True,
+                    revision=model_revision
                 )
         except (RecursionError, OSError, RuntimeError, ValueError) as e1:
 
@@ -79,7 +88,7 @@ def get_model():
 
             # Fallback if acceleration fails
             get_model.model = Blip2ForConditionalGeneration.from_pretrained(
-                model_id, low_cpu_mem_usage=True)
+                model_id, low_cpu_mem_usage=True, revision=model_revision)
             get_model.model.to("cpu")
 
         get_model.model.eval()

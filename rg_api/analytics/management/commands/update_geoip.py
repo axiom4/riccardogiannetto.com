@@ -3,6 +3,7 @@ import shutil
 import urllib.request
 import urllib.error
 from pathlib import Path
+from urllib.parse import urlparse
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
@@ -43,6 +44,13 @@ class Command(BaseCommand):
         self.stdout.write(f"Downloading GeoIP database from {url}...")
         self.stdout.write(f"Target file: {target_file}")
 
+        # Validate URL scheme to prevent unexpected file:/ or custom scheme access
+        parsed = urlparse(url)
+        if parsed.scheme not in ('http', 'https'):
+            self.stdout.write(getattr(self.style, 'ERROR')(
+                f'Rejected URL with disallowed scheme: {parsed.scheme}'))
+            return
+
         try:
             # Download directly to the target file
             # We use a temporary file first to ensure we don't
@@ -50,7 +58,7 @@ class Command(BaseCommand):
             temp_file = target_file.with_suffix('.tmp')
 
             try:
-                urllib.request.urlretrieve(url, temp_file)
+                urllib.request.urlretrieve(url, temp_file)  # nosec B310
 
                 # If download successful, move/rename to target
                 shutil.move(temp_file, target_file)
