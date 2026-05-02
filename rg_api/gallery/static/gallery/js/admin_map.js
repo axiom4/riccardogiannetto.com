@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
     attribution: "© OpenStreetMap",
+    referrerPolicy: "strict-origin-when-cross-origin",
   }).addTo(map);
 
   let marker;

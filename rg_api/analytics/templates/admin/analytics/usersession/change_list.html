@@ -21,6 +21,7 @@
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 18,
         attribution: "© OpenStreetMap",
+        referrerPolicy: "strict-origin-when-cross-origin",
       }).addTo(map);
 
       // Use a marker cluster group if we had it, but for now simple markers

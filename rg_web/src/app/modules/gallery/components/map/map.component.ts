@@ -74,6 +74,7 @@ export class MapComponent implements OnDestroy, AfterViewInit {
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        referrerPolicy: 'strict-origin-when-cross-origin',
       }).addTo(this.map);
 
       // Force a resize check to ensuring tiles render correctly

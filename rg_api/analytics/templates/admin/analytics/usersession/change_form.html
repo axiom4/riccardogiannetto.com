@@ -29,6 +29,7 @@
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           maxZoom: 19,
           attribution: "© OpenStreetMap",
+          referrerPolicy: "strict-origin-when-cross-origin",
         }).addTo(map);
 
         L.marker([lat, lon]).addTo(map).bindPopup('{{ original.city|default:"Unknown City"|escapejs }}, {{ original.country|default:"Unknown Country"|escapejs }}').openPopup();
