@@ -91,7 +91,8 @@ class ImageGalleryViewSet(viewsets.ModelViewSet):
         except (ValueError, TypeError, ObjectDoesNotExist) as exc:
             raise Http404 from exc
 
-        if not (1 <= width <= 2000):
+        max_width = getattr(settings, 'IMAGE_GENERATOR_MAX_WIDTH', 4000)
+        if not (1 <= width <= max_width):
             raise Http404
 
         # Ensure directory exists

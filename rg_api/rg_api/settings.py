@@ -315,6 +315,7 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
 
 IMAGE_GENERATOR_BASE_URL = "/portfolio/images"
+IMAGE_GENERATOR_MAX_WIDTH = int(os.environ.get("IMAGE_GENERATOR_MAX_WIDTH", "4000"))
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Riccardo Giannetto  API',
