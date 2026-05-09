@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
-const cheerio = require("cheerio");
+const { parse } = require("node-html-parser");
 const esbuild = require("esbuild");
 
 // Adjust the dist folder location
@@ -89,7 +89,9 @@ try {
 
 console.log(`Processing SRI for: ${INDEX_PATH}`);
 const html = fs.readFileSync(INDEX_PATH, "utf8");
-const $ = cheerio.load(html);
+const root = parse(html, {
+  comment: true,
+});
 
 function generateIntegrity(filePath) {
   try {
@@ -111,8 +113,8 @@ function generateIntegrity(filePath) {
 const referencedFiles = new Set();
 
 // Process JS scripts in index.html
-$("script").each((i, elem) => {
-  const src = $(elem).attr("src");
+root.querySelectorAll("script").forEach((elem) => {
+  const src = elem.getAttribute("src");
   if (src && !src.startsWith("http") && !src.startsWith("//")) {
     const cleanSrc = src.split("?")[0];
     const filePath = path.join(DIST_ROOT, cleanSrc);
@@ -121,20 +123,20 @@ $("script").each((i, elem) => {
       referencedFiles.add(path.basename(cleanSrc));
       const integrity = generateIntegrity(filePath);
       if (integrity) {
-        $(elem).attr("integrity", integrity);
-        $(elem).attr("crossorigin", "anonymous");
+        elem.setAttribute("integrity", integrity);
+        elem.setAttribute("crossorigin", "anonymous");
       }
     } else {
       console.warn(`Warning: Script file not found: ${filePath}`);
     }
   }
   // Add nonce placeholder
-  $(elem).attr("nonce", "NGINX_CSP_NONCE");
+  elem.setAttribute("nonce", "NGINX_CSP_NONCE");
 });
 
 // Process CSS stylesheets and modulepreload
-$('link[rel="stylesheet"], link[rel="modulepreload"]').each((i, elem) => {
-  const href = $(elem).attr("href");
+[...root.querySelectorAll('link[rel="stylesheet"]'), ...root.querySelectorAll('link[rel="modulepreload"]')].forEach((elem) => {
+  const href = elem.getAttribute("href");
   if (href && !href.startsWith("http") && !href.startsWith("//")) {
     const cleanHref = href.split("?")[0];
     const filePath = path.join(DIST_ROOT, cleanHref);
@@ -143,12 +145,12 @@ $('link[rel="stylesheet"], link[rel="modulepreload"]').each((i, elem) => {
       referencedFiles.add(path.basename(cleanHref));
       const integrity = generateIntegrity(filePath);
       if (integrity) {
-        $(elem).attr("integrity", integrity);
-        if ($(elem).attr("rel") === "stylesheet") {
-          $(elem).attr("crossorigin", "anonymous");
+        elem.setAttribute("integrity", integrity);
+        if (elem.getAttribute("rel") === "stylesheet") {
+          elem.setAttribute("crossorigin", "anonymous");
         } else {
-          if (!$(elem).attr("crossorigin")) {
-            $(elem).attr("crossorigin", "anonymous");
+          if (!elem.getAttribute("crossorigin")) {
+            elem.setAttribute("crossorigin", "anonymous");
           }
         }
       }
@@ -158,14 +160,14 @@ $('link[rel="stylesheet"], link[rel="modulepreload"]').each((i, elem) => {
   }
 });
 
-$("style").each((i, elem) => {
-  $(elem).attr("nonce", "NGINX_CSP_NONCE");
+root.querySelectorAll("style").forEach((elem) => {
+  elem.setAttribute("nonce", "NGINX_CSP_NONCE");
 });
 
 // Write updated HTML atomically (write to temp file, then rename)
 const INDEX_TMP_PATH = INDEX_PATH + ".tmp";
 try {
-  fs.writeFileSync(INDEX_TMP_PATH, $.html(), "utf8");
+  fs.writeFileSync(INDEX_TMP_PATH, root.toString(), "utf8");
   fs.renameSync(INDEX_TMP_PATH, INDEX_PATH);
   console.log("SRI hashes added successfully to index.html");
 } catch (err) {
