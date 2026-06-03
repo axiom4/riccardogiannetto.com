@@ -187,7 +187,7 @@
           <div class="info-row">
             <dt>Shutter Speed</dt>
             <dd>
-              {{ formatShutterSpeed(currentLightboxImg()?.shutter_speed) }}
+              {{ formatShutterSpeed($safeNavigationMigration(currentLightboxImg()?.shutter_speed)) }}
             </dd>
           </div>
         }
@@ -200,7 +200,7 @@
         @if (currentLightboxImg()?.date) {
           <div class="info-row">
             <dt>Date</dt>
-            <dd>{{ currentLightboxImg()?.date | date: "medium" }}</dd>
+            <dd>{{ $safeNavigationMigration(currentLightboxImg()?.date) | date: "medium" }}</dd>
           </div>
         }
       </dl>
