@@ -4,7 +4,7 @@ Page admin.
 from django.contrib import admin
 from django import forms
 from django.db import models
-from mdeditor.widgets import MDEditorWidget
+from martor.widgets import AdminMartorWidget
 from ..models import Page
 
 
@@ -39,7 +39,7 @@ class PageAdmin(admin.ModelAdmin):
     save_on_top = True
     search_fields = ['title',]
     formfield_overrides = {
-        models.TextField: {'widget': MDEditorWidget},
+        models.TextField: {'widget': AdminMartorWidget},
     }
 
     form = PageModelForm

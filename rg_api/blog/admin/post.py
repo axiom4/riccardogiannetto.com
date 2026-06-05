@@ -4,7 +4,7 @@ Post admin.
 from django.contrib import admin
 from django import forms
 from django.db import models
-from mdeditor.widgets import MDEditorWidget
+from martor.widgets import AdminMartorWidget
 from ..models import Post
 from .image import ImageInline
 from .comment import CommentInline
@@ -46,7 +46,7 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ['title', 'summary']
     inlines = [ImageInline, CommentInline]
     formfield_overrides = {
-        models.TextField: {'widget': MDEditorWidget}
+        models.TextField: {'widget': AdminMartorWidget}
     }
     readonly_fields = ['image_tag']
     form = PostModelForm
