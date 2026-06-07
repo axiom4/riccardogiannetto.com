@@ -189,7 +189,7 @@ function findReferencedChunks(filePath, knownFiles) {
   const content = fs.readFileSync(filePath, "utf8");
   // Simple regex to find chunk filenames (e.g. "chunk-XXXX.js")
   // Adjust based on your chunk format (esbuild uses chunk-HASH.js)
-  const chunkRegex = /chunk-[A-Z0-9]+\.js/g;
+  const chunkRegex = /chunk-[A-Za-z0-9_-]+\.js/g;
   let match;
   while ((match = chunkRegex.exec(content)) !== null) {
     const chunkName = match[0];
