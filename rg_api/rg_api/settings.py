@@ -277,7 +277,9 @@ MARTOR_ENABLE_CONFIGS = {
     'imgur': 'false',
     'mention': 'false',
     'github': 'true',
-    'live': 'true',
+    'jquery': 'true',
+    'living': 'true',
+    'spellcheck': 'false',
     'hljs': 'true',
 }
 
