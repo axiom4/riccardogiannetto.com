@@ -192,11 +192,20 @@ CSRF_TRUSTED_ORIGINS = [
     "https://riccardogiannetto.com"
 ]
 
-# Cookie settings for cross-site requests
-SESSION_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = 'None'
-CSRF_COOKIE_SECURE = True
+# Cookie settings for cross-site requests.
+# SameSite=None requires Secure, which browsers refuse over plain HTTP, so
+# only enable it outside local development (mirrors the DEBUG-gated
+# SECURE_* settings below).
+if DEBUG:
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SECURE = False
+else:
+    SESSION_COOKIE_SAMESITE = 'None'
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SAMESITE = 'None'
+    CSRF_COOKIE_SECURE = True
 
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = False
