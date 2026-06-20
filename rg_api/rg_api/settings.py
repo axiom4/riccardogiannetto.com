@@ -293,11 +293,16 @@ MARTOR_UPLOAD_URL = '/martor/uploader/'
 
 MAX_IMAGE_UPLOAD_SIZE = 5242880  # 5MB
 
+# Keep Martor endpoint aligned with reverse-proxy script prefix (e.g. /api).
+MARTOR_MARKDOWNIFY_URL = f"{FORCE_SCRIPT_NAME.rstrip('/')}/martor/markdownify/"
+MARTOR_MARKDOWNIFY_TIMEOUT = 0
+
 MARTOR_MARKDOWN_SAFE_MODE = False
 MARTOR_MARKDOWN_EXTENSIONS = [
     'markdown.extensions.extra',
     'markdown.extensions.nl2br',
     'markdown.extensions.codehilite',
+    'blog.markdown_mermaid',
 ]
 
 SESSION_COOKIE_HTTPONLY = True

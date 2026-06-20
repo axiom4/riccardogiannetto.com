@@ -1,0 +1,85 @@
+#content-main .aligned .form-row,
+#content-main .aligned .form-row > div,
+#content-main .main-martor,
+#content-main .section-martor,
+#content-main .tab-content,
+#content-main .tab-pane,
+#content-main .martor-field,
+#content-main .martor-preview {
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+#content-main .martor-field,
+#content-main .ace_editor {
+  overflow: hidden;
+}
+
+#content-main .ace_editor,
+#content-main .ace_editor .ace_scroller,
+#content-main .ace_editor .ace_content {
+  max-width: 100% !important;
+}
+
+#content-main .martor-preview,
+#content-main .mermaid {
+  overflow-x: auto !important;
+  overflow-y: hidden;
+}
+
+#content-main .mermaid svg {
+  display: block;
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* Living mode: keep editor and preview side-by-side on wide screens. */
+#content-main .main-martor.enable-living .tab-content {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+#content-main .main-martor.enable-living .tab-content > .tab-pane {
+  display: block !important;
+  flex: 1 1 0;
+  width: auto !important;
+  max-width: calc(50% - 6px) !important;
+}
+
+#content-main .main-martor.enable-living .martor-preview {
+  margin-top: 0 !important;
+  height: 520px;
+  min-height: 520px;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+#content-main .main-martor.enable-living .martor-field,
+#content-main .main-martor.enable-living .ace_editor {
+  height: 520px !important;
+  min-height: 520px;
+  max-height: 520px;
+}
+
+@media (max-width: 1200px) {
+  #content-main .main-martor.enable-living .tab-content {
+    flex-direction: column;
+  }
+
+  #content-main .main-martor.enable-living .tab-content > .tab-pane {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #content-main .main-martor.enable-living .martor-field,
+  #content-main .main-martor.enable-living .ace_editor,
+  #content-main .main-martor.enable-living .martor-preview {
+    height: 380px !important;
+    min-height: 380px;
+    max-height: 380px;
+  }
+}

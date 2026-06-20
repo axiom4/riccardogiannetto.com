@@ -4,8 +4,8 @@ Page admin.
 from django.contrib import admin
 from django import forms
 from django.db import models
-from martor.widgets import AdminMartorWidget
 from ..models import Page
+from .widgets import MARTOR_ADMIN_WIDGET
 
 
 class PageModelForm(forms.ModelForm):
@@ -30,6 +30,13 @@ class PageAdmin(admin.ModelAdmin):
     """
     Page admin.
     """
+    class Media:
+        """Static assets for the Martor editor."""
+        css = {
+            'all': ('blog/css/admin-martor-fix.css',)
+        }
+        js = ('blog/js/admin-mermaid-v2.js',)
+
     fields = [
         ('title'),
         ('author', 'tag'),
@@ -39,7 +46,7 @@ class PageAdmin(admin.ModelAdmin):
     save_on_top = True
     search_fields = ['title',]
     formfield_overrides = {
-        models.TextField: {'widget': AdminMartorWidget},
+        models.TextField: {'widget': MARTOR_ADMIN_WIDGET},
     }
 
     form = PageModelForm

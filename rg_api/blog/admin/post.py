@@ -4,10 +4,10 @@ Post admin.
 from django.contrib import admin
 from django import forms
 from django.db import models
-from martor.widgets import AdminMartorWidget
 from ..models import Post
 from .image import ImageInline
 from .comment import CommentInline
+from .widgets import MARTOR_ADMIN_WIDGET
 
 
 class PostModelForm(forms.ModelForm):
@@ -35,6 +35,13 @@ class PostAdmin(admin.ModelAdmin):
     """
     Post admin.
     """
+    class Media:
+        """Static assets for the Martor editor."""
+        css = {
+            'all': ('blog/css/admin-martor-fix.css',)
+        }
+        js = ('blog/js/admin-mermaid-v2.js',)
+
     save_on_top = True
     fields = [
         ('title', 'author', 'image', 'image_tag'),
@@ -46,7 +53,7 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ['title', 'summary']
     inlines = [ImageInline, CommentInline]
     formfield_overrides = {
-        models.TextField: {'widget': AdminMartorWidget}
+        models.TextField: {'widget': MARTOR_ADMIN_WIDGET}
     }
     readonly_fields = ['image_tag']
     form = PostModelForm

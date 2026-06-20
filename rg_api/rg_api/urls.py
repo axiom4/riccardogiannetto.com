@@ -38,7 +38,7 @@ urlpatterns = [
     path('openapi', SpectacularAPIView().as_view(), name='schema'),
     path('',
          SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-    path('martor/', include('martor.urls')),
+    path('martor/', include('blog.martor_urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 
