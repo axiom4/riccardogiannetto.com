@@ -36,8 +36,8 @@
     "esbuild": "0.28.1",
     "eslint": "^10.6.0",
     "jasmine-core": "~6.3.0",
-    "node-html-parser": "^8.0.4",
+    "node-html-parser": "^9.0.0",
     "typescript": "~6.0.3",
-    "typescript-eslint": "8.62.1"
+    "typescript-eslint": "8.63.0"
   }
 }
