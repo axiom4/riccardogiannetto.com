@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { ImageGallerySlug } from './imageGallerySlug';
 
 
 /**
@@ -16,7 +17,7 @@ export interface ImageGallery {
     readonly url: string;
     readonly id: number;
     title: string;
-    slug?: string;
+    slug?: ImageGallerySlug;
     image: string;
     gallery: string;
     readonly tags: Array<string>;

@@ -1,6 +1,7 @@
 export * from './category';
 export * from './gallery';
 export * from './imageGallery';
+export * from './imageGallerySlug';
 export * from './imageLocation';
 export * from './page';
 export * from './paginatedCategoryList';

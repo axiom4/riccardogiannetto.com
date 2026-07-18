@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { ImageGallerySlug } from './imageGallerySlug';
 
 
 /**
@@ -17,7 +18,7 @@ export interface ImageLocation {
     title: string;
     latitude?: number | null;
     longitude?: number | null;
-    slug?: string;
+    slug?: ImageGallerySlug;
     readonly thumbnail: string;
 }
 

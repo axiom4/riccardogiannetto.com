@@ -16,6 +16,7 @@ index.ts
 model/category.ts
 model/gallery.ts
 model/imageGallery.ts
+model/imageGallerySlug.ts
 model/imageLocation.ts
 model/models.ts
 model/page.ts
