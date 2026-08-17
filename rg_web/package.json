@@ -15,7 +15,7 @@
   "dependencies": {
     "@angular/common": "^22.1.1",
     "@angular/core": "^22.1.1",
-    "@angular/platform-browser": "^22.1.1",
+    "@angular/platform-browser": "^22.1.2",
     "@angular/router": "^22.1.1",
     "@types/leaflet": "^1.9.22",
     "@types/prismjs": "^1.26.6",
