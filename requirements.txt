@@ -73,7 +73,7 @@ safetensors==0.8.0
 service-identity==26.1.0
 setuptools==84.0.0
 shellingham==1.5.4
-sqlparse==0.5.5
+sqlparse==0.6.0
 sympy==1.14.0
 tokenizers==0.22.2
 torch==2.13.0
