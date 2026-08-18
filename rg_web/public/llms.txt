@@ -1,0 +1,30 @@
+# Riccardo Giannetto Photography
+
+Nature and wildlife photography portfolio and blog by Riccardo Giannetto. Focus: landscapes, wildlife, birds, and macro details of the natural world, shot with an ethical, non-intrusive approach (observe without interfering, respect distances and habitats). Contact: rgiannetto@gmail.com.
+
+## Pages
+
+- [Home](https://www.riccardogiannetto.com/): Photo gallery grid, latest work.
+- [About](https://www.riccardogiannetto.com/pages/about): Bio, photography approach and ethics.
+- [Map](https://www.riccardogiannetto.com/map): Interactive map of photo shoot locations (GPS-tagged).
+- [Privacy Policy](https://www.riccardogiannetto.com/pages/privacy)
+- [Cookie Policy](https://www.riccardogiannetto.com/pages/cookies)
+
+## Photo categories
+
+- natura (nature)
+- paesaggio (landscape)
+- Puffin (puffins)
+
+## Sample photos
+
+Each photo page (`/p/{slug}`) shows a single image with title, tags, camera/lens EXIF data, GPS location, and date.
+
+- [Puffin](https://www.riccardogiannetto.com/p/o58a8479-migliorato-nr)
+- [Grifone](https://www.riccardogiannetto.com/p/grifone) (griffon vulture)
+- [Sula](https://www.riccardogiannetto.com/p/sula) (gannet)
+- [Funghi](https://www.riccardogiannetto.com/p/funghi) (mushrooms)
+
+## Full index
+
+Complete, current list of pages: https://www.riccardogiannetto.com/sitemap.xml
