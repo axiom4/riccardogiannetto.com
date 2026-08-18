@@ -8,7 +8,7 @@ describe('HighlightService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()],
+      providers: [provideZonelessChangeDetection(), HighlightService],
     });
     service = TestBed.inject(HighlightService);
   });

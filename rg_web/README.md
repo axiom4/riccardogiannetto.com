@@ -1,6 +1,6 @@
 # RgWeb
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.6.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 22.1.4.
 
 ## Development server
 
@@ -16,7 +16,7 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 
 ## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run `ng test` to execute the unit tests via [Vitest](https://vitest.dev/).
 
 ## Running end-to-end tests
 

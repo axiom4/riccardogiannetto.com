@@ -1,5 +1,8 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 
 import { PageComponent } from './page.component';
 
@@ -10,7 +13,12 @@ describe('PageComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PageComponent],
-      providers: [provideZonelessChangeDetection()],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
     })
     .compileComponents();
     

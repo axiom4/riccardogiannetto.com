@@ -1,5 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { PageNotFoundComponent } from './page-not-found.component';
 
@@ -10,7 +11,7 @@ describe('PageNotFoundComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PageNotFoundComponent],
-      providers: [provideZonelessChangeDetection()],
+      providers: [provideZonelessChangeDetection(), provideRouter([])],
     })
     .compileComponents();
     
