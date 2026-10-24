@@ -10,7 +10,7 @@
 /* tslint:disable:no-unused-variable member-ordering */
 
 import { Inject, Injectable, Optional }                      from '@angular/core';
-import { HttpClient, 
+import { HttpClient, HttpHeaders, HttpParams,
          HttpResponse, HttpEvent, HttpContext 
         }       from '@angular/common/http';
 import { Observable }                                        from 'rxjs';
@@ -28,7 +28,7 @@ import { PaginatedGalleryList } from '../model/paginatedGalleryList';
 import { PaginatedImageGalleryList } from '../model/paginatedImageGalleryList';
 
 // @ts-ignore
-import { BASE_PATH }                     from '../variables';
+import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
