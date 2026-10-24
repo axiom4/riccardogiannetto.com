@@ -17,19 +17,11 @@ class GalleryConfig(AppConfig):
         """
         Run when the app is ready.
         """
+        # Avoid loading ML models during management commands (migrate, check, collectstatic, etc.)
+        is_manage_py = any('manage.py' in arg for arg in sys.argv)
+        is_server_cmd = any(cmd in ' '.join(sys.argv) for cmd in ('runserver', 'daphne', 'uvicorn', 'gunicorn'))
 
-        # Heuristic to detect if we are running a server (runserver, daphne, etc.)
-        # and avoid loading the model during management commands like migrate.
-        is_server_cmd = 'runserver' in sys.argv or \
-                        any('daphne' in arg for arg in sys.argv) or \
-                        'asgi' in str(sys.argv)
-
-        is_management = 'migrate' in sys.argv or \
-                        'makemigrations' in sys.argv or \
-                        'collectstatic' in sys.argv or \
-                        'test' in sys.argv
-
-        if is_server_cmd or not is_management:
+        if is_server_cmd or not is_manage_py:
             self._start_model_warmup()
 
     def _start_model_warmup(self):
