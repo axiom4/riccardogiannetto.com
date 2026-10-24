@@ -1,6 +1,5 @@
 """ Machine learning utilities for image classification using BLIP-2."""
 import logging
-from transformers import Blip2Processor, Blip2ForConditionalGeneration
 import torch
 from django.conf import settings
 from PIL import Image
@@ -29,6 +28,8 @@ def get_model():
         get_model.model = None
 
     if get_model.model is None:
+        from transformers import Blip2Processor, Blip2ForConditionalGeneration
+
         logger.info(
             "Loading BLIP-2 Model (OPT-2.7b)... this may take a moment.")
 
