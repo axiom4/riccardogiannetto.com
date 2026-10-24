@@ -4,7 +4,6 @@ Gallery app configuration.
 import sys
 import threading
 from django.apps import AppConfig
-from gallery.ml import get_model
 
 
 class GalleryConfig(AppConfig):
@@ -38,6 +37,7 @@ class GalleryConfig(AppConfig):
         def warmup_model():
             print("--- Starting Background Model Warmup ---")
             try:
+                from gallery.ml import get_model
                 get_model()
                 print("--- Model Warmup Complete ---")
             except (OSError, RuntimeError, ImportError) as e:
