@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'daphne',
     'django.contrib.staticfiles',
     'rest_framework',
     'django_filters',
@@ -61,7 +60,6 @@ INSTALLED_APPS = [
     'gallery',
     'analytics',
     'drf_spectacular',
-    'taggit',
 ]
 
 MIDDLEWARE = [

@@ -65,7 +65,7 @@ class Command(BaseCommand):
                 tags = classify_image(path)
 
                 if tags:
-                    image_obj.tags.add(*tags)
+                    image_obj.add_tags(*tags)
                     self.stdout.write(self.style.SUCCESS(
                         f"  + Added tags: {', '.join(tags)}"))
                 else:

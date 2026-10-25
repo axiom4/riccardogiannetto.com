@@ -2,7 +2,6 @@
 import logging
 from datetime import datetime
 from PIL import Image, ExifTags
-from taggit.managers import TaggableManager
 from django.conf import settings
 from django.db import models
 from django.utils.html import mark_safe
@@ -55,7 +54,11 @@ class ImageGallery(models.Model):
     gallery = models.ForeignKey(
         Gallery, related_name='images', on_delete=models.CASCADE)
 
-    tags = TaggableManager(blank=True)
+    tags = models.ManyToManyField(
+        'gallery.Tag',
+        blank=True,
+        related_name='images'
+    )
 
     width = models.IntegerField()
     height = models.IntegerField()
@@ -235,6 +238,23 @@ class ImageGallery(models.Model):
                             setattr(self, attribute, f_val)
                     else:
                         setattr(self, attribute, val)
+
+    def add_tags(self, *tag_names):
+        """Add tags by name, creating any that do not exist yet."""
+        from .tag import Tag
+        tag_objects = []
+        for name in tag_names:
+            if not name:
+                continue
+            clean_name = str(name).strip()
+            if clean_name:
+                tag, _ = Tag.objects.get_or_create(
+                    name=clean_name,
+                    defaults={'slug': slugify(clean_name)}
+                )
+                tag_objects.append(tag)
+        if tag_objects:
+            self.tags.add(*tag_objects)
 
     class Meta:
         """

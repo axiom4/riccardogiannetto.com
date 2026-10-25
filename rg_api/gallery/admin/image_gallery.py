@@ -86,7 +86,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
             try:
                 new_tags = classify_image(obj.image.path)
                 if new_tags:
-                    obj.tags.add(*new_tags)
+                    obj.add_tags(*new_tags)
                     updated += 1
                 count += 1
             except (OSError, ValueError) as e:
@@ -149,7 +149,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
         try:
             new_tags = classify_image(obj.image.path)
             if new_tags:
-                obj.tags.add(*new_tags)
+                obj.add_tags(*new_tags)
         except (OSError, ValueError) as e:
             print(f"Auto-tag error: {e}")
 
@@ -309,7 +309,7 @@ class ImageGalleryAdmin(admin.ModelAdmin):
             print(f"Auto-tagging image: {title}")
             new_tags = classify_image(image.image.path)
             if new_tags:
-                image.tags.add(*new_tags)
+                image.add_tags(*new_tags)
                 details.append(f"Tags: {len(new_tags)}")
         except (OSError, ValueError) as e:
             print(f"Auto-tag error for {title}: {e}")

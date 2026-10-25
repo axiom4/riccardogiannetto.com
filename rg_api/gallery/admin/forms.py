@@ -5,8 +5,7 @@ from django import forms
 from django.contrib import admin
 from django.contrib.admin.widgets import AutocompleteSelectMultiple
 from django.contrib.auth import get_user_model
-from taggit.models import Tag
-from ..models import Gallery, ImageGallery
+from ..models import Gallery, ImageGallery, Tag
 
 User = get_user_model()
 
