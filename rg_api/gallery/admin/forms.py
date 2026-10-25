@@ -38,11 +38,6 @@ class BulkUploadForm(forms.Form):
         label='Or create new gallery',
         required=False,
     )
-    auto_tag = forms.BooleanField(
-        label='Auto-generate tags with ML',
-        initial=True,
-        required=False,
-    )
 
 
 class ImageGalleryForm(forms.ModelForm):

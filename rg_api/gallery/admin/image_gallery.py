@@ -12,7 +12,6 @@ from django.shortcuts import redirect, render
 from django.urls import path
 
 from gallery.exif_utils import get_gps_data
-from gallery.ml import classify_image
 from ..models import Gallery, ImageGallery
 from .forms import ImageGalleryForm, BulkUploadForm
 from .constants import ALLOWED_IMAGE_EXTENSIONS
@@ -47,7 +46,6 @@ class ImageGalleryAdmin(admin.ModelAdmin):
     list_display_links = ('title',)
     list_per_page = 12
     change_list_template = 'admin/gallery/imagegallery/change_list.html'
-    actions = ['auto_tag_images']
 
     class Media:
         """
@@ -73,44 +71,8 @@ class ImageGalleryAdmin(admin.ModelAdmin):
         return ", ".join(t.name for t in tags)
     tag_list.short_description = 'Tags'
 
-    @admin.action(description='Auto-tag selected images')
-    def auto_tag_images(self, request, queryset):
-        """Automatically tag images using ML classifier."""
-        count = 0
-        updated = 0
-
-        for obj in queryset:
-            if not obj.image:
-                continue
-
-            try:
-                new_tags = classify_image(obj.image.path)
-                if new_tags:
-                    obj.add_tags(*new_tags)
-                    updated += 1
-                count += 1
-            except (OSError, ValueError) as e:
-                self.message_user(
-                    request,
-                    f"Error processing {obj.title}: {e}",
-                    messages.WARNING,
-                )
-
-        if updated > 0:
-            self.message_user(
-                request,
-                f"Successfully analyzed {count} images and tagged {updated}.",
-                messages.SUCCESS,
-            )
-        else:
-            self.message_user(
-                request,
-                "No tags added. Check logs or image paths.",
-                messages.WARNING,
-            )
-
     def save_related(self, request, form, formsets, change):
-        """Extract GPS and auto-tag on save."""
+        """Extract GPS on save."""
         super().save_related(request, form, formsets, change)
         obj = form.instance
 
@@ -118,7 +80,6 @@ class ImageGalleryAdmin(admin.ModelAdmin):
             return
 
         self._extract_gps_data(obj)
-        self._auto_tag_if_empty(obj)
 
     def _extract_gps_data(self, obj) -> None:
         """Extract GPS data from image EXIF."""
@@ -140,18 +101,6 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                 obj.save()
         except (OSError, ValueError) as e:
             print(f"GPS extraction error: {e}")
-
-    def _auto_tag_if_empty(self, obj) -> None:
-        """Auto-tag image if no tags exist."""
-        if obj.tags.exists():
-            return
-
-        try:
-            new_tags = classify_image(obj.image.path)
-            if new_tags:
-                obj.add_tags(*new_tags)
-        except (OSError, ValueError) as e:
-            print(f"Auto-tag error: {e}")
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         """Set default gallery and author."""
@@ -270,12 +219,9 @@ class ImageGalleryAdmin(admin.ModelAdmin):
         return created, skipped, details_list
 
     def _process_single_upload(self, image, title) -> List[str]:
-        """Process single image upload (GPS, tags)."""
+        """Process single image upload (GPS)."""
         details = []
-
         self._extract_upload_gps(image, title, details)
-        self._classify_upload_image(image, title, details)
-
         return details
 
     def _extract_upload_gps(
@@ -297,19 +243,3 @@ class ImageGalleryAdmin(admin.ModelAdmin):
                 details.append("GPS found")
         except (OSError, ValueError) as e:
             print(f"GPS extraction error for {title}: {e}")
-
-    def _classify_upload_image(
-        self,
-        image,
-        title: str,
-        details: List[str],
-    ) -> None:
-        """Auto-tag uploaded image."""
-        try:
-            print(f"Auto-tagging image: {title}")
-            new_tags = classify_image(image.image.path)
-            if new_tags:
-                image.add_tags(*new_tags)
-                details.append(f"Tags: {len(new_tags)}")
-        except (OSError, ValueError) as e:
-            print(f"Auto-tag error for {title}: {e}")

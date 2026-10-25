@@ -338,6 +338,3 @@ SPECTACULAR_SETTINGS = {
     'OAS_VERSION': '3.1.1',
     'SERVE_PERMISSIONS': ['rg_api.permissions.AccessListPermission'],
 }
-
-# AI/ML Configuration
-ENABLE_ML_MODELS = bool(int(os.environ.get("ENABLE_ML_MODELS", "0")))
